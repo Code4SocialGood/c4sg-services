@@ -4,7 +4,9 @@ import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Directory.RESUME_UPLOAD;
 import static org.c4sg.constant.Format.IMAGE;
 import static org.c4sg.constant.Format.RESUME;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -34,6 +36,8 @@ import org.c4sg.controller.UserController;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsNot;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,8 +51,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.ResourceUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -529,9 +535,12 @@ public class UserControllerTest {
 		when(userServiceMock.getAvatarUploadPath(userId)).thenReturn(uploadPath);
 
 		// mocking image upload
-		File imgFile = new File("C:\\Users\\Sayali\\Documents\\Sayali\\UnitTestFiles\\quilled-birds.jpg");
+		//C:\\Users\\Sayali\\Documents\\Sayali\\GitHub\\C4SG_New\\c4sg-services\\src\\main\\resources\\testdata\\SampleAvatar.jpg
+		//String fileName = "testdata/SampleAvatar.jpg";
+		File imgFile = ResourceUtils.getFile("classpath:testdata/SampleAvatar.jpg");
+		//File imgFile = new File("../testdata/SampleAvatar.jpg");
 		FileInputStream stream = new FileInputStream(imgFile);
-		MockMultipartFile file = new MockMultipartFile("file", "quilled-birds.jpg", "image/jpeg", stream);
+		MockMultipartFile file = new MockMultipartFile("file", "SampleAvatar.jpg", "image/jpeg", stream);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.fileUpload("/api/users/{id}/uploadAvatar", userId).file(file)
@@ -553,9 +562,9 @@ public class UserControllerTest {
 		when(userServiceMock.getAvatarUploadPath(userId)).thenReturn(uploadPath);
 
 		// mocking image upload
-		File imgFile = new File("C:\\Users\\Sayali\\Documents\\Sayali\\UnitTestFiles\\sample.txt");
+		File imgFile = ResourceUtils.getFile("classpath:testdata/Sample.txt");
 		FileInputStream stream = new FileInputStream(imgFile);
-		MockMultipartFile file = new MockMultipartFile("file", "sample.txt", "text/plain", stream);
+		MockMultipartFile file = new MockMultipartFile("file", "Sample.txt", "text/plain", stream);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.fileUpload("/api/users/{id}/uploadAvatar", userId).file(file)
@@ -575,7 +584,7 @@ public class UserControllerTest {
 		when(userServiceMock.getResumeUploadPath(userId)).thenReturn(uploadPath);
 
 		// mocking image upload
-		File resumeFile = new File("C:\\Users\\Sayali\\Documents\\Sayali\\UnitTestFiles\\RsumeTest.pdf");
+		File resumeFile = ResourceUtils.getFile("classpath:testdata/RsumeTest.pdf");
 		FileInputStream stream = new FileInputStream(resumeFile);
 		MockMultipartFile file = new MockMultipartFile("file", "RsumeTest.pdf", "application/pdf", stream);
 
@@ -599,15 +608,15 @@ public class UserControllerTest {
 		when(userServiceMock.getResumeUploadPath(userId)).thenReturn(uploadPath);
 
 		// mocking image upload
-		File resumeFile = new File("C:\\Users\\Sayali\\Documents\\Sayali\\UnitTestFiles\\sample.txt");
+		File resumeFile = ResourceUtils.getFile("classpath:testdata/Sample.txt");
 		FileInputStream stream = new FileInputStream(resumeFile);
-		MockMultipartFile file = new MockMultipartFile("file", "sample.txt", "text/plain", stream);
+		MockMultipartFile file = new MockMultipartFile("file", "Sample.txt", "text/plain", stream);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.fileUpload("/api/users/{id}/uploadResume", userId).file(file)
 						.contentType(MediaType.TEXT_PLAIN))
-				.andExpect(status().isBadRequest());
-				
+				.andDo(print())
+				.andExpect(status().isBadRequest());		
 		stream.close();
 
 	}
