@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Project {
 
-	private static final String IMAGE_DIRECTORY = "assets/project/";
+	//private static final String IMAGE_DIRECTORY = "assets/project/";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,8 +21,7 @@ public class Project {
 	@Column(name = "name", nullable = false)
 	private String name;
 
-	@Column(name = "image", nullable = false)
-	private String image;
+	
 
 	@Column(name = "description", nullable = false)
 	private String description;
@@ -37,14 +36,7 @@ public class Project {
 	@JoinColumn(name = "organization_id", insertable = false, updatable = false)
 	private Organization organization;
 
-	public String getImage() {
-		return IMAGE_DIRECTORY + image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
+	
 	public String getDescription() {
 		return description;
 	}
