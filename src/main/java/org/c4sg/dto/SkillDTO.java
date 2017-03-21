@@ -10,7 +10,7 @@ public class SkillDTO {
 	
 	@NotNull
 	@Length(max = 100)
-	private String skill;
+	private String skillName;
 	
 	public Integer getId() {
 		return id;
@@ -18,10 +18,10 @@ public class SkillDTO {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getSkill() {
-		return skill;
+	public String getSkillName() {
+		return skillName;
 	}
-	public void setSkill(String skill) {
-		this.skill = skill;
+	public void setSkillName(String skillName) {
+		this.skillName = skillName;
 	}
 }
