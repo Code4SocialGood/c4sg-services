@@ -12,7 +12,7 @@ public interface SkillDAO extends CrudRepository<Skill, Integer> {
 
 
 	String FIND_ALL_SORTED_QUERY = "SELECT s FROM Skill s " +
-                              "ORDER BY s.skill ASC";
+                              "ORDER BY s.skillName ASC";
     
     @Query(FIND_ALL_SORTED_QUERY)
     List<Skill> findAllSorted();
