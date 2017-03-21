@@ -2,7 +2,7 @@ package org.c4sg.constant;
 
 public enum UserRole {
 
-    VOLUNTEER("V"), ORGANIZATION("O"), C4SG_ADMIN("C"), C4SG_DEVELOPER("D");
+    VOLUNTEER("V"), ORGANIZATION("O"), ADMIN("A"), C4SG_DEVELOPER("D");
 
     private String value;
 
