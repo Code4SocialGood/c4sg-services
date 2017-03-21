@@ -79,6 +79,18 @@ public class User implements Serializable {
     private String skill3;
     @Column(name = "skill4",nullable = true)
     private String skill4;
+    
+    @Column(name="c4sg_developer_flg", columnDefinition = "char(1)", nullable = false)
+    private char developerFlag;
+    
+    public char getDeveloperFlag(){
+    	return developerFlag;
+    }
+    
+    public void setDeveloperFag(char developerFlag){
+    	this.developerFlag = developerFlag;
+    }
+    
     public String getIntroduction() {
 		return introduction;
 	}

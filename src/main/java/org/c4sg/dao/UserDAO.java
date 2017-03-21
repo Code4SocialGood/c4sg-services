@@ -24,7 +24,8 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
 
     User findById(int id);
     User findByEmail(String email);
-    List<User> findByRoleAndDisplayFlagOrderByGithubDesc(UserRole role, Boolean display);
+    List<User> findByDeveloperFlag(char flag);
+    
 
     @Query(FIND_BY_ID_QUERY)
     List<User> findByUserProjectId(@Param("projId") Integer projId);
