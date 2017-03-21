@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.c4sg.constant.slack.Problem;
-import org.c4sg.constant.slack.SlackWebApiConstants;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.slack.Profile;
 import org.c4sg.dto.slack.User;
@@ -22,6 +21,7 @@ import org.c4sg.service.slack.method.SlackMethod;
 import org.c4sg.service.slack.method.UserListMethod;
 import org.c4sg.util.slack.SlackUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -30,8 +30,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class SlackClientServiceImpl implements SlackClientService {
-
-	private String token;
+	
+	@Value("${slack.auth.token}")
+	private String slackAuthToken;
+	
+	@Value("${slack.webapi.url}")
+	private String slackApiUrl;
+	
+	@Value("${slack.webapi.document.url}")
+	private String slackApiDocUrl;
+	
+	@Value("${slack.default.timeout}")
+	private String slackDefaultTimeOut;
+	
 	private ObjectMapper mapper;
 	private CloseableHttpClient httpClient;
 	
@@ -56,8 +67,8 @@ public class SlackClientServiceImpl implements SlackClientService {
 	
 	@Override
 	public Boolean isJoinedChat(String email){
-		token=SlackWebApiConstants.SLACK_AUTH_TOKEN;
-		httpClient = SlackUtils.createHttpClient(1000000);
+		//token=SlackWebApiConstants.SLACK_AUTH_TOKEN;
+		httpClient = SlackUtils.createHttpClient(Integer.parseInt(slackDefaultTimeOut));
 		mapper = new ObjectMapper();
 		try {
 			org.c4sg.entity.User user = userDAO.findByEmail(email);
@@ -140,10 +151,10 @@ public class SlackClientServiceImpl implements SlackClientService {
 
 		Map<String, String> parameters = method.getParameters();
 		if (method.isRequiredToken()) {
-			parameters.put("token", token);
+			parameters.put("token", slackAuthToken);
 		}
 
-		String apiUrl = SlackWebApiConstants.SLACK_WEB_API_URL + "/" + method.getMethodName();
+		String apiUrl = slackApiUrl + "/" + method.getMethodName();
 
 		HttpEntity httpEntity = null;
 		if (is == null) {
@@ -165,7 +176,7 @@ public class SlackClientServiceImpl implements SlackClientService {
 		if (!retOk) {
 			String error = retNode.findPath("error").asText();
 			throw new SlackResponseErrorException(error + ". check the link "
-					+ SlackWebApiConstants.SLACK_WEB_API_DOCUMENT_URL + "/" + method.getMethodName());
+					+ slackApiDocUrl + "/" + method.getMethodName());
 		}
 
 		return retNode;

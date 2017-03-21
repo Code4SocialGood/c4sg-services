@@ -27,7 +27,7 @@ public class UserListMethod extends AbstractMethod {
 
 	@Override
 	public String getMethodName() {
-		return SlackWebApiConstants.USERS_LIST;
+		return SlackWebApiConstants.USERS_LIST.getValue();
 	}
 
 	@Override
