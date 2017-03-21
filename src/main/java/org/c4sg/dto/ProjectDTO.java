@@ -8,7 +8,7 @@ public class ProjectDTO {
 	
 	private String organizationId;
 	
-	private String image;
+	//private String image;
 	
 	private String description;
 	
@@ -42,15 +42,8 @@ public class ProjectDTO {
 		this.organizationId = organizationId;
 	}
 
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public String getDescription() {
+	
+    public String getDescription() {
 		return description;
 	}
 
