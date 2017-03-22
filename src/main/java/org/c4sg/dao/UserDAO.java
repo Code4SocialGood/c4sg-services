@@ -29,14 +29,15 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
 
     User findById(int id);
     User findByEmail(String email);
-    
+
+    List<User> findByDeveloperFlag(char flag);
+    // List<User> findByRoleAndDisplayFlagOrderByGithubDesc(UserRole role, Boolean display);
+  
     @Transactional
     @Modifying
     @Query(UPDATE_SLACK_STATUS)
     Integer updateIsSlackRegisteredFlag(@Param("isSlackReg") Boolean isSlackReg, @Param("userId") Integer userId);
-    
-    List<User> findByRoleAndDisplayFlagOrderByGithubDesc(UserRole role, Boolean display);
-
+  
     @Query(FIND_BY_ID_QUERY)
     List<User> findByUserProjectId(@Param("projId") Integer projId);
 }

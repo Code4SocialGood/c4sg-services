@@ -81,6 +81,17 @@ public class User implements Serializable {
     @Column(name = "skill4",nullable = true)
     private String skill4;
     
+    @Column(name="c4sg_developer_flg", columnDefinition = "char(1)", nullable = false)
+    private char developerFlag;
+    
+    public char getDeveloperFlag(){
+    	return developerFlag;
+    }
+    
+    public void setDeveloperFag(char developerFlag){
+    	this.developerFlag = developerFlag;
+    }
+
     //slack entry
     @Column(name = "slack_registered_flag",nullable = false)
     @Type(type="yes_no")
