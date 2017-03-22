@@ -20,8 +20,17 @@ public class UserDTO {
     private String linked_inurl;
     private String personal_web_site;
     private String resume;
-    
 
+    private char developerFlag; 
+
+
+    public char getDeveloperFlag(){
+    	return this.developerFlag;
+    }
+    
+    public void setDeveloperFlag(char developerFlag){
+    	this.developerFlag = developerFlag;
+    }
 
     public String getIntroduction() {
 		return introduction;

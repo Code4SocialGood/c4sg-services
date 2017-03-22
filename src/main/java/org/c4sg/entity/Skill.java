@@ -11,8 +11,8 @@ public class Skill{
 	@Column(name = "id", nullable = false, updatable = false)
 	private Integer id;
 
-	@Column(name = "skill", nullable = false)
-	private String skill;
+	@Column(name = "skill_name", nullable = false)
+	private String skillName;
 
 	public Integer getId() {
 		return id;
@@ -20,10 +20,10 @@ public class Skill{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getSkill() {
-		return skill;
+	public String getSkillName() {
+		return skillName;
 	}
-	public void setSkill(String skill) {
-		this.skill = skill;
+	public void setSkillName(String skillName) {
+		this.skillName = skillName;
 	}
 }
