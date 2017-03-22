@@ -1,6 +1,7 @@
 package org.c4sg.service.impl;
 
 import org.c4sg.constant.Status;
+import org.c4sg.constant.Constants;
 import static org.c4sg.constant.Directory.RESUME_UPLOAD;
 import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Format.RESUME;
@@ -54,13 +55,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findByEmail(String email) {
-        return userMapper.getUserDtoFromEntity(userDAO.findByEmail(email));
+    public UserDTO findByEmail(String email) {        
+    	return userMapper.getUserDtoFromEntity(userDAO.findByEmail(email));
     }
     
     @Override
-    public List<User> findDevelopers() {
-        return userDAO.findByRoleAndDisplayFlagOrderByGithubDesc(UserRole.C4SG_DEVELOPER, true);
+    public List<UserDTO> findDevelopers() {        
+    	return userMapper.getDtosFromEntities(userDAO.findByDeveloperFlag(Constants.YES));    	
     }
 
     @Override
