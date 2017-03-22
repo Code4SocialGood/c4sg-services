@@ -14,6 +14,7 @@ import org.c4sg.constant.Status;
 import org.c4sg.constant.UserRole;
 import org.c4sg.converter.StatusConverter;
 import org.c4sg.converter.UserRoleConverter;
+import org.hibernate.annotations.Type;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -90,6 +91,11 @@ public class User implements Serializable {
     public void setDeveloperFag(char developerFlag){
     	this.developerFlag = developerFlag;
     }
+
+    //slack entry
+    @Column(name = "slack_registered_flag",nullable = false)
+    @Type(type="yes_no")
+    private boolean isSlackRegistered;
     
     public String getIntroduction() {
 		return introduction;
@@ -278,4 +284,12 @@ public class User implements Serializable {
     public void setLocation(Point location) {
         this.location = location;
     }
+
+	public boolean isSlackRegistered() {
+		return isSlackRegistered;
+	}
+
+	public void setSlackRegistered(boolean isSlackRegistered) {
+		this.isSlackRegistered = isSlackRegistered;
+	}
 }
