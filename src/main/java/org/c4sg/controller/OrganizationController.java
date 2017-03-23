@@ -3,8 +3,13 @@ package org.c4sg.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.OrganizationDTO;
+import org.c4sg.dto.ProjectDTO;
+import org.c4sg.exception.NotFoundException;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,5 +165,29 @@ public class OrganizationController {
             e.printStackTrace();
         return null;
     }
+      
+        
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find organizations by user id", notes = "Returns a collection of organizations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "ID of user invalid")
+            })
+    public List<OrganizationDTO> getOrganizationsByUser(@ApiParam(value = "userId of organizations to return", required = true)
+                                        @PathVariable("id") Integer id) {
+    	
+    	System.out.println("**************Search**************" + id);
+    	
+    	List<OrganizationDTO> organizations = null;
+    	
+        try {
+        	organizations = organizationService.findByUser(id);
+        } catch (Exception e) {
+        	throw new NotFoundException("ID of user invalid");
+        }
+
+        return organizations;
     }
 }

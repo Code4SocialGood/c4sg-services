@@ -1,15 +1,27 @@
 package org.c4sg.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.c4sg.constant.Status;
+
+import static java.util.Objects.requireNonNull;
 import static org.c4sg.constant.Directory.LOGO_UPLOAD;
 import static org.c4sg.constant.Format.IMAGE;
 import org.c4sg.dao.OrganizationDAO;
+import org.c4sg.dao.UserDAO;
+import org.c4sg.dao.UserOrganizationDAO;
+import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.OrganizationDTO;
+import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Organization;
+import org.c4sg.entity.User;
+import org.c4sg.entity.UserOrganization;
+import org.c4sg.entity.UserProject;
 import org.c4sg.mapper.OrganizationMapper;
 import org.c4sg.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +33,12 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@Autowired
 	private OrganizationDAO organizationDAO;
 	
+    @Autowired
+    private UserDAO userDAO;
+
+    @Autowired
+    private UserOrganizationDAO userOrganizationDAO;
+    
 	@Autowired
 	private OrganizationMapper organizationMapper;
 	
@@ -88,4 +106,21 @@ public class OrganizationServiceImpl implements OrganizationService {
         return LOGO_UPLOAD.getValue() + File.separator + organizationId + IMAGE.getValue();
     }
 
+	@Override
+	public List<OrganizationDTO> findByUser(Integer userId) {
+		User user = userDAO.findById(userId);
+        requireNonNull(user, "Invalid User Id");
+		List<UserOrganization> userOrganizations = userOrganizationDAO.findByUserId(userId);
+		Collections.sort(userOrganizations, (p1, p2) -> {
+			int result = 0;
+			result = p1.getStatus().compareTo(p2.getStatus());
+			return result*-1;
+		});
+		
+		List<OrganizationDTO> organizationDtos = new ArrayList<OrganizationDTO>();
+		for(UserOrganization userOrganization: userOrganizations) {
+			organizationDtos.add(organizationMapper.getOrganizationDtoFromEntity(userOrganization));
+		}
+		return organizationDtos;
+	}
 }
