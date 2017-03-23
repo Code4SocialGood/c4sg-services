@@ -13,11 +13,14 @@ import org.c4sg.util.FileUploadUtil;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Directory.RESUME_UPLOAD;
@@ -101,7 +104,7 @@ public class UserController {
         return userService.search(userName, firstName, lastName);
     }
     
-    @RequestMapping(value = "/{id}/uploadAvatar", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/avatar", method = RequestMethod.POST)
 	@ApiOperation(value = "Add new upload Avatar")
 	public String uploadAvatar(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
 			@ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
@@ -123,9 +126,26 @@ public class UserController {
 			return "Error saving avatar for User " + id + " : " + e;
 		}
 	}
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/avatar", method = RequestMethod.GET)
+    @ApiOperation(value = "Retrieves user avatar")
+    public String retrieveAvatar(@ApiParam(value = "User id to get avatar for", required = true)
+                                         @PathVariable("id") int id) {
+        File avatar = new File(userService.getAvatarUploadPath(id));
+        try {
+			FileInputStream fileInputStreamReader = new FileInputStream(avatar);
+            byte[] bytes = new byte[(int) avatar.length()];
+            fileInputStreamReader.read(bytes);
+            fileInputStreamReader.close();
+            return new String(Base64.encodeBase64(bytes));
+        } catch (IOException e) {
+            e.printStackTrace();
+        return null;
+        }
+    }
 
-	// Determining if this approach is better that using base64
-	@RequestMapping(value = "/{id}/uploadResume", method = RequestMethod.POST)
+	@RequestMapping(value = "/{id}/resume", method = RequestMethod.POST)
 	@ApiOperation(value = "Add new upload resume")
 	public String uploadResume(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
 			@ApiParam(value = "Resume File(.pdf)", required = true) @RequestPart("file") MultipartFile file) {
@@ -147,4 +167,20 @@ public class UserController {
 			return "Error saving resume for User " + id + " : " + e;
 		}
 	}
+	
+	
+	
+	@CrossOrigin
+    @RequestMapping(value = "/{id}/resume", method = RequestMethod.GET)
+    @ApiOperation(value = "Retrieves user resume")
+    public FileSystemResource retrieveProjectImage(@ApiParam(value = "User id to get resume for", required = true)
+                                         @PathVariable("id") int id) {
+        File resume = new File(userService.getResumeUploadPath(id));
+        try {
+            return new FileSystemResource(resume);
+        } catch (Exception e) {
+            e.printStackTrace();
+        return null;
+        }
+    }
 }

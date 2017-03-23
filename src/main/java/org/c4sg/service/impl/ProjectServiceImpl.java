@@ -2,8 +2,11 @@ package org.c4sg.service.impl;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
+import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
+import static org.c4sg.constant.Format.IMAGE;
 import static org.c4sg.constant.UserProjectStatus.APPLIED;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -174,4 +177,8 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		return projectDtos;
 	}
+	
+	public String getImageUploadPath(Integer projectId) {
+        return PROJECT_UPLOAD.getValue() + File.separator + projectId + IMAGE.getValue();
+    }
 }
