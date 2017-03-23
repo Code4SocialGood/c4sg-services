@@ -16,7 +16,7 @@ public interface UserService {
 
     UserDTO findByEmail(String email);
 
-    List<User> findDevelopers();
+    List<UserDTO> findDevelopers();
 
     UserDTO saveUser(UserDTO userDTO);
 
