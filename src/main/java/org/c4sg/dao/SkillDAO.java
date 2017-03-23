@@ -9,10 +9,9 @@ import org.springframework.data.repository.CrudRepository;
 public interface SkillDAO extends CrudRepository<Skill, Integer> {
 	
 	List<Skill> findAll();
-
-
-	String FIND_ALL_SORTED_QUERY = "SELECT s FROM Skill s " +
-                              "ORDER BY s.skillName ASC";
+	
+	String FIND_ALL_SORTED_QUERY = "select s from UserSkill us inner join us.skill s " +
+                              " group by us.skill order by count(*) desc";
     
     @Query(FIND_ALL_SORTED_QUERY)
     List<Skill> findAllSorted();
