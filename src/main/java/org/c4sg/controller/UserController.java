@@ -13,7 +13,9 @@ import org.c4sg.util.FileUploadUtil;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -173,12 +175,22 @@ public class UserController {
 	@CrossOrigin
     @RequestMapping(value = "/{id}/resume", method = RequestMethod.GET)
     @ApiOperation(value = "Retrieves user resume")
-    public FileSystemResource retrieveProjectImage(@ApiParam(value = "User id to get resume for", required = true)
+	@ResponseBody
+    public HttpEntity<byte[]> retrieveProjectImage(@ApiParam(value = "User id to get resume for", required = true)
                                          @PathVariable("id") int id) {
         File resume = new File(userService.getResumeUploadPath(id));
         try {
-            return new FileSystemResource(resume);
-        } catch (Exception e) {
+        	FileInputStream fileInputStreamReader = new FileInputStream(resume);
+            byte[] bytes = new byte[(int) resume.length()];
+            fileInputStreamReader.read(bytes);
+            fileInputStreamReader.close();
+            HttpHeaders header = new HttpHeaders();
+            header.setContentType(MediaType.APPLICATION_PDF);
+            header.setContentLength(bytes.length);
+
+            return new HttpEntity<byte[]>(bytes, header);
+            
+        } catch (IOException e) {
             e.printStackTrace();
         return null;
         }

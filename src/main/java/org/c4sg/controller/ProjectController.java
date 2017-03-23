@@ -256,7 +256,7 @@ public class ProjectController extends GenericController{
     @CrossOrigin
     @RequestMapping(value = "/{id}/image", method = RequestMethod.GET)
     @ApiOperation(value = "Retrieves project image")
-    public String retrieveImage(@ApiParam(value = "Project id to get logo for", required = true)
+    public String retrieveImage(@ApiParam(value = "Project id to get image for", required = true)
                                          @PathVariable("id") int id) {
         File image = new File(projectService.getImageUploadPath(id));
         try {
