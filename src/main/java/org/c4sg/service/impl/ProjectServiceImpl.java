@@ -61,7 +61,7 @@ public class ProjectServiceImpl implements ProjectService {
     //TODO search by keyword
     public List<Project> findByKeyword(String keyWord) {
         List<Project> projects = new ArrayList<>();
-        projects.add(projectDAO.findByName(keyWord));
+        projects=projectDAO.findByKeyword(keyWord);
         return projects;
     }
 
