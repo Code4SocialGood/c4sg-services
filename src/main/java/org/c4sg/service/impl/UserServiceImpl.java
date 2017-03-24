@@ -6,7 +6,6 @@ import static org.c4sg.constant.Directory.RESUME_UPLOAD;
 import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Format.RESUME;
 import static org.c4sg.constant.Format.IMAGE;
-import org.c4sg.constant.UserRole;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.specification.UserSpecification;
 import org.c4sg.dto.UserDTO;

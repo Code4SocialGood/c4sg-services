@@ -28,9 +28,8 @@ public class OrganizationController {
     @Autowired
     private OrganizationService organizationService;
     
-	// Determining if this approach is better that using base64
-	@RequestMapping(value = "/{id}/uploadLogoAsFile", method = RequestMethod.POST)
-	@ApiOperation(value = "Add new upload Logo as Image File")
+	@RequestMapping(value = "/{id}/logo", method = RequestMethod.POST)
+	@ApiOperation(value = "Upload Logo as Image File")
 	public String uploadLogo(@ApiParam(value = "Organization Id", required = true) @PathVariable Integer id,
 			@ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
 
@@ -51,27 +50,7 @@ public class OrganizationController {
 			return "Error saving logo for organization " + id + " : " + e;
 		}
 	}
-
-    @RequestMapping(value = "/{id}/uploadLogo", method = RequestMethod.POST)
-    @ApiOperation(value = "Add new upload Logo")
-    public String uploadLogo(@ApiParam(value = "Organization Id", required = true)
-                             @PathVariable Integer id,
-                             @ApiParam(value = "Request Body", required = true)
-                             @RequestBody String logoFileContent) {
-        try {
-            byte[] imageByte = Base64.decodeBase64(logoFileContent);
-            File directory = new File(LOGO_UPLOAD.getValue());
-            if (!directory.exists()) {
-                directory.mkdir();
-            }
-            File f = new File(organizationService.getLogoUploadPath(id));
-            new FileOutputStream(f).write(imageByte);
-            return "Success";
-        } catch (Exception e) {
-            return "Error saving logo for organization " + id + " : " + e;
-        }
-    }
-
+	
     @CrossOrigin
     @RequestMapping(value = "/all", produces = {"application/json"}, method = RequestMethod.GET)
     @ApiOperation(value = "Find all organizations", notes = "Returns a collection of organizations")
@@ -146,19 +125,20 @@ public class OrganizationController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/{id}/getLogo", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/logo", method = RequestMethod.GET)
     @ApiOperation(value = "Retrieves organization logo")
     public String retrieveOrganizationLogo(@ApiParam(value = "Organization id to get logo for", required = true)
                                          @PathVariable("id") int id) {
         File logo = new File(organizationService.getLogoUploadPath(id));
         try {
-            FileInputStream fileInputStreamReader = new FileInputStream(logo);
+			FileInputStream fileInputStreamReader = new FileInputStream(logo);
             byte[] bytes = new byte[(int) logo.length()];
             fileInputStreamReader.read(bytes);
+            fileInputStreamReader.close();
             return new String(Base64.encodeBase64(bytes));
         } catch (IOException e) {
             e.printStackTrace();
         return null;
-    }
+        }
     }
 }
