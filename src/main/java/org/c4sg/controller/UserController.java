@@ -58,8 +58,8 @@ public class UserController {
     @RequestMapping(value = "/email/{email}/", method = RequestMethod.GET)
     @ApiOperation(value = "Find user by email", notes = "Returns a user")
     public UserDTO getUserByEmail(@ApiParam(value = "email address", required = true)
-                               @PathVariable("email") String email) {
-        return userService.findByEmail(email);
+                               @PathVariable("email") String email) {  	
+    	return userService.findByEmail(email);
     }
     
     @RequestMapping(method = RequestMethod.POST)
@@ -78,7 +78,7 @@ public class UserController {
 
     @RequestMapping(value = "/developers", method = RequestMethod.GET)
     @ApiOperation(value = "Find developers", notes = "Returns a collection of users")
-    public List<User> getDevelopers() {
+    public List<UserDTO> getDevelopers() {
         return userService.findDevelopers();
     }
 

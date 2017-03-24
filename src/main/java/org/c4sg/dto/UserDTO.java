@@ -25,7 +25,15 @@ public class UserDTO {
     private String skill3;
     private String skill4;
     private String skill5;
+    private char developerFlag; 
 
+    public char getDeveloperFlag(){
+    	return this.developerFlag;
+    }
+    
+    public void setDeveloperFlag(char developerFlag){
+    	this.developerFlag = developerFlag;
+    }
 
     public String getIntroduction() {
 		return introduction;
