@@ -20,7 +20,7 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     
     String FIND_BY_ORGANIZATION_ID = "SELECT p FROM Project p WHERE p.organization.id=:orgId";
 
-    String FIND_BY_KEYWORD = "SELECT p FROM Project p WHERE p.name LIKE %:keyword% OR p.description LIKE %:keyword%";    
+    String FIND_BY_KEYWORD = "SELECT p FROM Project p WHERE p.name LIKE %:keyword% OR p.description LIKE %:keyword% ORDER BY p.createdTimestamp DESC";    
 
 	Project findById(int id);
 	Project findByName(String name);
