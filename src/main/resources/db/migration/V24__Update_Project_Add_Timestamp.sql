@@ -1,0 +1,6 @@
+--add new column
+ALTER TABLE project
+ADD created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD created_by VARCHAR(100) ,
+ADD updated_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD updated_by VARCHAR(100) ;
