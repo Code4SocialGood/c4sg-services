@@ -100,6 +100,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @ApiOperation(value = "Find a user by keyWord", notes = "Returns a collection of users")
     public List<UserDTO> search(@RequestParam(required = false) String userName,
                                 @RequestParam(required = false) String firstName,
                                 @RequestParam(required = false) String lastName) {

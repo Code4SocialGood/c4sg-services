@@ -10,28 +10,32 @@ import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import static org.c4sg.constant.Directory.LOGO_UPLOAD;
 
 import javax.validation.Valid;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.c4sg.constant.Directory.LOGO_UPLOAD;
+
 @CrossOrigin
 @RestController
-@RequestMapping("/api/organization")
+@RequestMapping("/api/organizations")
 @Api(description = "Operations about Organizations", tags = "organization")
 public class OrganizationController {
 
     @Autowired
     private OrganizationService organizationService;
-    
+
 	@RequestMapping(value = "/{id}/logo", method = RequestMethod.POST)
 	@ApiOperation(value = "Upload Logo as Image File")
 	public String uploadLogo(@ApiParam(value = "Organization Id", required = true) @PathVariable Integer id,
-			@ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
+			                 @ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
 
 		String contentType = file.getContentType();
 		if (!FileUploadUtil.isValidImageFile(contentType)) {
@@ -50,16 +54,16 @@ public class OrganizationController {
 			return "Error saving logo for organization " + id + " : " + e;
 		}
 	}
-	
+
     @CrossOrigin
-    @RequestMapping(value = "/all", produces = {"application/json"}, method = RequestMethod.GET)
+    @RequestMapping(produces = {"application/json"}, method = RequestMethod.GET)
     @ApiOperation(value = "Find all organizations", notes = "Returns a collection of organizations")
     public List<OrganizationDTO> getOrganizations() {
         return organizationService.findOrganizations();
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/search/byId/{id}", produces = {"application/json"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", produces = {"application/json"}, method = RequestMethod.GET)
     @ApiOperation(value = "Find organization by ID", notes = "Returns a collection of organizations")
     public OrganizationDTO getOrganization(@ApiParam(value = "ID of organization to return", required = true)
                                            @PathVariable("id") int id) {
@@ -67,15 +71,15 @@ public class OrganizationController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/search/byKeyword/{keyWord}", produces = {"application/json"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/search", produces = {"application/json"}, method = RequestMethod.GET)
     @ApiOperation(value = "Find organization by keyWord", notes = "Returns a collection of organizations")
-    public List<OrganizationDTO> getOrganization(@ApiParam(value = "Keyword of organization to return", required = true)
-                                                 @PathVariable("keyWord") String keyWord) {
+    public List<OrganizationDTO> getOrganizations(@ApiParam(value = "Name or description of organization to return", required = true)
+                                                  @RequestParam String keyWord) {
         return organizationService.findByKeyword(keyWord);
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new organization")
     public Map<String, Object> createOrganization(@ApiParam(value = "Organization object to return", required = true)
                                                   @RequestBody @Valid OrganizationDTO organizationDTO) {
@@ -93,7 +97,7 @@ public class OrganizationController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ApiOperation(value = "Update an existing organization")
     public Map<String, Object> updateOrganization(@ApiParam(value = "Updated organization object", required = true)
                                                   @PathVariable("id") int id,
@@ -111,7 +115,7 @@ public class OrganizationController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Deletes a organization")
     public void deleteOrganization(@ApiParam(value = "Organization id to delete", required = true)
                                    @PathVariable("id") int id) {
@@ -128,7 +132,7 @@ public class OrganizationController {
     @RequestMapping(value = "/{id}/logo", method = RequestMethod.GET)
     @ApiOperation(value = "Retrieves organization logo")
     public String retrieveOrganizationLogo(@ApiParam(value = "Organization id to get logo for", required = true)
-                                         @PathVariable("id") int id) {
+                                           @PathVariable("id") int id) {
         File logo = new File(organizationService.getLogoUploadPath(id));
         try {
 			FileInputStream fileInputStreamReader = new FileInputStream(logo);
@@ -138,7 +142,7 @@ public class OrganizationController {
             return new String(Base64.encodeBase64(bytes));
         } catch (IOException e) {
             e.printStackTrace();
-        return null;
+            return null;
         }
     }
 }

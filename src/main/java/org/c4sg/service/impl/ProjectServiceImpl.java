@@ -24,6 +24,8 @@ import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -61,11 +63,10 @@ public class ProjectServiceImpl implements ProjectService {
         return projectDAO.findByName(name);
     }
 
-    //TODO search by keyword
-    public List<Project> findByKeyword(String keyWord) {
-        List<Project> projects = new ArrayList<>();
-        projects=projectDAO.findByKeyword(keyWord);
-        return projects;
+    public List<ProjectDTO> findByKeyword(String name, String keyWord) {
+        List<Project> projects = projectDAO.findByNameOrDescription(name, keyWord);
+
+        return projectMapper.getDtosFromEntities(projects);
     }
 
     public Project createProject(Project project) {
@@ -136,48 +137,48 @@ public class ProjectServiceImpl implements ProjectService {
 
     private void isUserAppliedPresent(Integer userId, Integer projectId) throws UserProjectException {
         UserProject userProject = userProjectDAO.findByUser_IdAndProject_Id(userId, projectId);
-        if(nonNull(userProject)){
+        if (nonNull(userProject)) {
             throw new UserProjectException("The user already exists in that project");
         }
     }
 
     @Override
-    public List<ProjectDTO> getAppliedProjects(Integer userId){
-    	List<Project> projects = projectDAO.findByStatus(userId, APPLIED.getStatus());
+    public List<ProjectDTO> getAppliedProjects(Integer userId) {
+        List<Project> projects = projectDAO.findByStatus(userId, APPLIED.getStatus());
         return projectMapper.getDtosFromEntities(projects);
     }
 
-	@Override
-	public List<Project> getProjectsByOrganization(Integer orgId) {
-		List<Project> projects = projectDAO.getProjectsByOrganization(orgId);
-		if(projects == null || projects.size() == 0) {
-			System.out.println("No Project available for the provided organization");
-		}
-		return projects;
-	}
+    @Override
+    public List<Project> getProjectsByOrganization(Integer orgId) {
+        List<Project> projects = projectDAO.getProjectsByOrganization(orgId);
+        if (projects == null || projects.size() == 0) {
+            System.out.println("No Project available for the provided organization");
+        }
+        return projects;
+    }
 
-	@Override
-	public List<ProjectDTO> findByUser(Integer userId) {
-		User user = userDAO.findById(userId);
+    @Override
+    public List<ProjectDTO> findByUser(Integer userId) {
+        User user = userDAO.findById(userId);
         requireNonNull(user, "Invalid User Id");
-		List<UserProject> userProjects = userProjectDAO.findByUserId(userId);
-		Comparator<UserProject> projectComp = new Comparator<UserProject>() {
-			@Override
-			public int compare(UserProject o1, UserProject o2) {
-				int result = 0;
-				// result = o1.getStatus().compareTo(o2.getStatus());
-				return result*-1;
-			}
-		};
-		Collections.sort(userProjects, projectComp);
-		List<ProjectDTO> projectDtos = new ArrayList<ProjectDTO>();
-		for(UserProject userProject: userProjects) {
-			projectDtos.add(projectMapper.getProjectDtoFromEntity(userProject));
-		}
-		return projectDtos;
-	}
-	
-	public String getImageUploadPath(Integer projectId) {
+        List<UserProject> userProjects = userProjectDAO.findByUserId(userId);
+        Comparator<UserProject> projectComp = new Comparator<UserProject>() {
+            @Override
+            public int compare(UserProject o1, UserProject o2) {
+                int result = 0;
+                // result = o1.getStatus().compareTo(o2.getStatus());
+                return result * -1;
+            }
+        };
+        Collections.sort(userProjects, projectComp);
+        List<ProjectDTO> projectDtos = new ArrayList<ProjectDTO>();
+        for (UserProject userProject : userProjects) {
+            projectDtos.add(projectMapper.getProjectDtoFromEntity(userProject));
+        }
+        return projectDtos;
+    }
+
+    public String getImageUploadPath(Integer projectId) {
         return PROJECT_UPLOAD.getValue() + File.separator + projectId + IMAGE.getValue();
     }
 }
