@@ -72,14 +72,7 @@ public class User implements Serializable {
     private String personal_web_site;
     @Column(name = "resume",nullable = true)
     private String resume;
-    @Column(name = "skill1",nullable = true)
-    private String skill1;
-    @Column(name = "skill2",nullable = true)
-    private String skill2;
-    @Column(name = "skill3",nullable = true)
-    private String skill3;
-    @Column(name = "skill4",nullable = true)
-    private String skill4;
+
     
     @Column(name="c4sg_developer_flg", columnDefinition = "char(1)", nullable = false)
     private char developerFlag;
@@ -97,6 +90,7 @@ public class User implements Serializable {
     @Type(type="yes_no")
     private boolean isSlackRegistered;
     
+
     public String getIntroduction() {
 		return introduction;
 	}
@@ -128,50 +122,6 @@ public class User implements Serializable {
 	public void setResume(String resume) {
 		this.resume = resume;
 	}
-
-	public String getSkill1() {
-		return skill1;
-	}
-
-	public void setSkill1(String skill1) {
-		this.skill1 = skill1;
-	}
-
-	public String getSkill2() {
-		return skill2;
-	}
-
-	public void setSkill2(String skill2) {
-		this.skill2 = skill2;
-	}
-
-	public String getSkill3() {
-		return skill3;
-	}
-
-	public void setSkill3(String skill3) {
-		this.skill3 = skill3;
-	}
-
-	public String getSkill4() {
-		return skill4;
-	}
-
-	public void setSkill4(String skill4) {
-		this.skill4 = skill4;
-	}
-
-	public String getSkill5() {
-		return skill5;
-	}
-
-	public void setSkill5(String skill5) {
-		this.skill5 = skill5;
-	}
-
-	@Column(name = "skill5",nullable = true)
-    private String skill5;
-
 
     public Integer getId() {
         return id;
