@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.c4sg.constant.Status;
+import org.c4sg.constant.UserStatus;
 import static org.c4sg.constant.Directory.LOGO_UPLOAD;
 import static org.c4sg.constant.Format.IMAGE;
 import org.c4sg.dao.OrganizationDAO;
@@ -75,7 +75,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void deleteOrganization(int id){
     	Organization organization = organizationDAO.findOne(id);
     	if(organization != null){
-    		organization.setStatus(Status.DELETED);
     		//TODO: Local or Timezone?
     		//TODO: Format date
     		//organization.setDeleteTime(LocalDateTime.now().toString());

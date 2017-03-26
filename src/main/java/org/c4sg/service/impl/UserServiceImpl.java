@@ -1,6 +1,6 @@
 package org.c4sg.service.impl;
 
-import org.c4sg.constant.Status;
+import org.c4sg.constant.UserStatus;
 import org.c4sg.constant.Constants;
 import static org.c4sg.constant.Directory.RESUME_UPLOAD;
 import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> findActiveUsers() {
-        List<User> users = userDAO.findByStatusOrderByUserNameAsc(Status.ACTIVE);
+        List<User> users = userDAO.findByStatusOrderByUserNameAsc(UserStatus.ACTIVE);
         List<UserDTO> userDTOS = users.stream()
                 .map(p -> userMapper.getUserDtoFromEntity(p))
                 .collect(Collectors.toList());
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public List<UserDTO> findDevelopers() {        
-    	return userMapper.getDtosFromEntities(userDAO.findByDeveloperFlag(Constants.YES));    	
+    	return userMapper.getDtosFromEntities(userDAO.findByDeveloperFlag(Constants.YES));  
     }
 
     @Override
@@ -73,8 +73,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Integer id) {
         User user = userDAO.findById(id);
-        user.setStatus(Status.DELETED);
-
+        user.setStatus(UserStatus.DELETED);
         userDAO.save(user);
     }
 

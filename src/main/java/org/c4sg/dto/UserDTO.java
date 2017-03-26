@@ -12,26 +12,25 @@ public class UserDTO {
     private String zip;
     private String status;
     private String role;
-    private Integer github;
-    private String displayFlag;
+    private String publicProfileFlag;
     private String latitude;
     private String longitude;
     private String introduction;
-    private String linked_inurl;
-    private String personal_web_site;
-    private String resume;
+    private String linkedinUrl;
+    private String personalUrl;
     private String skill1;
     private String skill2;
     private String skill3;
     private String skill4;
     private String skill5;
-    private char developerFlag; 
+    private String skill6;
+    private String developerFlag; 
 
-    public char getDeveloperFlag(){
+    public String getDeveloperFlag(){
     	return this.developerFlag;
     }
     
-    public void setDeveloperFlag(char developerFlag){
+    public void setDeveloperFlag(String developerFlag){
     	this.developerFlag = developerFlag;
     }
 
@@ -44,27 +43,19 @@ public class UserDTO {
 	}
 
 	public String getLinked_inurl() {
-		return linked_inurl;
+		return linkedinUrl;
 	}
 
 	public void setLinked_inurl(String linked_inurl) {
-		this.linked_inurl = linked_inurl;
+		this.linkedinUrl = linked_inurl;
 	}
 
 	public String getPersonal_web_site() {
-		return personal_web_site;
+		return personalUrl;
 	}
 
 	public void setPersonal_web_site(String personal_web_site) {
-		this.personal_web_site = personal_web_site;
-	}
-
-	public String getResume() {
-		return resume;
-	}
-
-	public void setResume(String resume) {
-		this.resume = resume;
+		this.personalUrl = personal_web_site;
 	}
 
 	public String getSkill1() {
@@ -107,6 +98,14 @@ public class UserDTO {
 		this.skill5 = skill5;
 	}
 
+	public String getSkill6() {
+		return skill6;
+	}
+
+	public void setSkill6(String skill6) {
+		this.skill6 = skill6;
+	}
+	
 	public Integer getId() {
         return id;
     }
@@ -195,20 +194,12 @@ public class UserDTO {
         this.role = role;
     }
 
-    public Integer getGithub() {
-        return github;
-    }
-
-    public void setGithub(Integer github) {
-        this.github = github;
-    }
-
     public String getDisplayFlag() {
-        return displayFlag;
+        return publicProfileFlag;
     }
 
     public void setDisplayFlag(String displayFlag) {
-        this.displayFlag = displayFlag;
+        this.publicProfileFlag = displayFlag;
     }
 
     public String getLatitude() {
