@@ -5,23 +5,23 @@ import java.util.Optional;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import org.c4sg.constant.Status;
+import org.c4sg.constant.UserStatus;
 
 @Converter
-public class StatusConverter implements AttributeConverter<Status, String> {
+public class StatusConverter implements AttributeConverter<UserStatus, String> {
 	@Override
-	public String convertToDatabaseColumn(Status s) {
+	public String convertToDatabaseColumn(UserStatus s) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(s.getValue());
 		return sb.toString();
 	}
 	
 	@Override
-	public Status convertToEntityAttribute(String s) {
+	public UserStatus convertToEntityAttribute(String s) {
     	if(!Optional.ofNullable(s.toUpperCase()).isPresent()) 
         {
-             return Status.PENDING;
+             return UserStatus.PENDING;
         }
-        return Status.valueOf(Status.class, Status.getStatus(s));
+        return UserStatus.valueOf(UserStatus.class, UserStatus.getStatus(s));
 	}
 }

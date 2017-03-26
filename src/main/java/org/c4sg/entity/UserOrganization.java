@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "user_project")
-public class UserProject implements Serializable{
+@Table(name = "user_organization")
+public class UserOrganization implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,13 +17,9 @@ public class UserProject implements Serializable{
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+    @JoinColumn(name = "organization_id")
+    private Organization organization;
 
-    @Basic
-    @Column(columnDefinition="char(1)", nullable = false)
-    private String status;
-    
     public Integer getId() {
         return id;
     }
@@ -40,19 +36,11 @@ public class UserProject implements Serializable{
         this.user = user;
     }
 
-    public Project getProject() {
-        return project;
+    public Organization getOrganization() {
+        return organization;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
-    }
-    
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
     }
 }
