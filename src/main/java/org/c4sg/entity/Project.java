@@ -1,5 +1,8 @@
 package org.c4sg.entity;
 
+import java.util.Date;
+
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,45 +24,42 @@ public class Project {
 	@Column(name = "name", nullable = false)
 	private String name;
 
-	@Column(name = "image", nullable = false)
-	private String image;
-
-	@Column(name = "description", nullable = false)
+	@Column(name = "description")
 	private String description;
 
-	@Column(name = "status", columnDefinition="char(1)",nullable = false)
-	private String status;
+	@Column(name = "address1")
+	private String address1;
 
-	@Column(name = "contact_email", nullable = false)
-	private String email;
+	@Column(name = "address2")
+	private String address2;
+	
+	@Column(name = "city")
+	private String city;
+	
+	@Column(name = "state")
+	private String state;
 
+	@Column(name = "country")
+	private String country;
+	
+	@Column(name = "zip")
+	private String zip;
+	
+	@Column(name = "remote_flag", columnDefinition="char(1)", nullable = false)
+	private Boolean remoteFlag;
+
+    @Column(columnDefinition="char(1)", nullable = false)
+    private String status;
+    
+	@Column(name = "created_time", nullable = false)
+	private Date createdTime;
+		
+	@Column(name = "updated_time", nullable = false)
+	private Date updatedTime;
+	
 	@ManyToOne
 	@JoinColumn(name = "organization_id", insertable = false, updatable = false)
 	private Organization organization;
-
-	public String getImage() {
-		return IMAGE_DIRECTORY + image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
 
 	public int getId() {
 		return id;
@@ -76,6 +76,94 @@ public class Project {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getAddress1() {
+		return address1;
+	}
+
+	public void setAddress1(String address1) {
+		this.address1 = address1;
+	}
+
+	public String getAddress2() {
+		return address2;
+	}
+
+	public void setAddress2(String address2) {
+		this.address2 = address2;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+	
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+	
+	public Boolean getRemoteFlag() {
+		return remoteFlag;
+	}
+
+	public void setRemoteFlag(Boolean remoteFlag) {
+		this.remoteFlag = remoteFlag;
+	}	
+    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+	
+	public Date getUpdatedTime() {
+		return updatedTime;
+	}
+
+	public void setUpdatedTime(Date updatedTime) {
+		this.updatedTime = updatedTime;
+	}
 
 	public Organization getOrganization() {
 		return organization;
@@ -85,11 +173,4 @@ public class Project {
 		this.organization = organization;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
 }

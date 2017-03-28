@@ -75,7 +75,7 @@ public class SlackClientServiceImpl implements SlackClientService {
 			if(user == null){
 				return false;
 			}
-			if(!user.isSlackRegistered()){
+			if(!user.getChatFlag()){
 				List<User> slackUsers = getUserList();
 				for(User slackUser: slackUsers) {
 					Profile slackUserProfile = slackUser.getProfile();

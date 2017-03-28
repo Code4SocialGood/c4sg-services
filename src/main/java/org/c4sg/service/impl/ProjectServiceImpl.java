@@ -112,7 +112,6 @@ public class ProjectServiceImpl implements ProjectService {
         UserProject userProject = new UserProject();
         userProject.setUser(user);
         userProject.setProject(project);
-        userProject.setStatus(APPLIED.getStatus());
         apply(user, project);
         userProjectDAO.save(userProject);
 
@@ -122,7 +121,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void apply(User user, Project project) {
         String from = "code4socialgood@code4socialgood.com";
-        String orgEmail = project.getEmail();
+        String orgEmail = project.getOrganization().getContactEmail();
         String orgSubject = "You received an application from Code for Social Good";
         String orgText = "You received an application from Code for Social Good. " +
                 "Please login to the dashboard to review the application.";
@@ -144,7 +143,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectDTO> getAppliedProjects(Integer userId){
-        List<Project> projects = projectDAO.findByStatus(userId, APPLIED.getStatus());
+    	List<Project> projects = projectDAO.findByStatus(userId, APPLIED.getStatus());
         return projectMapper.getDtosFromEntities(projects);
     }
 
@@ -166,7 +165,7 @@ public class ProjectServiceImpl implements ProjectService {
 			@Override
 			public int compare(UserProject o1, UserProject o2) {
 				int result = 0;
-				result = o1.getStatus().compareTo(o2.getStatus());
+				// result = o1.getStatus().compareTo(o2.getStatus());
 				return result*-1;
 			}
 		};
