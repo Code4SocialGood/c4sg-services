@@ -1,20 +1,16 @@
 package org.c4sg.mapper;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Component;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.WKTReader;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 
 @Component
@@ -47,12 +43,16 @@ public class UserMapper extends ModelMapper {
 		
 		UserDTO userDTO = map(user, UserDTO.class);
 		//add mapping for location if point object is not null
-		if (point != null) {
-			org.springframework.data.geo.Point gp = new Point(point.getX(), point.getY());
-			userDTO.setLongitude(Double.toString(point.getX()));
-			userDTO.setLatitude(Double.toString(point.getY()));
-		}
-		userDTO.setDisplayFlag((user.getPublicProfileFlag() != null && user.getPublicProfileFlag().booleanValue()) ? "Y" : "N");
+//		if (point != null) {
+//			org.springframework.data.geo.Point gp = new Point(point.getX(), point.getY());
+//			userDTO.setLongitude(Double.toString(point.getX()));
+//			userDTO.setLatitude(Double.toString(point.getY()));
+//		}
+//		userDTO.setPublicProfileFlag((user.getPublicProfileFlag() != null && user.getPublicProfileFlag().booleanValue()) ? "Y" : "N");
+//		userDTO.setChatFlag((user.getChatFlag() != null && user.getChatFlag().booleanValue()) ? "Y" : "N");
+//		userDTO.setForumFlag((user.getForumFlag() != null && user.getForumFlag().booleanValue()) ? "Y" : "N");
+//		userDTO.setDeveloperFlag((user.getDeveloperFlag() != null && user.getDeveloperFlag().booleanValue()) ? "Y" : "N");
+		
 		return userDTO;
 	}
 	
@@ -72,7 +72,10 @@ public class UserMapper extends ModelMapper {
 			com.vividsolutions.jts.geom.Point point = gf.createPoint(coordinate);	
 			user.setLocation(point);			
 		}*/
-		user.setPublicProfileFlag(Boolean.valueOf(userDTO.getDisplayFlag()));
+//		user.setPublicProfileFlag(Boolean.valueOf(userDTO.getPublicProfileFlag()));
+//		user.setDeveloperFlag(Boolean.valueOf(userDTO.getDeveloperFlag()));
+//		user.setForumFlag(Boolean.valueOf(userDTO.getForumFlag()));
+//		user.setChatFlag(Boolean.valueOf(userDTO.getChatFlag()));
 		return user;
 	}
 

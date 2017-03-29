@@ -75,108 +75,108 @@ public class User implements Serializable {
     private UserRole role;
 
     @Column(name = "public_profile_flag", columnDefinition="char(1)", nullable = false)
-    private Boolean publicProfileFlag;
+    private String publicProfileFlag;
 
     @Column(name = "chat_flag", columnDefinition="char(1)", nullable = false)
-    private Boolean chatFlag;
+    private String chatFlag;
             
     @Column(name = "forum_flag", columnDefinition="char(1)", nullable = false)
-    private Boolean forumFlag;
+    private String forumFlag;
 
     @Column(name="developer_flag", columnDefinition="char(1)", nullable = false)
-    private Boolean developerFlag;
+    private String developerFlag;
   
     @Convert(converter = StatusConverter.class)
     @Column(name = "status", columnDefinition="char(1)", nullable = false)
     private UserStatus status;
      
-	@Column(name = "created_time", nullable = false)
+	@Column(name = "created_time")
 	private Date createdTime;
 		
-	@Column(name = "updated_time", nullable = false)
+	@Column(name = "updated_time")
 	private Date updatedTime;
-	
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public String getUserName() {
-        return userName;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+	public String getUserName() {
+		return userName;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public String getPhone() {
-        return phone;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public String getCity() {
-        return city;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-    
-    public String getState() {
-        return state;
-    }
+	public String getCity() {
+		return city;
+	}
 
-    public void setState(String state) {
-        this.state = state;
-    }
+	public void setCity(String city) {
+		this.city = city;
+	}
 
-    public String getCountry() {
-        return country;
-    }
+	public String getState() {
+		return state;
+	}
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+	public void setState(String state) {
+		this.state = state;
+	}
 
-    public String getZip() {
-        return zip;
-    }
+	public String getCountry() {
+		return country;
+	}
 
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-    
-    public String getIntroduction() {
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+
+	public String getIntroduction() {
 		return introduction;
 	}
 
@@ -192,61 +192,61 @@ public class User implements Serializable {
 		this.linkedinUrl = linkedinUrl;
 	}
 
-	public String getPersonalURL() {
+	public String getPersonalUrl() {
 		return personalUrl;
 	}
 
-	public void setPersonalURL(String personalUrl) {
+	public void setPersonalUrl(String personalUrl) {
 		this.personalUrl = personalUrl;
 	}
 
-    public UserRole getRole() {
-        return role;
-    }
+	public UserRole getRole() {
+		return role;
+	}
 
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
+	public void setRole(UserRole role) {
+		this.role = role;
+	}
 
-	public Boolean getPublicProfileFlag() {
+	public String getPublicProfileFlag() {
 		return publicProfileFlag;
 	}
 
-	public void setPublicProfileFlag(Boolean publicProfileFlag) {
+	public void setPublicProfileFlag(String publicProfileFlag) {
 		this.publicProfileFlag = publicProfileFlag;
-	}	
+	}
 
-	public Boolean getChatFlag() {
+	public String getChatFlag() {
 		return chatFlag;
 	}
 
-	public void setChatFlag(Boolean chatFlag) {
+	public void setChatFlag(String chatFlag) {
 		this.chatFlag = chatFlag;
-	}	
+	}
 
-	public Boolean getForumFlag() {
+	public String getForumFlag() {
 		return forumFlag;
 	}
 
-	public void setForumFlag(Boolean forumFlag) {
+	public void setForumFlag(String forumFlag) {
 		this.forumFlag = forumFlag;
-	}	
+	}
 
-	public Boolean getDeveloperFlag() {
+	public String getDeveloperFlag() {
 		return developerFlag;
 	}
 
-	public void setDeveloperFlag(Boolean developerFlag) {
+	public void setDeveloperFlag(String developerFlag) {
 		this.developerFlag = developerFlag;
-	}	
-    
-    public UserStatus getStatus() {
-        return status;
-    }
+	}
 
-    public void setStatus(UserStatus status) {
-        this.status = status;
-    }
+	public UserStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(UserStatus status) {
+		this.status = status;
+	}
 
 	public Date getCreatedTime() {
 		return createdTime;
@@ -255,7 +255,7 @@ public class User implements Serializable {
 	public void setCreatedTime(Date createdTime) {
 		this.createdTime = createdTime;
 	}
-	
+
 	public Date getUpdatedTime() {
 		return updatedTime;
 	}
@@ -263,4 +263,6 @@ public class User implements Serializable {
 	public void setUpdatedTime(Date updatedTime) {
 		this.updatedTime = updatedTime;
 	}
+	
+   
 }

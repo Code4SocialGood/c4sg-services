@@ -7,215 +7,147 @@ public class UserDTO {
     private String lastName;
     private String email;
     private String phone;
+    private String city;
     private String state;
     private String country;
     private String zip;
-    private String status;
-    private String role;
-    private String publicProfileFlag;
-    private String latitude;
-    private String longitude;
     private String introduction;
     private String linkedinUrl;
     private String personalUrl;
-    private String skill1;
-    private String skill2;
-    private String skill3;
-    private String skill4;
-    private String skill5;
-    private String skill6;
-    private String developerFlag; 
-
-    public String getDeveloperFlag(){
-    	return this.developerFlag;
-    }
-    
-    public void setDeveloperFlag(String developerFlag){
-    	this.developerFlag = developerFlag;
-    }
-
-    public String getIntroduction() {
+    private String role;
+    private String publicProfileFlag;
+    private String chatFlag;
+    private String forumFlag;
+    private String developerFlag;
+    private String status;
+    private String createdTime;
+    private String updatedTime;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	public String getZip() {
+		return zip;
+	}
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+	public String getIntroduction() {
 		return introduction;
 	}
-
 	public void setIntroduction(String introduction) {
 		this.introduction = introduction;
 	}
-
-	public String getLinked_inurl() {
+	public String getLinkedinUrl() {
 		return linkedinUrl;
 	}
-
-	public void setLinked_inurl(String linked_inurl) {
-		this.linkedinUrl = linked_inurl;
+	public void setLinkedinUrl(String linkedinUrl) {
+		this.linkedinUrl = linkedinUrl;
 	}
-
-	public String getPersonal_web_site() {
+	public String getPersonalUrl() {
 		return personalUrl;
 	}
-
-	public void setPersonal_web_site(String personal_web_site) {
-		this.personalUrl = personal_web_site;
+	public void setPersonalUrl(String personalUrl) {
+		this.personalUrl = personalUrl;
 	}
-
-	public String getSkill1() {
-		return skill1;
+	public String getRole() {
+		return role;
 	}
-
-	public void setSkill1(String skill1) {
-		this.skill1 = skill1;
+	public void setRole(String role) {
+		this.role = role;
 	}
-
-	public String getSkill2() {
-		return skill2;
+	public String getPublicProfileFlag() {
+		return publicProfileFlag;
 	}
-
-	public void setSkill2(String skill2) {
-		this.skill2 = skill2;
+	public void setPublicProfileFlag(String publicProfileFlag) {
+		this.publicProfileFlag = publicProfileFlag;
 	}
-
-	public String getSkill3() {
-		return skill3;
+	public String getChatFlag() {
+		return chatFlag;
 	}
-
-	public void setSkill3(String skill3) {
-		this.skill3 = skill3;
+	public void setChatFlag(String chatFlag) {
+		this.chatFlag = chatFlag;
 	}
-
-	public String getSkill4() {
-		return skill4;
+	public String getForumFlag() {
+		return forumFlag;
 	}
-
-	public void setSkill4(String skill4) {
-		this.skill4 = skill4;
+	public void setForumFlag(String forumFlag) {
+		this.forumFlag = forumFlag;
 	}
-
-	public String getSkill5() {
-		return skill5;
+	public String getDeveloperFlag() {
+		return developerFlag;
 	}
-
-	public void setSkill5(String skill5) {
-		this.skill5 = skill5;
+	public void setDeveloperFlag(String developerFlag) {
+		this.developerFlag = developerFlag;
 	}
-
-	public String getSkill6() {
-		return skill6;
+	public String getCreatedTime() {
+		return createdTime;
 	}
-
-	public void setSkill6(String skill6) {
-		this.skill6 = skill6;
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
 	}
-	
-	public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getDisplayFlag() {
-        return publicProfileFlag;
-    }
-
-    public void setDisplayFlag(String displayFlag) {
-        this.publicProfileFlag = displayFlag;
-    }
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
+	public String getUpdatedTime() {
+		return updatedTime;
+	}
+	public void setUpdatedTime(String updatedTime) {
+		this.updatedTime = updatedTime;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+    
 
 }
