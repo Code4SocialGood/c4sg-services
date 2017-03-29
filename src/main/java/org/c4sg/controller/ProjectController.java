@@ -1,6 +1,8 @@
 package org.c4sg.controller;
 
 import io.swagger.annotations.*;
+
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Project;
@@ -8,14 +10,23 @@ import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
 import org.c4sg.service.UserService;
+import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+
+import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -70,7 +81,7 @@ public class ProjectController extends GenericController{
     
     @CrossOrigin
     @RequestMapping(value = "/search/byKeyword/{keyWord}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find project by keyWord", notes = "Returns a collection of projects")
+    @ApiOperation(value = "Find project by keyWord", notes = "Searches the keyword in project name and description, case insensitive. The search result is sorted by project create time in descending order.")
     public List<Project> getProjects(@ApiParam(value = "Keyword of project to return", required = true)
                                         @PathVariable("keyWord") String keyWord) {
     	
@@ -217,6 +228,47 @@ public class ProjectController extends GenericController{
     public List<ProjectDTO> getProjects(@ApiParam(value = "ID of user", required = true)
                                             @PathVariable("id") Integer userId){
         return projectService.getAppliedProjects(userId);
+    }
+    
+    @RequestMapping(value = "/{id}/image", method = RequestMethod.POST)
+   	@ApiOperation(value = "Add new image file for project")
+   	public String uploadImage(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
+   			@ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
+
+   		String contentType = file.getContentType();
+   		if (!FileUploadUtil.isValidImageFile(contentType)) {
+   			return "Invalid image File! Content Type :-" + contentType;
+   		}
+   		File directory = new File(PROJECT_UPLOAD.getValue());
+   		if (!directory.exists()) {
+   			directory.mkdir();
+   		}
+   		File f = new File(projectService.getImageUploadPath(id));
+   		try (FileOutputStream fos = new FileOutputStream(f)) {
+   			byte[] imageByte = file.getBytes();
+   			fos.write(imageByte);
+   			return "Success";
+   		} catch (Exception e) {
+   			return "Error saving image for Project " + id + " : " + e;
+   		}
+   	}
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/image", method = RequestMethod.GET)
+    @ApiOperation(value = "Retrieves project image")
+    public String retrieveImage(@ApiParam(value = "Project id to get image for", required = true)
+                                         @PathVariable("id") int id) {
+        File image = new File(projectService.getImageUploadPath(id));
+        try {
+			FileInputStream fileInputStreamReader = new FileInputStream(image);
+            byte[] bytes = new byte[(int) image.length()];
+            fileInputStreamReader.read(bytes);
+            fileInputStreamReader.close();
+            return new String(Base64.encodeBase64(bytes));
+        } catch (IOException e) {
+            e.printStackTrace();
+        return null;
+        }
     }
 }
 

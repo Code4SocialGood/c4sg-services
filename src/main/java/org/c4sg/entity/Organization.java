@@ -1,7 +1,9 @@
 package org.c4sg.entity;
 
-import org.c4sg.constant.Status;
+import org.c4sg.constant.UserStatus;
 import org.c4sg.converter.StatusConverter;
+
+import java.util.Date;
 
 import javax.persistence.*;
 
@@ -16,31 +18,51 @@ public class Organization {
 	@Column(name = "name", nullable = false)
 	private String name;
 
-	@Column(name = "url")
-	private String url;
+	@Column(name = "website_url")
+	private String websiteUrl;
 
-	@Column(name = "logo")
-	private String logo;
-
-	@Column(name = "description", nullable = false)
+	@Column(name = "description")
 	private String description;
 
-	@Column(name = "address1", nullable = false)
+	@Column(name = "address1")
 	private String address1;
 
 	@Column(name = "address2")
 	private String address2;
-
+	
+	@Column(name = "city")
+	private String city;
+	
 	@Column(name = "state")
 	private String state;
 
-	@Column(name = "country", nullable = false)
+	@Column(name = "country")
 	private String country;
 	
-	@Convert(converter = StatusConverter.class)
-	@Column(name = "status",nullable = false)
-	private Status status;
+	@Column(name = "zip")
+	private String zip;
+	
+	@Column(name = "contact_name")
+	private String contactName;
+	
+	@Column(name = "contact_phone")
+	private String contactPhone;
+	
+	@Column(name = "contact_email")
+	private String contactEmail;
+		
+	@Column(name = "category", columnDefinition="char(1)", nullable = false)
+	private String category;
 
+    @Column(columnDefinition="char(1)", nullable = false)
+    private String status;
+    
+	@Column(name = "created_time", nullable = false)
+	private Date createdTime;
+		
+	@Column(name = "updated_time", nullable = false)
+	private Date updatedTime;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -57,20 +79,12 @@ public class Organization {
 		this.name = name;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getWebsiteUrl() {
+		return websiteUrl;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getLogo() {
-		return logo;
-	}
-
-	public void setLogo(String logo) {
-		this.logo = logo;
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
 	}
 
 	public String getDescription() {
@@ -97,6 +111,14 @@ public class Organization {
 		this.address2 = address2;
 	}
 
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+	
 	public String getState() {
 		return state;
 	}
@@ -112,12 +134,69 @@ public class Organization {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-
-	public Status getStatus() {
-		return status;
+	
+	public String getZip() {
+		return zip;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setZip(String zip) {
+		this.zip = zip;
 	}
+	
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+	
+	public String getContactPhone() {
+		return contactPhone;
+	}
+
+	public void setContactPhone(String contactPhone) {
+		this.contactPhone = contactPhone;
+	}
+	
+	public String getContactEmail() {
+		return contactEmail;
+	}
+
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
+	}
+
+	public String getCaterogy() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+	
+	public Date getUpdatedTime() {
+		return updatedTime;
+	}
+
+	public void setUpdatedTime(Date updatedTime) {
+		this.updatedTime = updatedTime;
+	}
+	
 }

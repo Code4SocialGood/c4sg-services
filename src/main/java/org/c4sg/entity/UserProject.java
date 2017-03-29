@@ -23,7 +23,7 @@ public class UserProject implements Serializable{
     @Basic
     @Column(columnDefinition="char(1)", nullable = false)
     private String status;
-
+    
     public Integer getId() {
         return id;
     }
@@ -47,7 +47,7 @@ public class UserProject implements Serializable{
     public void setProject(Project project) {
         this.project = project;
     }
-
+    
     public String getStatus() {
         return status;
     }
@@ -55,7 +55,4 @@ public class UserProject implements Serializable{
     public void setStatus(String status) {
         this.status = status;
     }
-
-
-
 }

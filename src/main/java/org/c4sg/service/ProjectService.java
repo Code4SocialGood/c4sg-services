@@ -23,4 +23,5 @@ public interface ProjectService {
     List<ProjectDTO> getAppliedProjects(Integer userId);
     List<Project> getProjectsByOrganization(Integer orgId);
     List<ProjectDTO> findByUser(Integer userId);
+    String getImageUploadPath(Integer projectId);
 }

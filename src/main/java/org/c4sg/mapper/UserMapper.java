@@ -34,13 +34,13 @@ public class UserMapper extends ModelMapper {
 		Geometry g = null;
 		com.vividsolutions.jts.geom.Point point = null;		
 		WKTReader reader = new WKTReader();
-		try {
-			g = reader.read(user.getLocation().toText());
-			point = (com.vividsolutions.jts.geom.Point) g;
-		}
-		catch (Exception e) {
-			//do nothing
-		}
+		//try {
+		//	g = reader.read(user.getLocation().toText());
+		//	point = (com.vividsolutions.jts.geom.Point) g;
+		//}
+		//catch (Exception e) {
+		//	//do nothing
+		//}
 		//start mapping data into the dto
 		if (user == null)
 			return null;
@@ -52,7 +52,7 @@ public class UserMapper extends ModelMapper {
 			userDTO.setLongitude(Double.toString(point.getX()));
 			userDTO.setLatitude(Double.toString(point.getY()));
 		}
-		userDTO.setDisplayFlag((user.getDisplayFlag() != null && user.getDisplayFlag().booleanValue()) ? "Y" : "N");
+		userDTO.setDisplayFlag((user.getPublicProfileFlag() != null && user.getPublicProfileFlag().booleanValue()) ? "Y" : "N");
 		return userDTO;
 	}
 	
@@ -64,15 +64,15 @@ public class UserMapper extends ModelMapper {
 	 */	
 	public User getUserEntityFromDto(UserDTO userDTO){
 		User user = map(userDTO, User.class);
-		
+		/*
 		if (userDTO.getLatitude() != null && userDTO.getLongitude() != null){
 			GeometryFactory gf = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING));
 			Coordinate coordinate = new Coordinate(Double.parseDouble(userDTO.getLongitude()),
 					Double.parseDouble(userDTO.getLatitude()));
 			com.vividsolutions.jts.geom.Point point = gf.createPoint(coordinate);	
 			user.setLocation(point);			
-		}
-		user.setDisplayFlag(Boolean.valueOf(userDTO.getDisplayFlag()));
+		}*/
+		user.setPublicProfileFlag(Boolean.valueOf(userDTO.getDisplayFlag()));
 		return user;
 	}
 

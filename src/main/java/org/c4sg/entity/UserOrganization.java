@@ -20,10 +20,6 @@ public class UserOrganization implements Serializable{
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
-    @Basic
-    @Column(columnDefinition="char(1)", nullable = false)
-    private String status;
-
     public Integer getId() {
         return id;
     }
@@ -44,18 +40,7 @@ public class UserOrganization implements Serializable{
         return organization;
     }
 
-    public void setProject(Organization organization) {
+    public void setOrganization(Organization organization) {
         this.organization = organization;
     }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-
-
 }

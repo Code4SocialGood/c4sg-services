@@ -21,8 +21,8 @@ public class UserSkill implements Serializable{
     private Skill skill;
 
     @Basic
-    @Column(columnDefinition="int", nullable = false)
-    private int order ;
+    @Column(name = "display_order", nullable = false)
+    private int displayOrder ;
 
     public Integer getId() {
         return id;
@@ -45,15 +45,15 @@ public class UserSkill implements Serializable{
     }
 
     public void setSkill(Skill skill) {
-        this.skill=skill;
+        this.skill = skill;
     }
 
-    public int getOrder() {
-        return order;
+    public int getDisplayOrder() {
+        return displayOrder;
     }
 
-    public void setOrder(int order) {
-        this.order=order;
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
 
