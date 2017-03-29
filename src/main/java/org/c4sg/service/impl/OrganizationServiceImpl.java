@@ -26,86 +26,88 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	@Autowired
 	private OrganizationDAO organizationDAO;
-	
-    @Autowired
-    private UserDAO userDAO;
 
-    @Autowired
-    private UserOrganizationDAO userOrganizationDAO;
-    
+	@Autowired
+	private UserDAO userDAO;
+
+	@Autowired
+	private UserOrganizationDAO userOrganizationDAO;
+
 	@Autowired
 	private OrganizationMapper organizationMapper;
-	
+
 	public void save(OrganizationDTO organizationDTO) {
 		Organization organization = organizationMapper.getOrganizationEntityFromDto(organizationDTO);
 		organizationDAO.save(organization);
-    }
+	}
 
-    public List<OrganizationDTO> findOrganizations() {
-    	List<Organization> organizations = organizationDAO.findAll();
-    	List<OrganizationDTO> organizationDTOS = organizations.stream().map(o -> organizationMapper.getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
-        return organizationDTOS;
-    }
-	
-    public OrganizationDTO findById(int id) {
-        return organizationMapper.getOrganizationDtoFromEntity(organizationDAO.findOne(id));
-    }
+	public List<OrganizationDTO> findOrganizations() {
+		List<Organization> organizations = organizationDAO.findAll();
+		List<OrganizationDTO> organizationDTOS = organizations.stream()
+				.map(o -> organizationMapper.getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
+		return organizationDTOS;
+	}
 
-    public List<OrganizationDTO> findByKeyword(String keyWord) {
-    	List<Organization> organizations = organizationDAO.findByNameLikeOrDescriptionLikeAllIgnoreCase(keyWord, keyWord);
-    	if(organizations == null || organizations.isEmpty()){
-    		return null;
-    	}
-    	List<OrganizationDTO> organizationDTOS = organizations.stream()
-    			.map(o -> organizationMapper.getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
-    	return organizationDTOS;
-    }
-    
-    public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
-    	Organization organization = organizationDAO.findByName(organizationDTO.getName());
+	public OrganizationDTO findById(int id) {
+		return organizationMapper.getOrganizationDtoFromEntity(organizationDAO.findOne(id));
+	}
 
-        if (organization != null) {
-        	//TODO: return error message
-        } else {
-            organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
-        }
+	public List<OrganizationDTO> findByKeyword(String keyWord) {
+		List<Organization> organizations = organizationDAO.findByNameLikeOrDescriptionLikeAllIgnoreCase(keyWord,
+				keyWord);
+		if (organizations == null || organizations.isEmpty()) {
+			return null;
+		}
+		List<OrganizationDTO> organizationDTOS = organizations.stream()
+				.map(o -> organizationMapper.getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
+		return organizationDTOS;
+	}
 
-        return organizationMapper.getOrganizationDtoFromEntity(organization);
-    }
-    
-    public OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO) {
-    	Organization organization = organizationDAO.findOne(id);
-        if (organization == null) {
-        	//TODO: create new?
-        } else {
-            organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
-        }
+	public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
+		Organization organization = organizationDAO.findByName(organizationDTO.getName());
 
-        return organizationMapper.getOrganizationDtoFromEntity(organization);
-    }
-    
-    public void deleteOrganization(int id){
-    	Organization organization = organizationDAO.findOne(id);
-    	if(organization != null){
-    		//TODO: Local or Timezone?
-    		//TODO: Format date
-    		//organization.setDeleteTime(LocalDateTime.now().toString());
-    		//organization.setDeleteBy(user.getUsername());
-    		organizationDAO.save(organization);
-    	}
-    }
+		if (organization != null) {
+			// TODO: return error message
+		} else {
+			organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
+		}
 
-    public String getLogoUploadPath(Integer organizationId) {
-        return LOGO_UPLOAD.getValue() + File.separator + organizationId + IMAGE.getValue();
-    }
+		return organizationMapper.getOrganizationDtoFromEntity(organization);
+	}
+
+	public OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO) {
+		Organization organization = organizationDAO.findOne(id);
+		if (organization == null) {
+			// TODO: create new?
+		} else {
+			organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
+		}
+
+		return organizationMapper.getOrganizationDtoFromEntity(organization);
+	}
+
+	public void deleteOrganization(int id) {
+		Organization organization = organizationDAO.findOne(id);
+		if (organization != null) {
+			// TODO: Local or Timezone?
+			// TODO: Format date
+			// organization.setDeleteTime(LocalDateTime.now().toString());
+			// organization.setDeleteBy(user.getUsername());
+			organizationDAO.save(organization);
+		}
+	}
+
+	public String getLogoUploadPath(Integer organizationId) {
+		return LOGO_UPLOAD.getValue() + File.separator + organizationId + IMAGE.getValue();
+	}
 
 	@Override
 	public List<OrganizationDTO> findByUser(Integer userId) {
 		User user = userDAO.findById(userId);
-        requireNonNull(user, "Invalid User Id");
-		List<UserOrganization> userOrganizations = userOrganizationDAO.findByUserId(userId);		
+		requireNonNull(user, "Invalid User Id");
+		List<UserOrganization> userOrganizations = userOrganizationDAO.findByUserId(userId);
 		List<OrganizationDTO> organizationDtos = new ArrayList<OrganizationDTO>();
-		for(UserOrganization userOrganization: userOrganizations) {
+		for (UserOrganization userOrganization : userOrganizations) {
 			organizationDtos.add(organizationMapper.getOrganizationDtoFromEntity(userOrganization));
 		}
 		return organizationDtos;
