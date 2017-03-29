@@ -1,7 +1,8 @@
 package org.c4sg.dao;
 
-import org.c4sg.constant.Status;
+import org.c4sg.constant.UserStatus;
 import org.c4sg.constant.UserRole;
+import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,10 +23,10 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
                                 "JOIN up.project p " +
                                 "WHERE p.id = :projId";
     
-    String UPDATE_SLACK_STATUS = "UPDATE User u set u.isSlackRegistered = :isSlackReg where u.id = :userId";
-
+    String UPDATE_SLACK_STATUS = "UPDATE User u set u.chatFlag = :isSlackReg where u.id = :userId";
+    
     //temporary until create date is added
-    List<User> findByStatusOrderByUserNameAsc(Status status);
+    List<User> findByStatusOrderByUserNameAsc(UserStatus status);
 
     User findById(int id);
     User findByEmail(String email);
