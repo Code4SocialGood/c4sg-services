@@ -1,16 +1,30 @@
 package org.c4sg.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import static org.c4sg.constant.Directory.LOGO_UPLOAD;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.OrganizationDTO;
+import org.c4sg.exception.NotFoundException;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,15 +43,16 @@ import static org.c4sg.constant.Directory.LOGO_UPLOAD;
 @Api(description = "Operations about Organizations", tags = "organization")
 public class OrganizationController {
 
-    @Autowired
-    private OrganizationService organizationService;
+
+	@Autowired
+	private OrganizationService organizationService;
 
 	@RequestMapping(value = "/{id}/logo", method = RequestMethod.POST)
 	@ApiOperation(value = "Upload Logo as Image File")
 	public String uploadLogo(@ApiParam(value = "Organization Id", required = true) @PathVariable Integer id,
 			                 @ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
-
 		String contentType = file.getContentType();
+    
 		if (!FileUploadUtil.isValidImageFile(contentType)) {
 			return "Invalid Image file! Content Type :-" + contentType;
 		}
@@ -54,7 +69,7 @@ public class OrganizationController {
 			return "Error saving logo for organization " + id + " : " + e;
 		}
 	}
-
+  
     @CrossOrigin
     @RequestMapping(produces = {"application/json"}, method = RequestMethod.GET)
     @ApiOperation(value = "Find all organizations", notes = "Returns a collection of organizations")
@@ -145,4 +160,21 @@ public class OrganizationController {
             return null;
         }
     }
+
+	@CrossOrigin
+	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+	@ApiOperation(value = "Find organizations by user id", notes = "Returns a collection of organizations")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "ID of user invalid") })
+	public List<OrganizationDTO> getOrganizationsByUser(
+			@ApiParam(value = "userId of organizations to return", required = true) @PathVariable("id") Integer id) {
+
+		List<OrganizationDTO> organizations = null;
+		try {
+			organizations = organizationService.findByUser(id);
+		} catch (Exception e) {
+			throw new NotFoundException("ID of user invalid");
+		}
+
+		return organizations;
+	}
 }
