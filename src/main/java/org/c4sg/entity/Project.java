@@ -10,8 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.SQLInsert;
 
 @Entity
+@Table(name = "project")
 public class Project {
 
 	private static final String IMAGE_DIRECTORY = "assets/project/";
@@ -45,11 +49,11 @@ public class Project {
 	@Column(name = "zip")
 	private String zip;
 	
-	@Column(name = "remote_flag", columnDefinition="char(1)", nullable = false)
-	private Boolean remoteFlag;
+	@Column(name = "remote_flag", columnDefinition="char(1) default 'Y'", nullable = false)
+	private char remoteFlag='Y';
 
-    @Column(columnDefinition="char(1)", nullable = false)
-    private String status;
+    @Column(columnDefinition="char(1) default 'A'", nullable = false)
+    private String status="A";
     
 	@Column(name = "created_time", nullable = false)
 	private Date createdTime;
@@ -58,14 +62,14 @@ public class Project {
 	private Date updatedTime;
 	
 	@ManyToOne
-	@JoinColumn(name = "organization_id", insertable = false, updatable = false)
+	@JoinColumn(name = "organization_id", insertable = true, updatable = false)
 	private Organization organization;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -133,11 +137,11 @@ public class Project {
 		this.zip = zip;
 	}
 	
-	public Boolean getRemoteFlag() {
+	public char getRemoteFlag() {
 		return remoteFlag;
 	}
 
-	public void setRemoteFlag(Boolean remoteFlag) {
+	public void setRemoteFlag(char remoteFlag) {
 		this.remoteFlag = remoteFlag;
 	}	
     

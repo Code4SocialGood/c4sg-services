@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.mail.EmailException;
+import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
@@ -15,6 +16,7 @@ public interface ProjectService {
     Project findByName(String name);
     ProjectDTO saveUserProject(Integer userId, Integer projectId) throws RuntimeException;
     Project createProject(Project project);
+    Project createProject(CreateProjectDTO project);
     Project updateProject(Project project);
     void deleteProject(int id);
     void apply(User user, Project project) throws IOException, EmailException;
