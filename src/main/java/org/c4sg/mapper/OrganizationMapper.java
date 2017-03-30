@@ -2,6 +2,7 @@ package org.c4sg.mapper;
 
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.entity.Organization;
+import org.c4sg.entity.UserOrganization;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -16,5 +17,9 @@ public class OrganizationMapper extends ModelMapper {
 	public Organization getOrganizationEntityFromDto(OrganizationDTO organizationDTO){
 		Organization organization = map(organizationDTO, Organization.class);
 		return organization;
+	}
+	
+	public OrganizationDTO getOrganizationDtoFromEntity(UserOrganization userOrganization){
+		return getOrganizationDtoFromEntity(userOrganization.getOrganization());
 	}
 }
