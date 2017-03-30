@@ -19,8 +19,8 @@ public class SkillController {
     private SkillService skillService;
 
     @CrossOrigin
-    @RequestMapping(value = "/all", produces = {"application/json"}, method = RequestMethod.GET)
-    @ApiOperation(value = "Find all skills", notes = "Find all skills, ranked by most popular selections by volunteers and nonprofits.")
+    @RequestMapping(produces = {"application/json"}, method = RequestMethod.GET)
+    @ApiOperation(value = "Get all skills", notes = "Returns a collection of skills (alphabetical)")
     public List<SkillDTO> getSkills() {
         return skillService.findSkills();
     }
