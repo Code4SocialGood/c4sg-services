@@ -47,6 +47,5 @@ public class ProjectMapper extends ModelMapper{
 		Project project = map(createProjectDTO, Project.class);
 		project.setOrganization(organizationDAO.findOne(createProjectDTO.getOrganizationId()));
 		return project;
-	}
-	
+	}	
 }

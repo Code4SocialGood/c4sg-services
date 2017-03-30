@@ -107,6 +107,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     public Project updateProject(Project project) {
         Project localProject = projectDAO.findById(project.getId());
+        
         if (localProject != null) {
             localProject = projectDAO.save(project);
         } else {
