@@ -21,7 +21,7 @@ public interface ProjectService {
     void deleteProject(int id);
     void apply(User user, Project project) throws IOException, EmailException;
     List<ProjectDTO> findProjects();
-    List<Project> findByKeyword(String keyWord);
+    List<ProjectDTO> findByKeyword(String name, String keyWord);
     List<ProjectDTO> getAppliedProjects(Integer userId);
     List<Project> getProjectsByOrganization(Integer orgId);
     List<ProjectDTO> findByUser(Integer userId);

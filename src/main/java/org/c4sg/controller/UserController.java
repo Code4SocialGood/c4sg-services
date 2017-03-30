@@ -1,31 +1,38 @@
 package org.c4sg.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.c4sg.constant.Directory;
-import org.c4sg.dto.UserDTO;
-import org.c4sg.entity.User;
-import org.c4sg.service.UserService;
-import org.c4sg.util.FileUploadUtil;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
+import static org.c4sg.constant.Directory.RESUME_UPLOAD;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
-import static org.c4sg.constant.Directory.RESUME_UPLOAD;
+
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.c4sg.dto.UserDTO;
+import org.c4sg.service.UserService;
+import org.c4sg.util.FileUploadUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 
 @CrossOrigin(origins = "*")
@@ -100,6 +107,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @ApiOperation(value = "Find a user by keyWord", notes = "Returns a collection of users")
     public List<UserDTO> search(@RequestParam(required = false) String userName,
                                 @RequestParam(required = false) String firstName,
                                 @RequestParam(required = false) String lastName) {
