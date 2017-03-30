@@ -7,11 +7,13 @@ import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Project;
+import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
 import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
+import org.hibernate.jpa.criteria.predicate.ExistsPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -248,5 +250,31 @@ public class ProjectController {
         return null;
         }
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/bookmark/projects/{projectId}/users/{userId}", method = RequestMethod.POST)
+    @ApiOperation(value = "Create a bookmark for a project")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Invalid project or user")
+    })
+    //TODO: Replace explicit user{id} with AuthN user id.
+    public ResponseEntity<?> createUserProjectBookmark(@ApiParam(value = "Project ID", required = true)
+                                               @PathVariable("projectId") Integer projectId,
+                                               @ApiParam(value = "User ID", required = true)
+                                               @PathVariable("userId") Integer userId) {
+        try {
+            projectService.saveUserProjectBookmark(userId, projectId);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                                                      .path("/bookmark/projects/{projectId}/users/{userId}")
+                                                      .buildAndExpand(projectId, userId).toUri();
+            return ResponseEntity.created(location).build();
+        } catch (NullPointerException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+        catch(UserProjectException e){
+        	throw new BadRequestException(e.getErrorMessage());
+        }
+    }
+    
 }
 

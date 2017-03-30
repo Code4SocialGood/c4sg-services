@@ -196,4 +196,37 @@ public class ProjectServiceImpl implements ProjectService {
     public String getImageUploadPath(Integer projectId) {
         return PROJECT_UPLOAD.getValue() + File.separator + projectId + IMAGE.getValue();
     }
+    
+    @Override
+    public void saveUserProjectBookmark(Integer userId, Integer projectId) {
+        
+    	User user = userDAO.findById(userId);
+        requireNonNull(user, "Invalid User Id");
+        
+        Project project = projectDAO.findById(projectId);
+        requireNonNull(project, "Invalid Project Id");
+        
+        isBookmarkPresent(userId, projectId);
+        
+        UserProject userProject = new UserProject();
+        userProject.setUser(user);
+        userProject.setProject(project);
+        userProject.setStatus("B");
+        //apply(user, project);
+        userProjectDAO.save(userProject);
+
+        //return projectMapper.getProjectDtoFromEntity(project);
+    }
+    
+    private void isBookmarkPresent(Integer userId, Integer projectId)
+    {
+    	UserProject userProject = userProjectDAO.findByUser_IdAndProject_Id(userId, projectId);
+    	
+    	requireNonNull(userProject, "Invalid project or user");
+    	if(userProject.getStatus().equals("B"))
+    	{
+    		throw new UserProjectException("Project is already bookmarked");
+    	}
+    }
+    
 }
