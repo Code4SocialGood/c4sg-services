@@ -220,13 +220,16 @@ public class ProjectServiceImpl implements ProjectService {
     
     private void isBookmarkPresent(Integer userId, Integer projectId)
     {
-    	UserProject userProject = userProjectDAO.findByUser_IdAndProject_Id(userId, projectId);
+    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, "B");
     	
-    	requireNonNull(userProject, "Invalid project or user");
-    	if(userProject.getStatus().equals("B"))
+    	requireNonNull(userProjects, "Invalid operation");
+    	for(UserProject userProject : userProjects)
     	{
-    		throw new UserProjectException("Project is already bookmarked");
-    	}
+    		if(userProject.getStatus().equals("B"))
+        	{
+        		throw new UserProjectException("Project is already bookmarked");
+        	}
+    	}    	
     }
     
 }
