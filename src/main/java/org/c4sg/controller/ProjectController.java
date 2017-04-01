@@ -107,13 +107,12 @@ public class ProjectController extends GenericController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new project")
     public Map<String, Object> createProject(@ApiParam(value = "Project object to return", required = true)
+
                                                 @RequestBody @Valid CreateProjectDTO createProjectDTO) {
 
         System.out.println("**************Add**************");
 
         Map<String, Object> responseData = null;
-
-
         try {
             Project createProject = projectService.createProject(createProjectDTO);
             responseData = Collections.synchronizedMap(new HashMap<>());
