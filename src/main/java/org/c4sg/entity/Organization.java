@@ -2,6 +2,7 @@ package org.c4sg.entity;
 
 import org.c4sg.constant.UserStatus;
 import org.c4sg.converter.StatusConverter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 
@@ -58,6 +59,7 @@ public class Organization {
     private String status;
     
 	@Column(name = "created_time", nullable = false)
+	@Value("${var.string:#{NULL}}")
 	private Date createdTime;
 		
 	@Column(name = "updated_time", nullable = false)

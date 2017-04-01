@@ -17,6 +17,7 @@ import org.c4sg.constant.UserRole;
 import org.c4sg.converter.StatusConverter;
 import org.c4sg.converter.UserRoleConverter;
 import org.hibernate.annotations.Type;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -91,6 +92,7 @@ public class User implements Serializable {
     private UserStatus status;
      
 	@Column(name = "created_time")
+	@Value("${var.string:#{NULL}}")
 	private Date createdTime;
 		
 	@Column(name = "updated_time")
