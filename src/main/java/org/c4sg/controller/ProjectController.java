@@ -113,7 +113,6 @@ public class ProjectController extends GenericController {
         System.out.println("**************Add**************");
 
         Map<String, Object> responseData = null;
-
         try {
             Project createProject = projectService.createProject(createProjectDTO);
             responseData = Collections.synchronizedMap(new HashMap<>());

@@ -83,7 +83,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public Project createProject(CreateProjectDTO createProjectDTO) {
-        Project localProject = projectDAO.findByNameOrganizationId(
+        Project localProject = projectDAO.findByNameAndOrganizationId(
         			createProjectDTO.getName(), createProjectDTO.getOrganizationId());
         
         if (localProject != null) {
@@ -108,6 +108,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     public Project updateProject(Project project) {
         Project localProject = projectDAO.findById(project.getId());
+        
         if (localProject != null) {
             localProject = projectDAO.save(project);
         } else {

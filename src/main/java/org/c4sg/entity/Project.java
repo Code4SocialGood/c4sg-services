@@ -1,8 +1,6 @@
 package org.c4sg.entity;
 
 import java.util.Date;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,12 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
-import org.hibernate.annotations.SQLInsert;
+import org.springframework.beans.factory.annotation.Value;
 
 @Entity
-@Table(name = "project")
+
 public class Project {
 
 	private static final String IMAGE_DIRECTORY = "assets/project/";
@@ -56,6 +53,7 @@ public class Project {
     private String status="A";
     
 	@Column(name = "created_time", nullable = false)
+	@Value("${var.string:#{NULL}}")
 	private Date createdTime;
 		
 	@Column(name = "updated_time", nullable = false)
