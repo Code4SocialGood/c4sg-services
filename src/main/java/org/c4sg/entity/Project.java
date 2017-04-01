@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.SQLInsert;
 
 @Entity
-@Table(name = "project")
+
 public class Project {
 
 	private static final String IMAGE_DIRECTORY = "assets/project/";
