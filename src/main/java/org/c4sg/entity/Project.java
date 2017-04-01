@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import org.springframework.beans.factory.annotation.Value;
 
 @Entity
+
 public class Project {
 
 	private static final String IMAGE_DIRECTORY = "assets/project/";

@@ -44,6 +44,7 @@ public class ProjectMapper extends ModelMapper{
 	}
 	
 	public Project getProjectEntityFromCreateProjectDto(CreateProjectDTO createProjectDTO){
+		getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		Project project = map(createProjectDTO, Project.class);
 		project.setOrganization(organizationDAO.findOne(createProjectDTO.getOrganizationId()));
 		return project;
