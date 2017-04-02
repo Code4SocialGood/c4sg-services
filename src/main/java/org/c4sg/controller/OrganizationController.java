@@ -87,7 +87,7 @@ public class OrganizationController {
 
     @CrossOrigin
     @RequestMapping(value = "/search", produces = {"application/json"}, method = RequestMethod.GET)
-    @ApiOperation(value = "Find organization by keyWord", notes = "Returns a collection of organizations")
+    @ApiOperation(value = "Find organization by keyWord", notes = "Searches the keyword in organization name and description, case insensitive. The search result is sorted by project update time in descending order.")
     public List<OrganizationDTO> getOrganizations(@ApiParam(value = "Name or description of organization to return", required = true)
                                                   @RequestParam String keyWord) {
         return organizationService.findByKeyword(keyWord);
