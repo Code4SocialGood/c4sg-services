@@ -47,7 +47,7 @@ public class Project {
 	private String zip;
 	
 	@Column(name = "remote_flag", columnDefinition="char(1) default 'Y'", nullable = false)
-	private char remoteFlag='Y';
+	private String remoteFlag;
 
     @Column(columnDefinition="char(1) default 'A'", nullable = false)
     private String status="A";
@@ -135,11 +135,11 @@ public class Project {
 		this.zip = zip;
 	}
 	
-	public char getRemoteFlag() {
+	public String getRemoteFlag() {
 		return remoteFlag;
 	}
 
-	public void setRemoteFlag(char remoteFlag) {
+	public void setRemoteFlag(String remoteFlag) {
 		this.remoteFlag = remoteFlag;
 	}	
     
