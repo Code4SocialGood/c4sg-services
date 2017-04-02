@@ -10,7 +10,7 @@ public class CreateProjectDTO {
 	
 	private String description;
 	
-	private char remoteFlag;// possible values Y or N 
+	private String remoteFlag;// possible values Y or N 
 	
 	private String address1;
 	
@@ -50,11 +50,11 @@ public class CreateProjectDTO {
 		this.description = description;
 	}
 
-	public char getRemoteFlag() {
+	public String getRemoteFlag() {
 		return remoteFlag;
 	}
 
-	public void setRemoteFlag(char remoteFlag) {
+	public void setRemoteFlag(String remoteFlag) {
 		this.remoteFlag = remoteFlag;
 	}
 

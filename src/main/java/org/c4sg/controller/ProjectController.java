@@ -107,8 +107,7 @@ public class ProjectController extends GenericController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new project")
     public Map<String, Object> createProject(@ApiParam(value = "Project object to return", required = true)
-
-                                                @RequestBody @Valid CreateProjectDTO createProjectDTO) {
+                                             @RequestBody @Valid CreateProjectDTO createProjectDTO) {
 
         System.out.println("**************Add**************");
 
@@ -184,7 +183,7 @@ public class ProjectController extends GenericController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of projects")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Applicants not found")
