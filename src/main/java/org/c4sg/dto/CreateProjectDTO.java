@@ -23,9 +23,7 @@ public class CreateProjectDTO {
 	private String country;
 	
 	private String zip;
-	
-	private String createdTime=null;
-	
+		
 	public String getName() {
 		return name;
 	}
@@ -104,14 +102,6 @@ public class CreateProjectDTO {
 
 	public void setZip(String zip) {
 		this.zip = zip;
-	}
-
-	public String getCreatedTime() {
-		return createdTime;
-	}
-
-	public void setCreatedTime(String createdTime) {
-		this.createdTime = createdTime;
 	}
 
 }

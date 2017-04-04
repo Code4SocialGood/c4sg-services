@@ -9,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import org.springframework.beans.factory.annotation.Value;
-
 @Entity
 
 public class Project {
@@ -53,7 +51,6 @@ public class Project {
     private String status="A";
     
 	@Column(name = "created_time", nullable = false)
-	@Value("${var.string:#{NULL}}")
 	private Date createdTime;
 		
 	@Column(name = "updated_time", nullable = false)
