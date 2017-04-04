@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     String FIND_BY_NAME_OR_DESCRIPTION = "SELECT o FROM Organization o " +
-                                            "WHERE o.name LIKE CONCAT('%', :name, '%') " +
-                                                "OR o.description LIKE CONCAT('%', :description, '%') order by project_updated_time desc";
+                                            "WHERE LOWER(o.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
+                                                "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :description, '%')) order by project_updated_time desc";
 
     Organization findByName(String name);
 
