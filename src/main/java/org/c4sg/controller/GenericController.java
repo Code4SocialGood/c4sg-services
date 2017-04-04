@@ -16,35 +16,35 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GenericController {
 
-	@CrossOrigin
+    @CrossOrigin
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public MessageDTO exception(NotFoundException e) {
         return new MessageDTO(e.getMessage());
     }
     
-	@CrossOrigin
+    @CrossOrigin
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
     public MessageDTO exception(BadRequestException e) {
         return new MessageDTO("Error from Global BadRequest");
     }
     
-	@CrossOrigin
+    @CrossOrigin
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(UserProjectException.class)
     public MessageDTO exception(UserProjectException e) {
         return new MessageDTO(e.getMessage());
     }
     
-	@CrossOrigin
+    @CrossOrigin
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(SlackArgumentException.class)
     public MessageDTO exception(SlackArgumentException e) {
         return new MessageDTO(e.getMessage());
     }
     
-	@CrossOrigin
+    @CrossOrigin
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(SlackResponseErrorException.class)
     public MessageDTO exception(SlackResponseErrorException e) {
