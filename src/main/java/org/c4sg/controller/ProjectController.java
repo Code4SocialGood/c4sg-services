@@ -3,6 +3,7 @@ package org.c4sg.controller;
 import io.swagger.annotations.*;
 
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Project;
@@ -106,14 +107,13 @@ public class ProjectController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new project")
     public Map<String, Object> createProject(@ApiParam(value = "Project object to return", required = true)
-                                             @RequestBody @Valid Project project) {
+                                             @RequestBody @Valid CreateProjectDTO createProjectDTO) {
 
         System.out.println("**************Add**************");
 
         Map<String, Object> responseData = null;
-
         try {
-            Project createProject = projectService.createProject(project);
+            Project createProject = projectService.createProject(createProjectDTO);
             responseData = Collections.synchronizedMap(new HashMap<>());
             responseData.put("project", createProject);
         } catch (Exception e) {

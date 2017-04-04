@@ -59,7 +59,6 @@ public class Organization {
     private String status;
     
 	@Column(name = "created_time", nullable = false)
-	@Value("${var.string:#{NULL}}")
 	private Date createdTime;
 		
 	@Column(name = "updated_time", nullable = false)

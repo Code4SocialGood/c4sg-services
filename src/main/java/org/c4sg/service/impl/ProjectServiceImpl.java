@@ -15,6 +15,7 @@ import java.util.List;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
+import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
@@ -68,7 +69,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         return projectMapper.getDtosFromEntities(projects);
     }
-
+    
     public Project createProject(Project project) {
         Project localProject = projectDAO.findById(project.getId());
 
@@ -76,6 +77,20 @@ public class ProjectServiceImpl implements ProjectService {
             System.out.println("Project already exist.");
         } else {
             localProject = projectDAO.save(project);
+        }
+
+        return localProject;
+    }
+
+    public Project createProject(CreateProjectDTO createProjectDTO) {
+        Project localProject = projectDAO.findByNameAndOrganizationId(
+        			createProjectDTO.getName(), createProjectDTO.getOrganizationId());
+        
+        if (localProject != null) {
+            System.out.println("Project already exist.");
+        } else {
+            localProject = projectDAO.save(
+            		projectMapper.getProjectEntityFromCreateProjectDto(createProjectDTO));
         }
 
         return localProject;
@@ -93,7 +108,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     public Project updateProject(Project project) {
         Project localProject = projectDAO.findById(project.getId());
-
+        
         if (localProject != null) {
             localProject = projectDAO.save(project);
         } else {
