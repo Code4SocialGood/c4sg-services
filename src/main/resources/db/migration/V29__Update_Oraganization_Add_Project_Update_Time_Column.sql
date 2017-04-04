@@ -1,2 +1,2 @@
 --add new column
-ALTER TABLE organization ADD project_updated_time timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+ALTER TABLE organization ADD project_updated_time timestamp NOT NULL DEFAULT '2017-001-01 00:00:00';
