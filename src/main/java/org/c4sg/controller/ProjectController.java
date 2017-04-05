@@ -38,7 +38,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/projects")
 @Api(description = "Operations about Projects", tags = "project")
-public class ProjectController extends GenericController {
+public class ProjectController {
 
     @Autowired
     private ProjectService projectService;

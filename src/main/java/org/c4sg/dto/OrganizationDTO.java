@@ -31,6 +31,8 @@ public class OrganizationDTO {
 	@NotNull
 	private String status;
 	
+	private String projectUpdatedTime;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -90,5 +92,11 @@ public class OrganizationDTO {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public String getProjectUpdatedTime() {
+		return projectUpdatedTime;
+	}
+	public void setProjectUpdatedTime(String projectUpdatedTime) {
+		this.projectUpdatedTime = projectUpdatedTime;
 	}
 }
