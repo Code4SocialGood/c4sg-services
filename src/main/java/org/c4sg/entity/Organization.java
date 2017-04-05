@@ -2,7 +2,6 @@ package org.c4sg.entity;
 
 import org.c4sg.constant.UserStatus;
 import org.c4sg.converter.StatusConverter;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 
@@ -53,10 +52,10 @@ public class Organization {
 	private String contactEmail;
 		
 	@Column(name = "category", columnDefinition="char(1)", nullable = false)
-	private String category;
+	private String category="N";
 
     @Column(columnDefinition="char(1)", nullable = false)
-    private String status;
+    private String status="A";
     
 	@Column(name = "created_time", nullable = false)
 	private Date createdTime;
