@@ -1,8 +1,6 @@
 package org.c4sg.entity;
 
 import java.util.Date;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
+
 public class Project {
 
 	private static final String IMAGE_DIRECTORY = "assets/project/";
@@ -45,11 +44,11 @@ public class Project {
 	@Column(name = "zip")
 	private String zip;
 	
-	@Column(name = "remote_flag", columnDefinition="char(1)", nullable = false)
-	private Boolean remoteFlag;
+	@Column(name = "remote_flag", columnDefinition="char(1) default 'Y'", nullable = false)
+	private String remoteFlag;
 
-    @Column(columnDefinition="char(1)", nullable = false)
-    private String status;
+    @Column(columnDefinition="char(1) default 'A'", nullable = false)
+    private String status="A";
     
 	@Column(name = "created_time", nullable = false)
 	private Date createdTime;
@@ -58,14 +57,14 @@ public class Project {
 	private Date updatedTime;
 	
 	@ManyToOne
-	@JoinColumn(name = "organization_id", insertable = false, updatable = false)
+	@JoinColumn(name = "organization_id", insertable = true, updatable = false)
 	private Organization organization;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -133,11 +132,11 @@ public class Project {
 		this.zip = zip;
 	}
 	
-	public Boolean getRemoteFlag() {
+	public String getRemoteFlag() {
 		return remoteFlag;
 	}
 
-	public void setRemoteFlag(Boolean remoteFlag) {
+	public void setRemoteFlag(String remoteFlag) {
 		this.remoteFlag = remoteFlag;
 	}	
     

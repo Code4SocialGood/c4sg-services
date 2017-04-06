@@ -2,6 +2,7 @@ package org.c4sg.entity;
 
 import org.c4sg.constant.UserStatus;
 import org.c4sg.converter.StatusConverter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 
@@ -62,6 +63,9 @@ public class Organization {
 		
 	@Column(name = "updated_time", nullable = false)
 	private Date updatedTime;
+	
+	@Column(name = "project_updated_time")
+	private Date projectUpdatedTime;	
 	
 	public Integer getId() {
 		return id;
@@ -197,6 +201,14 @@ public class Organization {
 
 	public void setUpdatedTime(Date updatedTime) {
 		this.updatedTime = updatedTime;
+	}
+
+	public Date getProjectUpdatedTime() {
+		return projectUpdatedTime;
+	}
+
+	public void setProjectUpdatedTime(Date projectUpdatedTime) {
+		this.projectUpdatedTime = projectUpdatedTime;
 	}
 	
 }

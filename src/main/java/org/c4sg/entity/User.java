@@ -2,8 +2,6 @@ package org.c4sg.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -16,9 +14,6 @@ import org.c4sg.constant.UserStatus;
 import org.c4sg.constant.UserRole;
 import org.c4sg.converter.StatusConverter;
 import org.c4sg.converter.UserRoleConverter;
-import org.hibernate.annotations.Type;
-
-import com.vividsolutions.jts.geom.Point;
 
 @Entity
 @Table(name = "user")

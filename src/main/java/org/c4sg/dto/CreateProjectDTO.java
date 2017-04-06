@@ -2,101 +2,106 @@ package org.c4sg.dto;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.Length;
-
-public class OrganizationDTO {
-	private Integer id;
-	
+public class CreateProjectDTO {
 	@NotNull
-	private String name;
-	
-	private String logo;
-	
+	private String name;//required
 	@NotNull
-	@Length(max = 500)
+	private Integer organizationId;//required
+	
 	private String description;
 	
-	@NotNull
+	private String remoteFlag;// possible values Y or N 
+	
 	private String address1;
 	
 	private String address2;
 	
+	private String city;
+	
 	private String state;
 	
-	@NotNull
 	private String country;
 	
-	private String createDate;
-	
-	@NotNull
-	private String status;
-	
-	private String projectUpdatedTime;
-	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	private String zip;
+		
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getLogo() {
-		return logo;
+
+	public Integer getOrganizationId() {
+		return organizationId;
 	}
-	public void setLogo(String logo) {
-		this.logo = logo;
+
+	public void setOrganizationId(Integer organizationId) {
+		this.organizationId = organizationId;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public String getRemoteFlag() {
+		return remoteFlag;
+	}
+
+	public void setRemoteFlag(String remoteFlag) {
+		this.remoteFlag = remoteFlag;
+	}
+
 	public String getAddress1() {
 		return address1;
 	}
+
 	public void setAddress1(String address1) {
 		this.address1 = address1;
 	}
+
 	public String getAddress2() {
 		return address2;
 	}
+
 	public void setAddress2(String address2) {
 		this.address2 = address2;
 	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
 	public String getState() {
 		return state;
 	}
+
 	public void setState(String state) {
 		this.state = state;
 	}
+
 	public String getCountry() {
 		return country;
 	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	public String getCreateDate() {
-		return createDate;
+
+	public String getZip() {
+		return zip;
 	}
-	public void setCreateDate(String createDate) {
-		this.createDate = createDate;
+
+	public void setZip(String zip) {
+		this.zip = zip;
 	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	public String getProjectUpdatedTime() {
-		return projectUpdatedTime;
-	}
-	public void setProjectUpdatedTime(String projectUpdatedTime) {
-		this.projectUpdatedTime = projectUpdatedTime;
-	}
+
 }

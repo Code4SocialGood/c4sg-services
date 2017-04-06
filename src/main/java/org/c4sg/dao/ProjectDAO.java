@@ -32,4 +32,5 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
 	@Query(FIND_BY_USER_STATUS_QUERY)
 	List<Project> findByStatus(@Param("userId") Integer userId, @Param("status") String status);
 
+	Project findByNameAndOrganizationId(String name, Integer orgId);
 }

@@ -1,8 +1,6 @@
 -- -----------------------------------------------------
 -- C4SG Table Creation
 -- -----------------------------------------------------
-USE c4sg ;
-
 DROP TABLE IF EXISTS user_project ;
 DROP TABLE IF EXISTS user_organization ;
 DROP TABLE IF EXISTS user_skill ;
