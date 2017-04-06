@@ -5,12 +5,10 @@ import io.swagger.annotations.*;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
-import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Project;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
-import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,9 +40,6 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
-
-    @Autowired
-    private UserService userService;
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -179,23 +174,6 @@ public class ProjectController {
             return ResponseEntity.created(location).build();
         } catch (NullPointerException | UserProjectException e) {
             throw new NotFoundException("ID of project or user invalid");
-        }
-    }
-
-    @CrossOrigin
-    @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of projects")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Applicants not found")
-    })
-    public ResponseEntity<List<UserDTO>> getApplicants(@ApiParam(value = "ID of project", required = true)
-                                                       @PathVariable("id") Integer projectId) {
-        List<UserDTO> applicants = userService.getApplicants(projectId);
-
-        if (!applicants.isEmpty()) {
-            return ResponseEntity.ok().body(applicants);
-        } else {
-            throw new NotFoundException("Applicants not found");
         }
     }
 
