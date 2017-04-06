@@ -1,5 +1,7 @@
 package org.c4sg.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +34,9 @@ public class Project {
 
 	@Column(name = "contact_email", nullable = false)
 	private String email;
+	
+	@Column(name = "create_time", nullable = false)
+	private Date createTime;
 
 	@ManyToOne
 	@JoinColumn(name = "organization_id", insertable = false, updatable = false)
@@ -92,4 +97,13 @@ public class Project {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	public String getCreateTime() {
+		return createTime.toString();
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	
 }
