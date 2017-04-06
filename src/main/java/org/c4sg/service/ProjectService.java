@@ -26,4 +26,5 @@ public interface ProjectService {
     List<Project> getProjectsByOrganization(Integer orgId);
     List<ProjectDTO> findByUser(Integer userId);
     String getImageUploadPath(Integer projectId);
+    void saveUserProjectBookmark(Integer userId, Integer projectId);
 }
