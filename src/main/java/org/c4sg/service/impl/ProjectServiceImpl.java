@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.c4sg.constant.UserProjectStatus;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
@@ -158,8 +159,17 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectDTO> getAppliedProjects(Integer userId) {
-        List<Project> projects = projectDAO.findByStatus(userId, APPLIED.getStatus());
+    public List<ProjectDTO> getProjectsByUserIdAndUserProjStatus(Integer userId, String userProjStatus) {
+    	String statusCode="";
+    	for(UserProjectStatus ups: UserProjectStatus.values())	{
+    		if(ups.name().equalsIgnoreCase(userProjStatus) ||
+    		   ups.getStatus().equalsIgnoreCase(userProjStatus)	)	{
+    			statusCode = ups.getStatus();
+    			break;
+    		} 
+    	}
+    	if(statusCode.isEmpty())	statusCode = UserProjectStatus.APPLIED.getStatus();
+        List<Project> projects = projectDAO.findByUserIdAndUserProjStatus(userId, statusCode);
         return projectMapper.getDtosFromEntities(projects);
     }
 
@@ -172,7 +182,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projects;
     }
 
-    @Override
+   /* @Override
     public List<ProjectDTO> findByUser(Integer userId) {
         User user = userDAO.findById(userId);
         requireNonNull(user, "Invalid User Id");
@@ -191,7 +201,7 @@ public class ProjectServiceImpl implements ProjectService {
             projectDtos.add(projectMapper.getProjectDtoFromEntity(userProject));
         }
         return projectDtos;
-    }
+    }*/
 
     public String getImageUploadPath(Integer projectId) {
         return PROJECT_UPLOAD.getValue() + File.separator + projectId + IMAGE.getValue();
