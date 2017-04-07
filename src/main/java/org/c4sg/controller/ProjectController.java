@@ -77,27 +77,15 @@ public class ProjectController {
                                         @RequestParam(required = false) String keyword) {
         return projectService.findByKeyword(name, keyword);
     }
-
+    
     @CrossOrigin
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find projects by user", notes = "Returns a collection of projects")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "ID of user invalid")
-    })
-    public List<ProjectDTO> getProjectsByUser(@ApiParam(value = "userId of projects to return", required = true)
-                                              @PathVariable("id") Integer id) {
-
-        System.out.println("**************Search**************" + id);
-
-        List<ProjectDTO> projects;
-
-        try {
-            projects = projectService.findByUser(id);
-        } catch (Exception e) {
-            throw new NotFoundException("ID of user invalid");
-        }
-
-        return projects;
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @ApiOperation(value = "Find projects by user (id) and project status (applied/bookmarked)", notes = "Returns a collection of projects")
+    public List<ProjectDTO> getUserProjects(@ApiParam(value = "ID of user", required = true)
+                                        	@RequestParam Integer id,
+                                        	@ApiParam(value = "Project Status of user", required = false, defaultValue="APPLIED")
+                                        	@RequestParam String status)	{
+        return projectService.getProjectsByUserIdAndUserProjStatus(id,status);
     }
 
     @CrossOrigin
@@ -177,15 +165,6 @@ public class ProjectController {
         } catch (NullPointerException | UserProjectException e) {
             throw new NotFoundException("ID of project or user invalid");
         }
-    }
-
-    @CrossOrigin
-    @RequestMapping(value = "/applied/users/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find projects, with status applied, related to a given user",
-            notes = "Returns a collection of projects with status applied")
-    public List<ProjectDTO> getProjects(@ApiParam(value = "ID of user", required = true)
-                                        @PathVariable("id") Integer userId) {
-        return projectService.getAppliedProjects(userId);
     }
 
     @RequestMapping(value = "/{id}/image", method = RequestMethod.POST)
