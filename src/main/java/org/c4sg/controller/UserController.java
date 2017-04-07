@@ -17,6 +17,8 @@ import org.c4sg.util.FileUploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -33,10 +35,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiImplicitParams;
 
 
 @CrossOrigin(origins = "*")
@@ -52,9 +56,18 @@ public class UserController {
     @CrossOrigin
     @RequestMapping(value = "/active", method = RequestMethod.GET)
     @ApiOperation(value = "Find users, with status applied", notes = "Returns a collection of active users")
-    public List<UserDTO> getActiveUsers() {
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                value = "Results page you want to retrieve (0..N)"),
+        @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                value = "Number of records per page."),
+        @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                value = "Sorting criteria in the format: property(,asc|desc). " +
+                        "Default sort order is ascending. " +
+                        "Multiple sort criteria are supported.")})
+    public Page<UserDTO> getActiveUsers(Pageable pageable) {
         LOGGER.debug("**************All**************");
-        return userService.findActiveUsers();
+        return userService.findActiveUsers(pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET)
