@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserDTO> findActiveUsers(Pageable pageable) {
-        Page<User> users = userDAO.findByStatusOrderByIdDescUserNameAsc(pageable, UserStatus.ACTIVE);
+        Page<User> users = userDAO.findByStatus(pageable, UserStatus.ACTIVE);
         Page<UserDTO> userDTOS = users
                 .map(p -> userMapper.getUserDtoFromEntity(p));
         return userDTOS;
