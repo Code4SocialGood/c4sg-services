@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
+import org.c4sg.entity.Organization;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.util.FileUploadUtil;
@@ -97,12 +99,12 @@ public class OrganizationController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new organization")
     public Map<String, Object> createOrganization(@ApiParam(value = "Organization object to return", required = true)
-                                                  @RequestBody @Valid OrganizationDTO organizationDTO) {
+                                                  @RequestBody @Valid CreateOrganizationDTO createOrganizationDTO) {
         System.out.println("**************Create**************");
         Map<String, Object> responseData = null;
-        organizationDTO.setLogo(organizationService.getLogoUploadPath(organizationDTO.getId()));
+        //organizationDTO.setLogo(organizationService.getLogoUploadPath(organizationDTO.getId()));
         try {
-            OrganizationDTO createdOrganization = organizationService.createOrganization(organizationDTO);
+            Organization createdOrganization = organizationService.createOrganization(createOrganizationDTO);
             responseData = Collections.synchronizedMap(new HashMap<>());
             responseData.put("organization", createdOrganization);
         } catch (Exception e) {

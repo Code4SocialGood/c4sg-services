@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserOrganizationDAO;
+import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.User;
@@ -73,6 +74,18 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
 
         return organizationMapper.getOrganizationDtoFromEntity(organization);
+    }
+    
+    public Organization createOrganization(CreateOrganizationDTO createOrganizationDTO) {
+        Organization organization = organizationDAO.findByName(createOrganizationDTO.getName());
+
+        if (organization != null) {
+            //TODO: return error message
+        } else {
+            organization = organizationDAO.save(organizationMapper.getOrganEntityFromCreateOrganDto(createOrganizationDTO));
+        }
+
+        return organization;
     }
 
     public OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO) {

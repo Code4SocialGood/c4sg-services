@@ -2,6 +2,8 @@ package org.c4sg.service.impl;
 
 import org.c4sg.constant.UserStatus;
 import org.c4sg.constant.Constants;
+import org.c4sg.constant.UserProjectStatus;
+
 import static org.c4sg.constant.Directory.RESUME_UPLOAD;
 import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Format.RESUME;
@@ -80,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> getApplicants(Integer projectId) {
-        List<User> users = userDAO.findByUserProjectId(projectId);
+    	List<User> users = userDAO.findByUserProjectId(projectId, UserProjectStatus.APPLIED.getStatus());
         return userMapper.getDtosFromEntities(users);
     }
 
