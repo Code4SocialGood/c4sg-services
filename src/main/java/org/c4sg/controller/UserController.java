@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.UserDTO;
+import org.c4sg.exception.NotFoundException;
 import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 
 @CrossOrigin(origins = "*")
@@ -92,6 +96,21 @@ public class UserController {
     @ApiOperation(value = "Find developers", notes = "Returns a collection of users")
     public List<UserDTO> getDevelopers() {
         return userService.findDevelopers();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of projects")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Applicants not found")})
+    public ResponseEntity<List<UserDTO>> getApplicants(@ApiParam(value = "ID of project", required = true)
+                                                       @PathVariable("id") Integer projectId) {
+        List<UserDTO> applicants = userService.getApplicants(projectId);
+
+        if (!applicants.isEmpty()) {
+            return ResponseEntity.ok().body(applicants);
+        } else {
+            throw new NotFoundException("Applicants not found");
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
