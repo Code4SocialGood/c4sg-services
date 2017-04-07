@@ -13,6 +13,8 @@ import org.c4sg.entity.User;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -40,11 +42,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findActiveUsers() {
-        List<User> users = userDAO.findByStatusOrderByUserNameAsc(UserStatus.ACTIVE);
-        List<UserDTO> userDTOS = users.stream()
-                .map(p -> userMapper.getUserDtoFromEntity(p))
-                .collect(Collectors.toList());
+    public Page<UserDTO> findActiveUsers(Pageable pageable) {
+        Page<User> users = userDAO.findByStatusOrderByUserNameAsc(pageable, UserStatus.ACTIVE);
+        Page<UserDTO> userDTOS = users
+                .map(p -> userMapper.getUserDtoFromEntity(p));
         return userDTOS;
     }
 
