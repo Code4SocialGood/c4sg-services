@@ -22,8 +22,9 @@ public interface ProjectService {
     void apply(User user, Project project) throws IOException, EmailException;
     List<ProjectDTO> findProjects();
     List<ProjectDTO> findByKeyword(String name, String keyWord);
-    List<ProjectDTO> getAppliedProjects(Integer userId);
+    List<ProjectDTO> getProjectsByUserIdAndUserProjStatus(Integer userId, String userProjStatus);
     List<Project> getProjectsByOrganization(Integer orgId);
-    List<ProjectDTO> findByUser(Integer userId);
+    //List<ProjectDTO> findByUser(Integer userId);
     String getImageUploadPath(Integer projectId);
+    void saveUserProjectBookmark(Integer userId, Integer projectId);
 }

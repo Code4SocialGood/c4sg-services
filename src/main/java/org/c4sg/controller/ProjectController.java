@@ -5,13 +5,13 @@ import io.swagger.annotations.*;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
-import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Project;
+import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
-import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
+import org.hibernate.jpa.criteria.predicate.ExistsPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,9 +42,6 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
-
-    @Autowired
-    private UserService userService;
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -80,27 +77,15 @@ public class ProjectController {
                                         @RequestParam(required = false) String keyword) {
         return projectService.findByKeyword(name, keyword);
     }
-
+    
     @CrossOrigin
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find projects by user", notes = "Returns a collection of projects")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "ID of user invalid")
-    })
-    public List<ProjectDTO> getProjectsByUser(@ApiParam(value = "userId of projects to return", required = true)
-                                              @PathVariable("id") Integer id) {
-
-        System.out.println("**************Search**************" + id);
-
-        List<ProjectDTO> projects;
-
-        try {
-            projects = projectService.findByUser(id);
-        } catch (Exception e) {
-            throw new NotFoundException("ID of user invalid");
-        }
-
-        return projects;
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @ApiOperation(value = "Find projects by user (id) and project status (applied/bookmarked)", notes = "Returns a collection of projects")
+    public List<ProjectDTO> getUserProjects(@ApiParam(value = "ID of user", required = true)
+                                        	@RequestParam Integer id,
+                                        	@ApiParam(value = "Project Status of user", required = false, defaultValue="APPLIED")
+                                        	@RequestParam String status)	{
+        return projectService.getProjectsByUserIdAndUserProjStatus(id,status);
     }
 
     @CrossOrigin
@@ -182,32 +167,6 @@ public class ProjectController {
         }
     }
 
-    @CrossOrigin
-    @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of projects")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Applicants not found")
-    })
-    public ResponseEntity<List<UserDTO>> getApplicants(@ApiParam(value = "ID of project", required = true)
-                                                       @PathVariable("id") Integer projectId) {
-        List<UserDTO> applicants = userService.getApplicants(projectId);
-
-        if (!applicants.isEmpty()) {
-            return ResponseEntity.ok().body(applicants);
-        } else {
-            throw new NotFoundException("Applicants not found");
-        }
-    }
-
-    @CrossOrigin
-    @RequestMapping(value = "/applied/users/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find projects, with status applied, related to a given user",
-            notes = "Returns a collection of projects with status applied")
-    public List<ProjectDTO> getProjects(@ApiParam(value = "ID of user", required = true)
-                                        @PathVariable("id") Integer userId) {
-        return projectService.getAppliedProjects(userId);
-    }
-
     @RequestMapping(value = "/{id}/image", method = RequestMethod.POST)
    	@ApiOperation(value = "Add new image file for project")
    	public String uploadImage(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
@@ -248,5 +207,31 @@ public class ProjectController {
         return null;
         }
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/bookmark/projects/{projectId}/users/{userId}", method = RequestMethod.POST)
+    @ApiOperation(value = "Create a bookmark for a project")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Invalid project or user")
+    })
+    //TODO: Replace explicit user{id} with AuthN user id.
+    public ResponseEntity<?> createUserProjectBookmark(@ApiParam(value = "Project ID", required = true)
+                                               @PathVariable("projectId") Integer projectId,
+                                               @ApiParam(value = "User ID", required = true)
+                                               @PathVariable("userId") Integer userId) {
+        try {
+            projectService.saveUserProjectBookmark(userId, projectId);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                                                      .path("/bookmark/projects/{projectId}/users/{userId}")
+                                                      .buildAndExpand(projectId, userId).toUri();
+            return ResponseEntity.created(location).build();
+        } catch (NullPointerException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+        catch(UserProjectException e){
+        	throw new BadRequestException(e.getErrorMessage());
+        }
+    }
+    
 }
 
