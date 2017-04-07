@@ -7,11 +7,14 @@ import static org.c4sg.constant.Format.IMAGE;
 import static org.c4sg.constant.UserProjectStatus.APPLIED;
 
 import java.io.File;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
@@ -25,8 +28,6 @@ import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -46,6 +47,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private AsyncEmailService asyncEmailService;
+    
+    @Autowired
+    private OrganizationDAO organizationDAO;
 
     public void save(Project project) {
         projectDAO.save(project);
@@ -91,6 +95,8 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             localProject = projectDAO.save(
             		projectMapper.getProjectEntityFromCreateProjectDto(createProjectDTO));
+            Date currentTime = new Date(Calendar.getInstance().getTime().getTime());
+            Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
         }
 
         return localProject;
