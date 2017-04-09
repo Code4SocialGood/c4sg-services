@@ -22,6 +22,7 @@ public class UserDTO {
     private String status;
     private String createdTime;
     private String updatedTime;
+    private String title;
 	public Integer getId() {
 		return id;
 	}
@@ -147,6 +148,12 @@ public class UserDTO {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
     
 
