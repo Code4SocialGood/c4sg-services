@@ -91,8 +91,8 @@ public class User implements Serializable {
 	@Column(name = "updated_time")
 	private Date updatedTime;
 	
-    @Column(name = "title")
-    private String title;	
+	@Column(name = "title")
+	private String title;	
 
 	public Integer getId() {
 		return id;
