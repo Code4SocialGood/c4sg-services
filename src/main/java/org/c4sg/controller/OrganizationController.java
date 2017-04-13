@@ -10,16 +10,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.Valid;
+
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
-import org.c4sg.entity.Organization;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
@@ -27,17 +35,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import javax.validation.Valid;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.c4sg.constant.Directory.LOGO_UPLOAD;
 
 @CrossOrigin
 @RestController
@@ -45,10 +42,9 @@ import static org.c4sg.constant.Directory.LOGO_UPLOAD;
 @Api(description = "Operations about Organizations", tags = "organization")
 public class OrganizationController {
 
-
 	@Autowired
 	private OrganizationService organizationService;
-
+	
 	@RequestMapping(value = "/{id}/logo", method = RequestMethod.POST)
 	@ApiOperation(value = "Upload Logo as Image File")
 	public String uploadLogo(@ApiParam(value = "Organization Id", required = true) @PathVariable Integer id,
@@ -95,21 +91,32 @@ public class OrganizationController {
         return organizationService.findByKeyword(keyWord);
     }
 
+    // TODO Define error codes: required input missing, etc 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.POST)
-    @ApiOperation(value = "Add a new organization")
-    public Map<String, Object> createOrganization(@ApiParam(value = "Organization object to return", required = true)
-                                                  @RequestBody @Valid CreateOrganizationDTO createOrganizationDTO) {
-        System.out.println("**************Create**************");
+    @ApiOperation(
+    		value = "Create organization",
+    		notes = "Creates an organization, and returns the organization created.",
+    		response = OrganizationDTO.class)
+    @ApiResponses(value = { 
+    		@ApiResponse(code = 500, message = "Internal server error")})    
+    public Map<String, Object> createOrganization(
+    		@ApiParam(value = "Organization to create", required = true)
+            @RequestBody @Valid CreateOrganizationDTO createOrganizationDTO) {
+    	
+        System.out.println("**************Create Organization: Begin**************");
+        System.out.println("Organization Name = " + createOrganizationDTO.getName());
         Map<String, Object> responseData = null;
         //organizationDTO.setLogo(organizationService.getLogoUploadPath(organizationDTO.getId()));
         try {
-            Organization createdOrganization = organizationService.createOrganization(createOrganizationDTO);
+            OrganizationDTO createdOrganization = organizationService.createOrganization(createOrganizationDTO);
             responseData = Collections.synchronizedMap(new HashMap<>());
             responseData.put("organization", createdOrganization);
         } catch (Exception e) {
             System.err.println(e);
         }
+        
+        System.out.println("**************Create Organization: End**************");
         return responseData;
     }
 
