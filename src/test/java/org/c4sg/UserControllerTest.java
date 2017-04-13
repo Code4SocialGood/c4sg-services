@@ -48,33 +48,12 @@ public class UserControllerTest {
 	 public void setup() {
 	      this.mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 	 }
-	/*
-	 //Testing POST
-	 @Test	 
-	 public void testCreateUser() throws Exception {
-	 
-		 UserDTO user = new UserDTO();
-		 user.setEmail("test1Email@gmail.com");
-		 
-		 when(userServiceMock.saveUser(user)).thenReturn(user);
-		 
-		 this.mockMvc.perform(post("/api/users")
-				 .contentType(MediaType.APPLICATION_JSON)
-				 .content(asJsonString(user)))
-		 .andExpect(status().isCreated())
-		 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-		 .andExpect(jsonPath("$.email",is("test1Email@gmail.com")))
-		 ;
-		 
-		 verify(userServiceMock, times(1)).saveUser(user);
-	     verifyNoMoreInteractions(userServiceMock);	 
-	 }
-	 
-
-	 //Testing GET
+	
 	 @Test
 	 public void testGetUsers() throws Exception
 	 {
+		 
+		 /*
 		//Mock user data 
 		 List<UserDTO> mockUsers = getMockUsers("All");
 		 
@@ -134,7 +113,29 @@ public class UserControllerTest {
 		 
 		 verify(userServiceMock, times(1)).findAll();
 	     verifyNoMoreInteractions(userServiceMock);
+		 */
+	 }
+	 
+	/*
+	 //Testing POST
+	 @Test	 
+	 public void testCreateUser() throws Exception {
+	 
+		 UserDTO user = new UserDTO();
+		 user.setEmail("test1Email@gmail.com");
 		 
+		 when(userServiceMock.saveUser(user)).thenReturn(user);
+		 
+		 this.mockMvc.perform(post("/api/users")
+				 .contentType(MediaType.APPLICATION_JSON)
+				 .content(asJsonString(user)))
+		 .andExpect(status().isCreated())
+		 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+		 .andExpect(jsonPath("$.email",is("test1Email@gmail.com")))
+		 ;
+		 
+		 verify(userServiceMock, times(1)).saveUser(user);
+	     verifyNoMoreInteractions(userServiceMock);	 
 	 }
 	 
 	 @Test	 
