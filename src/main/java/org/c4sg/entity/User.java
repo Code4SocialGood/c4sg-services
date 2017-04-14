@@ -90,6 +90,9 @@ public class User implements Serializable {
 		
 	@Column(name = "updated_time")
 	private Date updatedTime;
+	
+	@Column(name = "title")
+	private String title;	
 
 	public Integer getId() {
 		return id;
@@ -257,6 +260,14 @@ public class User implements Serializable {
 
 	public void setUpdatedTime(Date updatedTime) {
 		this.updatedTime = updatedTime;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title= title;
 	}
 	
    
