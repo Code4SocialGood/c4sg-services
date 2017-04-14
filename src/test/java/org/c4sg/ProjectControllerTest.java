@@ -200,8 +200,5 @@ public class ProjectControllerTest extends C4SGTest {
     	fail("Not yet implemented");  	
 
     }*/
-	
-    @Test
-    public void testDummy() throws Exception {
-    }
+
 }
