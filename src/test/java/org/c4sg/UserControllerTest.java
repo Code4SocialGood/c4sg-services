@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {C4SgApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserControllerTest {	
+public class UserControllerTest extends C4SGTest {	
 
 	private MockMvc mockMvc;
 	
@@ -428,12 +428,4 @@ public class UserControllerTest {
 			 return Arrays.asList(userDto, userDto2, userDto3, userDto4);
 		 }
 	 }
-	 
-	 static String asJsonString(final Object obj) {
-	        try {
-	            return new ObjectMapper().writeValueAsString(obj);
-	        } catch (Exception e) {
-	            throw new RuntimeException(e);
-	        }
-	    }
 }
