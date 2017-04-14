@@ -3,19 +3,17 @@ package org.c4sg;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.c4sg.controller.ProjectController;
-import org.c4sg.dto.CreateOrganizationDTO;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.GreaterThan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -23,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {C4SgApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProjectControllerTest extends C4SGTest {
@@ -72,7 +71,6 @@ public class ProjectControllerTest extends C4SGTest {
 	public void tearDown() throws Exception {
 	}
 
-	/*
     @Test
     public void testGetProjects() throws Exception {
     	
@@ -153,8 +151,6 @@ public class ProjectControllerTest extends C4SGTest {
     		.andExpect(status().isOk()); 
     }
     
-    */
-/*
     @Test
     public void testGetProjectsByKeyword() throws Exception {
     	fail("Not yet implemented");  		

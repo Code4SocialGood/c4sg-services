@@ -22,8 +22,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {C4SgApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -58,8 +56,6 @@ public class OrganizationControllerTest extends C4SGTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-	
-	/*
 
     @Test
     public void testCreateOrganization() throws Exception {
@@ -114,9 +110,5 @@ public class OrganizationControllerTest extends C4SGTest {
     		.andExpect(jsonPath("$.organization.contactEmail",is("contactEmail"))) 
     		.andExpect(jsonPath("$.organization.category",is("O")))
     		.andExpect(jsonPath("$.organization.status",is("A")));
-    }
-    */
-    @Test
-    public void testDummy() throws Exception {
     }
 }
