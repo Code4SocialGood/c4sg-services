@@ -93,6 +93,9 @@ public class User implements Serializable {
 	
 	@Column(name = "title")
 	private String title;	
+	
+	@Column(name="github_url")
+	private String gitHubUrl;
 
 	public Integer getId() {
 		return id;
@@ -268,6 +271,14 @@ public class User implements Serializable {
 
 	public void setTitle(String title) {
 		this.title= title;
+	}
+	
+	public String getGitHubUrl() {
+		return gitHubUrl;
+	}
+
+	public void setGitHubUrl(String gitHubUrl) {
+		this.gitHubUrl = gitHubUrl;
 	}
 	
    
