@@ -23,6 +23,7 @@ public class UserDTO {
     private String createdTime;
     private String updatedTime;
     private String title;
+    private String gitHubUrl;
 	public Integer getId() {
 		return id;
 	}
@@ -154,6 +155,13 @@ public class UserDTO {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public String getGitHubUrl()
+	{
+		return gitHubUrl;
+	}
+	public void setGitHubUrl(String gitHubUrl){
+		this.gitHubUrl = gitHubUrl;
 	}
     
 
