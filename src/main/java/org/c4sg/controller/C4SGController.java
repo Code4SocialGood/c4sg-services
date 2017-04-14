@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @CrossOrigin
 @RestControllerAdvice
-public class GenericController {
+public class C4SGController {
 
     @CrossOrigin
     @ResponseStatus(HttpStatus.NOT_FOUND)

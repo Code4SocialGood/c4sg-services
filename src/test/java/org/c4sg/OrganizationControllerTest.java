@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {C4SgApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class OrganizationControllerTest {
+public class OrganizationControllerTest extends C4SGTest {
 
     @Autowired
     private OrganizationController organizationController;
@@ -60,7 +60,7 @@ public class OrganizationControllerTest {
     @Test
     public void testCreateOrganization() throws Exception {
     	
-    	// 1. Tests that the only required field is name
+    	// 1. Only required input field is name
     	CreateOrganizationDTO organizationDto = new CreateOrganizationDTO();
     	organizationDto.setName("Test Organization 1"); 
     	    	 
@@ -111,12 +111,4 @@ public class OrganizationControllerTest {
     		.andExpect(jsonPath("$.organization.category",is("O")))
     		.andExpect(jsonPath("$.organization.status",is("A")));
     }
-    
-	private String asJsonString(final Object obj) {
-		try {
-			return new ObjectMapper().writeValueAsString(obj);
-	    } catch (Exception e) {
-	        throw new RuntimeException(e);
-	     }
-	}
 }

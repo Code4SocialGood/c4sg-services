@@ -2,6 +2,7 @@ package org.c4sg.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "user_project")
@@ -24,6 +25,12 @@ public class UserProject implements Serializable{
     @Column(columnDefinition="char(1)", nullable = false)
     private String status;
     
+	@Column(name = "created_time", nullable = false)
+	private Date createdTime;
+		
+	@Column(name = "updated_time", nullable = false)
+	private Date updatedTime;
+	
     public Integer getId() {
         return id;
     }
@@ -55,4 +62,20 @@ public class UserProject implements Serializable{
     public void setStatus(String status) {
         this.status = status;
     }
+    
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+	
+	public Date getUpdatedTime() {
+		return updatedTime;
+	}
+
+	public void setUpdatedTime(Date updatedTime) {
+		this.updatedTime = updatedTime;
+	}
 }
