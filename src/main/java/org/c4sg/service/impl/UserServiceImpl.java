@@ -11,6 +11,7 @@ import static org.c4sg.constant.Format.IMAGE;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.specification.UserSpecification;
 import org.c4sg.dto.UserDTO;
+import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.UserService;
@@ -37,9 +38,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> findAll() {
-        List<UserDTO> usersDto = new ArrayList<>();
-        userDAO.findAll().stream().forEach(user -> usersDto.add(userMapper.getUserDtoFromEntity(user)));
-        return usersDto;
+        //List<UserDTO> usersDto = new ArrayList<>();
+        //userDAO.findAll().stream().forEach(user -> usersDto.add(userMapper.getUserDtoFromEntity(user)));
+        //return usersDto;
+        List<User> users = userDAO.findAllByOrderByIdDesc();
+        return userMapper.getDtosFromEntities(users);
 
     }
 
