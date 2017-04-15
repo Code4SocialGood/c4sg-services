@@ -3,6 +3,7 @@ package org.c4sg.dao;
 import java.util.List;
 
 import org.c4sg.entity.Organization;
+import org.c4sg.entity.Project;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -15,8 +16,8 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
 
     Organization findByName(String name);
 
-    List<Organization> findAll();
-
+    List<Organization> findAllByOrderByIdDesc();
+    
     Organization findOne(Integer id);
 
     /*@Query("SELECT o FROM Organization o WHERE LOWER(o.name) LIKE LOWER(CONCAT('%',:keyword,'%')) OR LOWER(o.description) LIKE LOWER(CONCAT('%',:keyword,'%'))")

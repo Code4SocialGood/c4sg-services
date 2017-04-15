@@ -1,6 +1,7 @@
 package org.c4sg.dao;
 
 import org.c4sg.constant.UserStatus;
+import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +31,7 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
 
     User findById(int id);
     User findByEmail(String email);
-
+    List<User> findAllByOrderByIdDesc();
     List<User> findByDeveloperFlag(char flag);
     // List<User> findByRoleAndDisplayFlagOrderByGithubDesc(UserRole role, Boolean display);
   

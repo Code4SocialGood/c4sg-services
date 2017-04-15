@@ -51,7 +51,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public List<ProjectDTO> findProjects() {
-        List<Project> projects = projectDAO.findAll();
+        List<Project> projects = projectDAO.findAllByOrderByIdDesc();
         return projectMapper.getDtosFromEntities(projects);
     }
 
