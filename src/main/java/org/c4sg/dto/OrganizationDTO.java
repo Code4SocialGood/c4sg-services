@@ -41,7 +41,7 @@ public class OrganizationDTO {
 	
 	private String status;
 
-	private String createDate;
+	private String createdTime;
 	
 	private String projectUpdatedTime;
 
@@ -168,12 +168,12 @@ public class OrganizationDTO {
 		this.status = status;
 	}
 	
-	public String getCreateDate() {
-		return createDate;
+	public String getCreatedTime() {
+		return createdTime;
 	}
 
-	public void setCreateDate(String createDate) {
-		this.createDate = createDate;
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
 	}
 
 	public String getProjectUpdatedTime() {

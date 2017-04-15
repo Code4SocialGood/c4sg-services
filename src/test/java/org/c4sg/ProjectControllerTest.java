@@ -84,7 +84,7 @@ public class ProjectControllerTest extends C4SGTest {
          	.andExpect(jsonPath("$[0].organizationName", is(TestDataSet.PROJECT_1_ORG_NAME)))     	
          	.andExpect(jsonPath("$[0].description", is(TestDataSet.PROJECT_1_DESCRIPTION)))
          	.andExpect(jsonPath("$[0].status", is(TestDataSet.PROJECT_1_STATUS)))
-     		//.andExpect(jsonPath("$[0].createTime", is(TestDataSet.PROJECT_1_CREATE_TIME))) TODO JW Always return null, Github issue 
+     		.andExpect(jsonPath("$[0].createdTime", is(TestDataSet.PROJECT_1_CREATED_TIME)))
         	.andExpect(jsonPath("$[1].name", is(TestDataSet.PROJECT_2_NAME)))
         	.andExpect(jsonPath("$[2].name", is(TestDataSet.PROJECT_3_NAME)))
         	.andExpect(jsonPath("$[3].name", is(TestDataSet.PROJECT_4_NAME)))
