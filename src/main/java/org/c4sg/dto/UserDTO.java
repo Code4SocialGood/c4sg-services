@@ -11,9 +11,11 @@ public class UserDTO {
     private String state;
     private String country;
     private String zip;
+    private String title;
     private String introduction;
     private String linkedinUrl;
     private String personalUrl;
+    private String gitHubUrl;
     private String role;
     private String publicProfileFlag;
     private String chatFlag;
@@ -22,8 +24,8 @@ public class UserDTO {
     private String status;
     private String createdTime;
     private String updatedTime;
-    private String title;
-    private String gitHubUrl;
+
+
 	public Integer getId() {
 		return id;
 	}
@@ -102,6 +104,13 @@ public class UserDTO {
 	public void setPersonalUrl(String personalUrl) {
 		this.personalUrl = personalUrl;
 	}
+	public String getGitHubUrl()
+	{
+		return gitHubUrl;
+	}
+	public void setGitHubUrl(String gitHubUrl){
+		this.gitHubUrl = gitHubUrl;
+	}
 	public String getRole() {
 		return role;
 	}
@@ -155,14 +164,5 @@ public class UserDTO {
 	}
 	public void setTitle(String title) {
 		this.title = title;
-	}
-	public String getGitHubUrl()
-	{
-		return gitHubUrl;
-	}
-	public void setGitHubUrl(String gitHubUrl){
-		this.gitHubUrl = gitHubUrl;
-	}
-    
-
+	}  
 }
