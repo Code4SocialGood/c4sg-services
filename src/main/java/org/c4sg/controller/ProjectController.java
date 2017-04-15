@@ -4,10 +4,12 @@ import io.swagger.annotations.*;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateProjectDTO;
+import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Project;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
 import org.c4sg.util.FileUploadUtil;
@@ -65,7 +67,7 @@ public class ProjectController {
     public List<Project> getProjectsByOrganization(@ApiParam(value = "ID of an organization", required = true)
                                                    @PathVariable("id") int orgId) {
         System.out.println("**************OrganizationID**************" + orgId);
-        return projectService.getProjectsByOrganization(orgId);
+        return projectService.findByOrganization(orgId);
     }
 
     @CrossOrigin
@@ -80,12 +82,22 @@ public class ProjectController {
     
     @CrossOrigin
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    @ApiOperation(value = "Find projects by user (id) and project status (applied/bookmarked)", notes = "Returns a collection of projects")
-    public List<ProjectDTO> getUserProjects(@ApiParam(value = "ID of user", required = true)
-                                        	@RequestParam Integer id,
-                                        	@ApiParam(value = "Project Status of user", required = false, defaultValue="APPLIED")
-                                        	@RequestParam String status)	{
-        return projectService.getProjectsByUserIdAndUserProjStatus(id,status);
+    @ApiOperation(
+    		value = "Find projects by user", 
+    		notes = "Returns a list of projects searched by user ID and user-project status (applied/bookmarked). "
+    				+ "If user-project status is not provided, returns all projects related to the user. "
+    				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
+    		response =ProjectDTO.class , 
+    		responseContainer = "List")
+    @ApiResponses(value = { 
+    		@ApiResponse(code = 404, message = "Missing required input")})  
+    public List<ProjectDTO> getUserProjects(@ApiParam(value = "User ID", required = true)
+    										@RequestParam Integer userId,
+                                        	@ApiParam(value = "User project status, A-Applied, B-Bookmarked", allowableValues = "A, B")
+    										@RequestParam (required = false) String userProjectStatus)	
+                                        			throws ProjectServiceException {
+    	System.out.println("************** Find Projects for User **************");
+        return projectService.findByUser(userId, userProjectStatus);
     }
 
     @CrossOrigin
@@ -94,7 +106,7 @@ public class ProjectController {
     public Map<String, Object> createProject(@ApiParam(value = "Project object to return", required = true)
                                              @RequestBody @Valid CreateProjectDTO createProjectDTO) {
 
-        System.out.println("**************Add**************");
+        System.out.println("************** Add **************");
 
         Map<String, Object> responseData = null;
         try {

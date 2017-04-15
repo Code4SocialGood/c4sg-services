@@ -12,7 +12,7 @@ public class ProjectDTO {
 	
 	private String status;
 	
-	private String createTime;
+	private String createdTime;
 	
 	private String organizationName;
 	
@@ -56,12 +56,12 @@ public class ProjectDTO {
 		this.status = status;
 	}
 
-	public String getCreateTime() {
-		return createTime;
+	public String getCreatedTime() {
+		return createdTime;
 	}
 
-	public void setCreateTime(String createTime) {
-		this.createTime = createTime;
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
 	}
 
 	public String getOrganizationName() {

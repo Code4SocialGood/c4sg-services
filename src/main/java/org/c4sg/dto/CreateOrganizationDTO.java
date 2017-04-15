@@ -2,6 +2,10 @@ package org.c4sg.dto;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel
 public class CreateOrganizationDTO {
 	
 	@NotBlank
@@ -22,7 +26,7 @@ public class CreateOrganizationDTO {
 	private String country;
 	
 	private String zip;
-	
+
 	private String contactName;
 	
 	private String contactPhone;
@@ -31,6 +35,7 @@ public class CreateOrganizationDTO {
 	
 	private String category;
 
+	@ApiModelProperty(required = true)
 	public String getName() {
 		return name;
 	}
@@ -127,6 +132,7 @@ public class CreateOrganizationDTO {
 		this.contactEmail = contactEmail;
 	}
 
+	@ApiModelProperty(value = "N-nonprofit, O-opensource, default to N")
 	public String getCategory() {
 		return category;
 	}
