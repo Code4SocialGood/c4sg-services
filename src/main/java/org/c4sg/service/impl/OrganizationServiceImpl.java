@@ -46,7 +46,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     public List<OrganizationDTO> findOrganizations() {
-        List<Organization> organizations = organizationDAO.findAll();
+        List<Organization> organizations = organizationDAO.findAllByOrderByIdDesc();
         List<OrganizationDTO> organizationDTOS = organizations.stream().map(o -> organizationMapper
                 .getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
         return organizationDTOS;

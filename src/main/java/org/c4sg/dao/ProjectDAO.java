@@ -35,7 +35,8 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
 
 	Project findById(int id);
 	Project findByName(String name);
-    List<Project> findAll();
+
+    List<Project> findAllByOrderByIdDesc();
 	Project findByNameAndOrganizationId(String name, Integer orgId);
 	
     @Query(FIND_BY_NAME_OR_DESCRIPTION)
