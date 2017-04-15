@@ -1,5 +1,7 @@
 package org.c4sg.dto;
 
+import java.util.Date;
+
 public class ProjectDTO {
 
 	private int id;
@@ -12,7 +14,7 @@ public class ProjectDTO {
 	
 	private String status;
 	
-	private String createTime;
+	private Date createdTime;
 	
 	private String organizationName;
 	
@@ -56,12 +58,12 @@ public class ProjectDTO {
 		this.status = status;
 	}
 
-	public String getCreateTime() {
-		return createTime;
+	public String getCreatedTime() {
+		return createdTime.toString();
 	}
 
-	public void setCreateTime(String createTime) {
-		this.createTime = createTime;
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
 	}
 
 	public String getOrganizationName() {
