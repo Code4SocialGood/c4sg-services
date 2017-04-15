@@ -4,14 +4,10 @@ import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
 import static org.c4sg.constant.Format.IMAGE;
-import static org.c4sg.constant.UserProjectStatus.APPLIED;
 
 import java.io.File;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.c4sg.dao.OrganizationDAO;
@@ -21,6 +17,7 @@ import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.entity.UserProject;
@@ -96,8 +93,12 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             localProject = projectDAO.save(
             		projectMapper.getProjectEntityFromCreateProjectDto(createProjectDTO));
-            Date currentTime = new Date(Calendar.getInstance().getTime().getTime());
-            Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
+            // Updates projectUpdateTime for the organization
+            Organization localOrgan = localProject.getOrganization(); 
+            localOrgan.setProjectUpdatedTime(new Date(Calendar.getInstance().getTime().getTime())); 
+            organizationDAO.save(localOrgan);
+            //Date currentTime = new Date(Calendar.getInstance().getTime().getTime());
+            //Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
         }
 
         return localProject;
