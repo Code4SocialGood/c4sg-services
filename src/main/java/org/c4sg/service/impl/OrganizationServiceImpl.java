@@ -63,6 +63,14 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
                             .collect(Collectors.toList());
     }
+    public List<OrganizationDTO> findByCriteria(String keyWord, String country, boolean open) {
+        List<Organization> organizations = organizationDAO.findByCriteria(keyWord, country, open);
+
+        return organizations.stream()
+                            .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
+                            .collect(Collectors.toList());
+    }
+    
 /*
     public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
         Organization organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
