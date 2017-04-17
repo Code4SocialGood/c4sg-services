@@ -13,8 +13,8 @@ public interface OrganizationService {
     void deleteOrganization(int id);
     String getLogoUploadPath(Integer organizationId);
     OrganizationDTO findById(int id);
-    OrganizationDTO createOrganization(OrganizationDTO organizationDTO);
-    Organization createOrganization(CreateOrganizationDTO createOrganizationDTO);
+    //OrganizationDTO createOrganization(OrganizationDTO organizationDTO);
+    OrganizationDTO createOrganization(CreateOrganizationDTO createOrganizationDTO);
     OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO);
     List<OrganizationDTO> findOrganizations();
     List<OrganizationDTO> findByKeyword(String name);

@@ -1,11 +1,13 @@
 package org.c4sg.entity;
 
-import org.c4sg.constant.UserStatus;
-import org.c4sg.converter.StatusConverter;
-
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
 
 @Entity
 public class Organization {
@@ -50,11 +52,11 @@ public class Organization {
 	
 	@Column(name = "contact_email")
 	private String contactEmail;
-		
-	@Column(name = "category", columnDefinition="char(1)", nullable = false)
-	private String category="N";
 
-    @Column(columnDefinition="char(1)", nullable = false)
+    @Column(name = "category", columnDefinition="char(1)", nullable = false)
+    private String category="N";
+    
+    @Column(name = "status", columnDefinition="char(1)", nullable = false)
     private String status="A";
     
 	@Column(name = "created_time", nullable = false)
@@ -65,6 +67,12 @@ public class Organization {
 	
 	@Column(name = "project_updated_time")
 	private Date projectUpdatedTime;	
+	
+	@PrePersist
+	void preInsert() {
+	    if (category == null)
+	    	category = "N";
+	}
 	
 	public Integer getId() {
 		return id;
@@ -170,13 +178,13 @@ public class Organization {
 		this.contactEmail = contactEmail;
 	}
 
-	public String getCaterogy() {
-		return category;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
     
     public String getStatus() {
         return status;

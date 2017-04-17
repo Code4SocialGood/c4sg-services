@@ -46,7 +46,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     public List<OrganizationDTO> findOrganizations() {
-        List<Organization> organizations = organizationDAO.findAll();
+        List<Organization> organizations = organizationDAO.findAllByOrderByIdDesc();
         List<OrganizationDTO> organizationDTOS = organizations.stream().map(o -> organizationMapper
                 .getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
         return organizationDTOS;
@@ -63,29 +63,16 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
                             .collect(Collectors.toList());
     }
-
+/*
     public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
-        Organization organization = organizationDAO.findByName(organizationDTO.getName());
-
-        if (organization != null) {
-            //TODO: return error message
-        } else {
-            organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
-        }
-
+        Organization organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
         return organizationMapper.getOrganizationDtoFromEntity(organization);
-    }
+    }*/
     
-    public Organization createOrganization(CreateOrganizationDTO createOrganizationDTO) {
-        Organization organization = organizationDAO.findByName(createOrganizationDTO.getName());
+    public OrganizationDTO createOrganization(CreateOrganizationDTO createOrganizationDTO) {
 
-        if (organization != null) {
-            //TODO: return error message
-        } else {
-            organization = organizationDAO.save(organizationMapper.getOrganEntityFromCreateOrganDto(createOrganizationDTO));
-        }
-
-        return organization;
+        Organization organization = organizationDAO.save(organizationMapper.getOrganEntityFromCreateOrganDto(createOrganizationDTO));
+        return organizationMapper.getOrganizationDtoFromEntity(organization);
     }
 
     public OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO) {
