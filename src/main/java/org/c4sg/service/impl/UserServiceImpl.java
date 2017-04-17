@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public List<UserDTO> findDevelopers() {        
-    	return userMapper.getDtosFromEntities(userDAO.findByDeveloperFlag(Constants.YES));  
+    	return userMapper.getDtosFromEntities(userDAO.findByDeveloperFlagAndPublicProfileFlagOrderByDeveloperCommitDesc(Constants.YES, Constants.YES));  
     }
 
     @Override
