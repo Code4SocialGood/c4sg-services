@@ -97,6 +97,9 @@ public class User implements Serializable {
 	@Column(name="github_url")
 	private String gitHubUrl;
 
+	@Column(name="developer_commit", columnDefinition="int", nullable=true)
+	private Integer developerCommit;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -281,5 +284,11 @@ public class User implements Serializable {
 		this.gitHubUrl = gitHubUrl;
 	}
 	
+	public Integer getDeveloperCommit(){
+		return developerCommit;
+	}
+	public void setDeveloperCommit(Integer developerCommit){
+		this.developerCommit = developerCommit;
+	}
    
 }
