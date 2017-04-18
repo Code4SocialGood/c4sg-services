@@ -18,5 +18,6 @@ public interface OrganizationService {
     OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO);
     List<OrganizationDTO> findOrganizations();
     List<OrganizationDTO> findByKeyword(String name);
+    List<OrganizationDTO> findByCriteria(String keyWord, String country, boolean open);
     List<OrganizationDTO> findByUser(Integer userId);
 }
