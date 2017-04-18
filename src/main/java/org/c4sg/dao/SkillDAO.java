@@ -17,12 +17,10 @@ public interface SkillDAO extends CrudRepository<Skill, Integer> {
 								+"order by userCount desc, skillName";
 	
 	String FIND_SKILL_FOR_USER 	="select s.skillName as skillName "
-								+"from UserSkill us inner join us.skill s where us.user.id= :id "
-								+"order by skillName";
+								+"from UserSkill us inner join us.skill s where us.user.id= :id order by us.displayOrder";
 	
 	String FIND_SKILL_FOR_PROJECT ="select s.skillName as skillName "
-								+"from ProjectSkill ps inner join ps.skill s where ps.project.id= :id "
-								+"order by skillName";
+								+"from ProjectSkill ps inner join ps.skill s where ps.project.id= :id order by us.displayOrder";
 
     @Query(FIND_SKILL_USERCOUNT)
     List<Map<String, Object>> findSkillsAndUserCount();
