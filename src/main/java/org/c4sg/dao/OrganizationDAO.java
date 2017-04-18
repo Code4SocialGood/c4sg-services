@@ -14,11 +14,11 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
                                                 "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :description, '%')) order by project_updated_time desc";
 
     String FIND_BY_CRITERIA = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o " +
-            "WHERE ((LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
                 "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
-                + " AND LOWER(o.country) LIKE LOWER(CONCAT('%', :country, '%')) "
-                + "AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false))"
-                + ") OR (:keyword is null AND :country is null AND :open<>true) ORDER BY o.name ASC";
+                + " AND (LOWER(o.country) LIKE LOWER(CONCAT('%', :country, '%')) OR :country is null) "
+                + "AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false) OR :open=false )"
+                + ")  ORDER BY o.name ASC";
 
     Organization findByName(String name);
 
