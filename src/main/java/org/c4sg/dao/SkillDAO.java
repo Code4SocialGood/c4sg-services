@@ -20,7 +20,7 @@ public interface SkillDAO extends CrudRepository<Skill, Integer> {
 								+"from UserSkill us inner join us.skill s where us.user.id= :id order by us.displayOrder";
 	
 	String FIND_SKILL_FOR_PROJECT ="select s.skillName as skillName "
-								+"from ProjectSkill ps inner join ps.skill s where ps.project.id= :id order by us.displayOrder";
+								+"from ProjectSkill ps inner join ps.skill s where ps.project.id= :id order by ps.displayOrder";
 
     @Query(FIND_SKILL_USERCOUNT)
     List<Map<String, Object>> findSkillsAndUserCount();
