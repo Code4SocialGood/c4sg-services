@@ -92,7 +92,6 @@ public class ProjectControllerTest extends C4SGTest {
         
         	// TODO JW Should we return images for projects 
     }
-/*
 
     @Test
     public void testGetProjectsByUserAndStatus() throws Exception {
@@ -195,6 +194,5 @@ public class ProjectControllerTest extends C4SGTest {
     public void testAddProjectForUser() throws Exception {
     	fail("Not yet implemented");  	
 
-    }*/
-
+    }
 }
