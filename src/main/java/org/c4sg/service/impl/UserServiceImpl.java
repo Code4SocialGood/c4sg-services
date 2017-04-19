@@ -90,13 +90,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> search(String userName, String firstName, String lastName) {
-        Map<String, Object> conditions = new HashMap<>();
-        conditions.put("userName", userName);
-        conditions.put("firstName", firstName);
-        conditions.put("lastName", lastName);
-
-        List<User> users = userDAO.findAll(new UserSpecification(conditions));
+    public List<UserDTO> search(String keyWord, List<Integer> skills) {
+    	long skillCount=0;
+    	if (skills != null) skillCount=skills.size(); 
+        List<User> users = userDAO.findByKeyword(keyWord, skills, skillCount);
         return mapUsersToUserDtos(users);
     }
 
