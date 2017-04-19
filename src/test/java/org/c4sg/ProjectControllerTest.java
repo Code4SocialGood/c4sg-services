@@ -92,7 +92,7 @@ public class ProjectControllerTest extends C4SGTest {
         
         	// TODO JW Should we return images for projects 
     }
-    
+
     @Test
     public void testGetProjectsByUserAndStatus() throws Exception {
     	
@@ -133,8 +133,7 @@ public class ProjectControllerTest extends C4SGTest {
     		.andExpect(jsonPath("$", hasSize(4)))
             .andExpect(jsonPath("$[0].id", is(1)))
         	.andExpect(jsonPath("$[1].id", is(2)))
-        	.andExpect(jsonPath("$[2].id", is(3)))
-        	.andExpect(jsonPath("$[3].id", is(4))); 
+        	.andExpect(jsonPath("$[2].id", is(3)))        	.andExpect(jsonPath("$[3].id", is(4))); 
  
     	// 5. No projects found
         this.mockMvc.perform(
