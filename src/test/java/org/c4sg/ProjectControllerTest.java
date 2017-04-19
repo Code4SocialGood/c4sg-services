@@ -194,7 +194,6 @@ public class ProjectControllerTest extends C4SGTest {
     @Test
     public void testAddProjectForUser() throws Exception {
     	fail("Not yet implemented");  	
-
     }*/
 
 }

@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
+import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.constant.UserProjectStatus;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
@@ -45,6 +46,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private AsyncEmailService asyncEmailService;
+    
+    @Autowired
+    private OrganizationDAO organizationDAO;
 
     public void save(Project project) {
         projectDAO.save(project);
