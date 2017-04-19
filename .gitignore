@@ -39,3 +39,5 @@ bin/
 .factorypath
 .settings
 .springBeans
+src/test/java/org/c4sg/ProjectControllerTest.java
+src/test/java/org/c4sg/ProjectControllerTest.java

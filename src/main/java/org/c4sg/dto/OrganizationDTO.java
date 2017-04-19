@@ -15,6 +15,8 @@ public class OrganizationDTO {
 	private String name;
 
 	private String websiteURL;
+	
+    private String logoUrl;
 
 	@Length(max = 500)
 	private String description;
@@ -68,6 +70,13 @@ public class OrganizationDTO {
 
 	public void setWebsiteURL(String websiteURL) {
 		this.websiteURL = websiteURL;
+	}
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
 	}
 	
 	public String getDescription() {

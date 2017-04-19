@@ -139,10 +139,9 @@ public class UserController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find a user by keyWord", notes = "Returns a collection of users")
-    public List<UserDTO> search(@RequestParam(required = false) String userName,
-                                @RequestParam(required = false) String firstName,
-                                @RequestParam(required = false) String lastName) {
-        return userService.search(userName, firstName, lastName);
+    public List<UserDTO> search(@RequestParam(required = false) String keyWord,
+                                @RequestParam(required = false) List<Integer> skills){
+        return userService.search(keyWord,skills);
     }
     
     @RequestMapping(value = "/{id}/avatar", method = RequestMethod.POST)

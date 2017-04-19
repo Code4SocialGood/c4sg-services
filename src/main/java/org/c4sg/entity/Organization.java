@@ -23,6 +23,9 @@ public class Organization {
 	@Column(name = "website_url")
 	private String websiteUrl;
 
+    @Column(name = "logo_url")
+    private String logoUrl;
+    
 	@Column(name = "description")
 	private String description;
 
@@ -96,6 +99,14 @@ public class Organization {
 
 	public void setWebsiteUrl(String websiteUrl) {
 		this.websiteUrl = websiteUrl;
+	}
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
 	}
 
 	public String getDescription() {

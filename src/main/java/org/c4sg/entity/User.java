@@ -1,6 +1,7 @@
 package org.c4sg.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -56,14 +57,29 @@ public class User implements Serializable {
     @Column(name = "zip")
     private String zip;
     
+    @Column(name = "latitude")
+    private BigDecimal latitude;
+    
+    @Column(name = "longitude")
+    private BigDecimal longitude;
+    
     @Column(name = "introduction")
     private String introduction;
+    
+    @Column(name = "avatar_url")
+    private String avatarUrl;
     
     @Column(name = "linkedin_url")
     private String linkedinUrl;
     
     @Column(name = "personal_url")
     private String personalUrl;   
+    
+	@Column(name="github_url")
+	private String gitHubUrl;
+	
+    @Column(name = "resume_url")
+    private String resumeUrl;
 
     @Convert(converter = UserRoleConverter.class)
     @Column(name = "role", columnDefinition="char(1)", nullable = false)
@@ -93,9 +109,6 @@ public class User implements Serializable {
 	
 	@Column(name = "title")
 	private String title;	
-	
-	@Column(name="github_url")
-	private String gitHubUrl;
 
 	@Column(name="developer_commit", columnDefinition="int", nullable=true)
 	private Integer developerCommit;
@@ -172,12 +185,20 @@ public class User implements Serializable {
 		this.country = country;
 	}
 
-	public String getZip() {
-		return zip;
+	public BigDecimal getLatitude() {
+		return latitude;
 	}
 
-	public void setZip(String zip) {
-		this.zip = zip;
+	public void setLatitude(BigDecimal latitude) {
+		this.latitude = latitude;
+	}
+	
+	public BigDecimal getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(BigDecimal longitude) {
+		this.longitude = longitude;
 	}
 
 	public String getIntroduction() {
@@ -188,6 +209,14 @@ public class User implements Serializable {
 		this.introduction = introduction;
 	}
 
+	public String getAvatarUrl() {
+		return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
+	}
+	
 	public String getLinkedinUrl() {
 		return linkedinUrl;
 	}
@@ -204,6 +233,14 @@ public class User implements Serializable {
 		this.personalUrl = personalUrl;
 	}
 
+	public String getResumeUrl() {
+		return resumeUrl;
+	}
+
+	public void setResumeUrl(String resumeUrl) {
+		this.resumeUrl = resumeUrl;
+	}
+	
 	public UserRole getRole() {
 		return role;
 	}

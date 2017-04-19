@@ -10,6 +10,8 @@ public class ProjectDTO {
 	
 	private String description;
 	
+    private String imageUrl;
+	
 	private String status;
 	
 	private String createdTime;
@@ -46,6 +48,13 @@ public class ProjectDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public String getStatus() {
