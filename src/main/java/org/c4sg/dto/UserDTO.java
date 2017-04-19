@@ -1,5 +1,7 @@
 package org.c4sg.dto;
 
+import java.math.BigDecimal;
+
 public class UserDTO {
     private Integer id;
     private String userName;
@@ -11,11 +13,15 @@ public class UserDTO {
     private String state;
     private String country;
     private String zip;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
     private String title;
     private String introduction;
+    private String avatarUrl;
     private String linkedinUrl;
     private String personalUrl;
     private String gitHubUrl;
+    private String resumeUrl;
     private String role;
     private String publicProfileFlag;
     private String chatFlag;
@@ -86,11 +92,29 @@ public class UserDTO {
 	public void setZip(String zip) {
 		this.zip = zip;
 	}
+	public BigDecimal getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(BigDecimal latitude) {
+		this.latitude = latitude;
+	}
+	public BigDecimal getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(BigDecimal longitude) {
+		this.longitude = longitude;
+	}
 	public String getIntroduction() {
 		return introduction;
 	}
 	public void setIntroduction(String introduction) {
 		this.introduction = introduction;
+	}
+	public String getAvatarUrl() {
+		return avatarUrl;
+	}
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
 	}
 	public String getLinkedinUrl() {
 		return linkedinUrl;
@@ -110,6 +134,12 @@ public class UserDTO {
 	}
 	public void setGitHubUrl(String gitHubUrl){
 		this.gitHubUrl = gitHubUrl;
+	}
+	public String getResumeUrl() {
+		return resumeUrl;
+	}
+	public void setResumeUrl(String resumeUrl) {
+		this.resumeUrl = resumeUrl;
 	}
 	public String getRole() {
 		return role;
