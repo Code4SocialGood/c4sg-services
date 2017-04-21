@@ -7,13 +7,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
+import org.c4sg.util.GeoCodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +98,19 @@ public class UserController {
     @ApiOperation(value = "Add a new user")
     public UserDTO createUser(@ApiParam(value = "User object to return", required = true)
                               @RequestBody UserDTO userDTO) {
-        return userService.saveUser(userDTO);
+    	//calculate lat and long
+    	try {
+        	GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO);
+        	Map<String,BigDecimal> geoCode = geoCodeUtil.getGeoCode();
+			userDTO.setLatitude(geoCode.get("lat"));
+		    userDTO.setLongitude(geoCode.get("lon"));
+			
+		} catch (Exception e) {
+			
+			throw new NotFoundException("Error getting geocode");
+		}       
+       
+    	return userService.saveUser(userDTO);
     }
 
     @RequestMapping(method = RequestMethod.PUT)

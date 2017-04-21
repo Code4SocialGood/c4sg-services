@@ -184,6 +184,14 @@ public class User implements Serializable {
 	public void setCountry(String country) {
 		this.country = country;
 	}
+	
+	public String getZip()
+	{
+		return this.zip;
+	}
+	public void setZip(String zip){
+		this.zip = zip;
+	}
 
 	public BigDecimal getLatitude() {
 		return latitude;
