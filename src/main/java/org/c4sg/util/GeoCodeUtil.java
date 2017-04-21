@@ -103,15 +103,15 @@ public class GeoCodeUtil {
 		StringBuffer address = new StringBuffer();
 		if(this.city != null && !this.city.isEmpty()){
 			address.append(this.city);
-			address.append(",");
+			address.append(" ");
 		}
 		if(this.state != null && !this.state.isEmpty()){
 			address.append(this.state==null?"":this.state);
-			address.append(",");
+			address.append(" ");
 		}
 		if(this.zip != null && !this.zip.isEmpty()){
 			address.append(this.zip==null?"":this.zip);
-			address.append(",");
+			address.append(" ");
 		}
 		
 		if(this.country != null && !this.country.isEmpty()){
