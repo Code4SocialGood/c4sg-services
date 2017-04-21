@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiParam;
 
 import org.c4sg.dto.SkillDTO;
 import org.c4sg.dto.SkillUserCountDTO;
+import org.c4sg.exception.BadRequestException;
+import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.SkillException;
 import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +50,39 @@ public class SkillController {
     @RequestMapping(value="/project",produces = {"application/json"}, method = RequestMethod.GET)
     @ApiOperation(value = "Get skills for a project by id", notes = "Returns a collection of skills for a project")
     public List<String> getSkillsForProject(@ApiParam(value = "ID of project to return", required = true)
-    									 @RequestParam Integer id) {
+    									 	@RequestParam Integer id) {
         return skillService.findSkillsForProject(id);
     }
+    
+    @CrossOrigin
+    @RequestMapping(value="/user/save", method = RequestMethod.POST)
+    @ApiOperation(value = "Add skills for a user", notes = "Adds skills for the user with display order")
+    public void createSkillsForUser(@ApiParam(value = "ID of user to add skills",name="id", required = true)
+			 						@RequestParam Integer id,
+    								@ApiParam(value = "Skills in display order",name="skillsList", required = true)
+									@RequestParam List<String> skillsList)	{
+		try {
+			skillService.saveSkillsForUser(id,skillsList);
+		} catch (NullPointerException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (SkillException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+	}
+    
+    @CrossOrigin
+    @RequestMapping(value="/project/save", method = RequestMethod.POST)
+    @ApiOperation(value = "Add skills for a project", notes = "Adds skills for the project with display order")
+    public void createSkillsForProject(@ApiParam(value = "ID of project to add skills", required = true)
+			 								@RequestParam Integer id,
+    										@ApiParam(value = "Skills in display order", required = true)
+											@RequestParam List<String> skillsList)	{
+		try {
+			skillService.saveSkillsForProject(id,skillsList);
+		} catch (NullPointerException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (SkillException e) {
+        	throw new BadRequestException(e.getMessage());
+		}
+	}
 }
