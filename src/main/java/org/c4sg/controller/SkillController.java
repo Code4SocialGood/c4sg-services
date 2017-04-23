@@ -55,7 +55,7 @@ public class SkillController {
     }
     
     @CrossOrigin
-    @RequestMapping(value="/user/addSkills", method = RequestMethod.POST)
+    @RequestMapping(value="/user/skills", method = RequestMethod.POST)
     @ApiOperation(value = "Add skills for a user", notes = "Adds skills for the user with display order")
     public void createSkillsForUser(@ApiParam(value = "ID of user to add skills",name="id", required = true)
 			 	    @RequestParam Integer id,
@@ -71,7 +71,7 @@ public class SkillController {
     }
     
     @CrossOrigin
-    @RequestMapping(value="/project/addSkills", method = RequestMethod.POST)
+    @RequestMapping(value="/project/skills", method = RequestMethod.POST)
     @ApiOperation(value = "Add skills for a project", notes = "Adds skills for the project with display order")
     public void createSkillsForProject(@ApiParam(value = "ID of project to add skills", required = true)
 			 	       @RequestParam Integer id,
