@@ -21,13 +21,13 @@ public class C4SGController {
     @ExceptionHandler(NotFoundException.class)
     public MessageDTO exception(NotFoundException e) {
         return new MessageDTO(e.getMessage());
-    }
+    }    
     
     @CrossOrigin
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
     public MessageDTO exception(BadRequestException e) {
-        return new MessageDTO("Error from Global BadRequest");
+        return new MessageDTO("Error from Global BadRequest. "+e.getMessage());
     }
     
     @CrossOrigin
@@ -36,7 +36,7 @@ public class C4SGController {
     public MessageDTO exception(UserProjectException e) {
         return new MessageDTO(e.getMessage());
     }
-    
+        
     @CrossOrigin
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(SlackArgumentException.class)

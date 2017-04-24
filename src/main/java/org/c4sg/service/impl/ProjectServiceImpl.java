@@ -153,7 +153,7 @@ public class ProjectServiceImpl implements ProjectService {
             localProject = projectDAO.save(
             		projectMapper.getProjectEntityFromCreateProjectDto(createProjectDTO));
 
-           // Updates projectUpdateTime for the organization
+            // Updates projectUpdateTime for the organization
             Organization localOrgan = localProject.getOrganization(); 
             localOrgan.setProjectUpdatedTime(new Date(Calendar.getInstance().getTime().getTime())); 
             organizationDAO.save(localOrgan);

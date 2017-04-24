@@ -45,7 +45,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api/users")
