@@ -10,9 +10,11 @@ public class ProjectDTO {
 	
 	private String description;
 	
+    private String imageUrl;
+	
 	private String status;
 	
-	private String createTime;
+	private String createdTime;
 	
 	private String organizationName;
 	
@@ -47,6 +49,13 @@ public class ProjectDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 
 	public String getStatus() {
 		return status;
@@ -56,12 +65,12 @@ public class ProjectDTO {
 		this.status = status;
 	}
 
-	public String getCreateTime() {
-		return createTime;
+	public String getCreatedTime() {
+		return createdTime;
 	}
 
-	public void setCreateTime(String createTime) {
-		this.createTime = createTime;
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
 	}
 
 	public String getOrganizationName() {

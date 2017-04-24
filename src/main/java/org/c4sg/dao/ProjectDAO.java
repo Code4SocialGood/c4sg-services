@@ -9,28 +9,45 @@ import java.util.List;
 
 public interface ProjectDAO extends CrudRepository<Project, Long> {
 
-    String FIND_BY_USER_STATUS_QUERY = "SELECT p FROM UserProject up " +
-                                        	"JOIN up.project p " +
-                                            "WHERE up.user.id = :userId AND up.status = :status";
+    String FIND_BY_USER_ID = 
+    		"SELECT p FROM UserProject up " +
+        	"JOIN up.project p " +
+            "WHERE up.user.id = :userId " +
+            "ORDER BY up.createdTime DESC";
 
-    String FIND_BY_ORGANIZATION_ID = "SELECT p FROM Project p WHERE p.organization.id = :orgId";
+    String FIND_BY_USER_ID_AND_STATUS = 
+    		"SELECT p FROM UserProject up " +
+            "JOIN up.project p " +
+            "WHERE up.user.id = :userId AND up.status = :userProjectStatus " +
+            "ORDER BY up.createdTime DESC";
 
-    String FIND_BY_NAME_OR_DESCRIPTION = "SELECT p FROM Project p " +
-                                            "WHERE p.name LIKE CONCAT('%', :name, '%') " +
-                                                "OR p.description LIKE CONCAT('%', :description, '%') ORDER BY p.createdTime DESC";
+	// TODO JW order by
+    String FIND_BY_ORGANIZATION_ID = 
+    		"SELECT p FROM Project p " +
+    		"WHERE p.organization.id = :orgId " +
+            "ORDER BY p.createdTime DESC";
+
+    String FIND_BY_NAME_OR_DESCRIPTION = 
+    		"SELECT p FROM Project p " +
+            "WHERE p.name LIKE CONCAT('%', :name, '%') " +
+            "OR p.description LIKE CONCAT('%', :description, '%') " +
+            "ORDER BY p.createdTime DESC";
 
 	Project findById(int id);
 	Project findByName(String name);
-    List<Project> findAll();
 
+    List<Project> findAllByOrderByIdDesc();
+	Project findByNameAndOrganizationId(String name, Integer orgId);
+	
     @Query(FIND_BY_NAME_OR_DESCRIPTION)
     List<Project> findByNameOrDescription(@Param("name") String name, @Param("description") String description);
 
 	@Query(FIND_BY_ORGANIZATION_ID)
 	List<Project> getProjectsByOrganization(@Param("orgId") Integer orgId);
 
-	@Query(FIND_BY_USER_STATUS_QUERY)
-	List<Project> findByUserIdAndUserProjStatus(@Param("userId") Integer userId, @Param("status") String status);
-
-	Project findByNameAndOrganizationId(String name, Integer orgId);
+	@Query(FIND_BY_USER_ID)
+	List<Project> findByUserId(@Param("userId") Integer userId);
+	
+	@Query(FIND_BY_USER_ID_AND_STATUS)
+	List<Project> findByUserIdAndUserProjectStatus(@Param("userId") Integer userId, @Param("userProjectStatus") String userProjectStatus);
 }

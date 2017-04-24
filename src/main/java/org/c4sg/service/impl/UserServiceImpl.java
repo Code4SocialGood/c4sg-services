@@ -11,10 +11,13 @@ import static org.c4sg.constant.Format.IMAGE;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.specification.UserSpecification;
 import org.c4sg.dto.UserDTO;
+import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,18 +38,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> findAll() {
-        List<UserDTO> usersDto = new ArrayList<>();
-        userDAO.findAll().stream().forEach(user -> usersDto.add(userMapper.getUserDtoFromEntity(user)));
-        return usersDto;
+        //List<UserDTO> usersDto = new ArrayList<>();
+        //userDAO.findAll().stream().forEach(user -> usersDto.add(userMapper.getUserDtoFromEntity(user)));
+        //return usersDto;
+        List<User> users = userDAO.findAllByOrderByIdDesc();
+        return userMapper.getDtosFromEntities(users);
 
     }
 
     @Override
-    public List<UserDTO> findActiveUsers() {
-        List<User> users = userDAO.findByStatusOrderByUserNameAsc(UserStatus.ACTIVE);
-        List<UserDTO> userDTOS = users.stream()
-                .map(p -> userMapper.getUserDtoFromEntity(p))
-                .collect(Collectors.toList());
+    public Page<UserDTO> findActiveUsers(Pageable pageable) {
+        Page<User> users = userDAO.findByStatus(pageable, UserStatus.ACTIVE);
+        Page<UserDTO> userDTOS = users
+                .map(p -> userMapper.getUserDtoFromEntity(p));
         return userDTOS;
     }
 
@@ -62,7 +66,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public List<UserDTO> findDevelopers() {        
-    	return userMapper.getDtosFromEntities(userDAO.findByDeveloperFlag(Constants.YES));  
+    	return userMapper.getDtosFromEntities(userDAO.findByDeveloperFlagAndPublicProfileFlagOrderByDeveloperCommitDesc(Constants.YES, Constants.YES));  
     }
 
     @Override
@@ -86,13 +90,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> search(String userName, String firstName, String lastName) {
-        Map<String, Object> conditions = new HashMap<>();
-        conditions.put("userName", userName);
-        conditions.put("firstName", firstName);
-        conditions.put("lastName", lastName);
-
-        List<User> users = userDAO.findAll(new UserSpecification(conditions));
+    public List<UserDTO> search(String keyWord, List<Integer> skills) {
+    	long skillCount=0;
+    	if (skills != null) skillCount=skills.size(); 
+        List<User> users = userDAO.findByKeyword(keyWord, skills, skillCount);
         return mapUsersToUserDtos(users);
     }
 

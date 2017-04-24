@@ -4,30 +4,29 @@ import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
 import static org.c4sg.constant.Format.IMAGE;
-import static org.c4sg.constant.UserProjectStatus.APPLIED;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 
+import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.constant.UserProjectStatus;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.entity.UserProject;
+import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,13 +46,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private AsyncEmailService asyncEmailService;
+    
+    @Autowired
+    private OrganizationDAO organizationDAO;
 
     public void save(Project project) {
         projectDAO.save(project);
     }
 
     public List<ProjectDTO> findProjects() {
-        List<Project> projects = projectDAO.findAll();
+        List<Project> projects = projectDAO.findAllByOrderByIdDesc();
         return projectMapper.getDtosFromEntities(projects);
     }
 
@@ -69,6 +71,64 @@ public class ProjectServiceImpl implements ProjectService {
         List<Project> projects = projectDAO.findByNameOrDescription(name, keyWord);
 
         return projectMapper.getDtosFromEntities(projects);
+    }
+    
+    /* @Override
+    public List<ProjectDTO> findByUser(Integer userId) {
+        User user = userDAO.findById(userId);
+        requireNonNull(user, "Invalid User Id");
+        List<UserProject> userProjects = userProjectDAO.findByUserId(userId);
+        Comparator<UserProject> projectComp = new Comparator<UserProject>() {
+            @Override
+            public int compare(UserProject o1, UserProject o2) {
+                int result = 0;
+                // result = o1.getStatus().compareTo(o2.getStatus());
+                return result * -1;
+            }
+        };
+        Collections.sort(userProjects, projectComp);
+        List<ProjectDTO> projectDtos = new ArrayList<ProjectDTO>();
+        for (UserProject userProject : userProjects) {
+            projectDtos.add(projectMapper.getProjectDtoFromEntity(userProject));
+        }
+        return projectDtos;
+    }*/
+    
+    @Override
+    public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
+    	
+    	List<Project> projects = null;
+    	
+    	// If status is not set, search by user ID only
+    	if ((userProjectStatus == null) || userProjectStatus.isEmpty()) {
+    		projects = projectDAO.findByUserId(userId);
+    	} else {
+    		String statusCode="";
+    		for (UserProjectStatus ups: UserProjectStatus.values())	{
+    			if (ups.name().equalsIgnoreCase(userProjectStatus) ||
+    				ups.getStatus().equalsIgnoreCase(userProjectStatus))	{
+    				statusCode = ups.getStatus();
+    				break;
+    			} 
+    		}
+    		
+    		// If status is not found, return error.
+    		if (statusCode.isEmpty()) 	
+    			throw new ProjectServiceException(ProjectServiceException.MSG_INVALID_INPUT);
+    		else 
+    			projects = projectDAO.findByUserIdAndUserProjectStatus(userId, statusCode);
+    	}
+    	
+    	return projectMapper.getDtosFromEntities(projects);
+    }
+
+    @Override
+    public List<Project> findByOrganization(Integer orgId) {
+        List<Project> projects = projectDAO.getProjectsByOrganization(orgId);
+        if (projects == null || projects.size() == 0) {
+            System.out.println("No Project available for the provided organization");
+        }
+        return projects;
     }
     
     public Project createProject(Project project) {
@@ -92,19 +152,16 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             localProject = projectDAO.save(
             		projectMapper.getProjectEntityFromCreateProjectDto(createProjectDTO));
+
+            // Updates projectUpdateTime for the organization
+            Organization localOrgan = localProject.getOrganization(); 
+            localOrgan.setProjectUpdatedTime(new Date(Calendar.getInstance().getTime().getTime())); 
+            organizationDAO.save(localOrgan);
+            //Date currentTime = new Date(Calendar.getInstance().getTime().getTime());
+            //Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
         }
 
         return localProject;
-    }
-
-    public void deleteProject(int id) {
-        Project localProject = projectDAO.findById(id);
-
-        if (localProject != null) {
-            projectDAO.delete(localProject);
-        } else {
-            System.out.println("Project does not exist.");
-        }
     }
 
     public Project updateProject(Project project) {
@@ -135,6 +192,16 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(project);
     }
 
+    public void deleteProject(int id) {
+        Project localProject = projectDAO.findById(id);
+
+        if (localProject != null) {
+            projectDAO.delete(localProject);
+        } else {
+            System.out.println("Project does not exist.");
+        }
+    }
+    
     @Override
     public void apply(User user, Project project) {
         String from = "code4socialgood@code4socialgood.com";
@@ -150,58 +217,6 @@ public class ProjectServiceImpl implements ProjectService {
                 "Organization is notified to review your application and contact you.";
         asyncEmailService.send(from, userEmail, userSubject, userText);
     }
-
-    private void isUserAppliedPresent(Integer userId, Integer projectId) throws UserProjectException {
-        UserProject userProject = userProjectDAO.findByUser_IdAndProject_Id(userId, projectId);
-        if (nonNull(userProject)) {
-            throw new UserProjectException("The user already exists in that project");
-        }
-    }
-
-    @Override
-    public List<ProjectDTO> getProjectsByUserIdAndUserProjStatus(Integer userId, String userProjStatus) {
-    	String statusCode="";
-    	for(UserProjectStatus ups: UserProjectStatus.values())	{
-    		if(ups.name().equalsIgnoreCase(userProjStatus) ||
-    		   ups.getStatus().equalsIgnoreCase(userProjStatus)	)	{
-    			statusCode = ups.getStatus();
-    			break;
-    		} 
-    	}
-    	if(statusCode.isEmpty())	statusCode = UserProjectStatus.APPLIED.getStatus();
-        List<Project> projects = projectDAO.findByUserIdAndUserProjStatus(userId, statusCode);
-        return projectMapper.getDtosFromEntities(projects);
-    }
-
-    @Override
-    public List<Project> getProjectsByOrganization(Integer orgId) {
-        List<Project> projects = projectDAO.getProjectsByOrganization(orgId);
-        if (projects == null || projects.size() == 0) {
-            System.out.println("No Project available for the provided organization");
-        }
-        return projects;
-    }
-
-   /* @Override
-    public List<ProjectDTO> findByUser(Integer userId) {
-        User user = userDAO.findById(userId);
-        requireNonNull(user, "Invalid User Id");
-        List<UserProject> userProjects = userProjectDAO.findByUserId(userId);
-        Comparator<UserProject> projectComp = new Comparator<UserProject>() {
-            @Override
-            public int compare(UserProject o1, UserProject o2) {
-                int result = 0;
-                // result = o1.getStatus().compareTo(o2.getStatus());
-                return result * -1;
-            }
-        };
-        Collections.sort(userProjects, projectComp);
-        List<ProjectDTO> projectDtos = new ArrayList<ProjectDTO>();
-        for (UserProject userProject : userProjects) {
-            projectDtos.add(projectMapper.getProjectDtoFromEntity(userProject));
-        }
-        return projectDtos;
-    }*/
 
     public String getImageUploadPath(Integer projectId) {
         return PROJECT_UPLOAD.getValue() + File.separator + projectId + IMAGE.getValue();
@@ -242,4 +257,10 @@ public class ProjectServiceImpl implements ProjectService {
     	}    	
     }
     
+    private void isUserAppliedPresent(Integer userId, Integer projectId) throws UserProjectException {
+        UserProject userProject = userProjectDAO.findByUser_IdAndProject_Id(userId, projectId);
+        if (nonNull(userProject)) {
+            throw new UserProjectException("The user already exists in that project");
+        }
+    }
 }
