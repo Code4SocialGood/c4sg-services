@@ -1,0 +1,1 @@
+ALTER TABLE organization ADD contact_title  VARCHAR(100);
