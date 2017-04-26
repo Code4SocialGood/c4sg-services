@@ -72,14 +72,14 @@ public class ProjectController {
 
     @CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    @ApiOperation(value = "Find project by name or keyWord", notes = "Returns a collection of projects")
-    public List<ProjectDTO> getProjects(@ApiParam(value = "Name of project to return", required = true)
-                                        @RequestParam String name,
-                                        @ApiParam(value = "Description of project to return")
-                                        @RequestParam(required = false) String keyword) {
-        return projectService.findByKeyword(name, keyword);
+    @ApiOperation(value = "Find project by keyWord or skills list", notes = "Returns a collection of projects")
+    public List<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
+                                        @RequestParam(required=false) String keyWord,
+                                        @ApiParam(value = "Skills for projects to return")
+                                        @RequestParam(required = false) List<Integer> skills) {
+        return projectService.findByKeyword(keyWord,skills);
     }
-    
+
     @CrossOrigin
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     @ApiOperation(

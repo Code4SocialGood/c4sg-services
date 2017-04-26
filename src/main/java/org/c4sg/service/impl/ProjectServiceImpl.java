@@ -67,9 +67,10 @@ public class ProjectServiceImpl implements ProjectService {
         return projectDAO.findByName(name);
     }
 
-    public List<ProjectDTO> findByKeyword(String name, String keyWord) {
-        List<Project> projects = projectDAO.findByNameOrDescription(name, keyWord);
-
+    public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills) {
+    	long skillCount=0;
+    	if (skills != null) skillCount=skills.size(); 
+        List<Project> projects = projectDAO.findByKeyword(keyWord, skills, skillCount);
         return projectMapper.getDtosFromEntities(projects);
     }
     
@@ -152,6 +153,7 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             localProject = projectDAO.save(
             		projectMapper.getProjectEntityFromCreateProjectDto(createProjectDTO));
+
             // Updates projectUpdateTime for the organization
             Organization localOrgan = localProject.getOrganization(); 
             localOrgan.setProjectUpdatedTime(new Date(Calendar.getInstance().getTime().getTime())); 

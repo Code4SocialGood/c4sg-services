@@ -25,7 +25,7 @@ public class Project {
 
 	@Column(name = "description")
 	private String description;
-
+    
 	@Column(name = "address1")
 	private String address1;
 
@@ -47,6 +47,9 @@ public class Project {
 	@Column(name = "remote_flag", columnDefinition="char(1) default 'Y'", nullable = false)
 	private String remoteFlag;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+    
     @Column(columnDefinition="char(1) default 'A'", nullable = false)
     private String status="A";
     
@@ -139,6 +142,14 @@ public class Project {
 	public void setRemoteFlag(String remoteFlag) {
 		this.remoteFlag = remoteFlag;
 	}	
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
     
     public String getStatus() {
         return status;

@@ -23,6 +23,9 @@ public class Organization {
 	@Column(name = "website_url")
 	private String websiteUrl;
 
+    @Column(name = "logo_url")
+    private String logoUrl;
+    
 	@Column(name = "description")
 	private String description;
 
@@ -46,6 +49,9 @@ public class Organization {
 	
 	@Column(name = "contact_name")
 	private String contactName;
+	
+	@Column(name = "contact_title")
+	private String contactTitle;
 	
 	@Column(name = "contact_phone")
 	private String contactPhone;
@@ -96,6 +102,14 @@ public class Organization {
 
 	public void setWebsiteUrl(String websiteUrl) {
 		this.websiteUrl = websiteUrl;
+	}
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
 	}
 
 	public String getDescription() {
@@ -160,6 +174,14 @@ public class Organization {
 
 	public void setContactName(String contactName) {
 		this.contactName = contactName;
+	}
+	
+	public String getContactTitle() {
+		return contactTitle;
+	}
+
+	public void setContactTitle(String contactTitle) {
+		this.contactTitle = contactTitle;
 	}
 	
 	public String getContactPhone() {

@@ -36,6 +36,7 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.4.0'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.4.0'
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.3.3'
+    compile group: 'net.minidev', name: 'json-smart', version: '2.2.1'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
 

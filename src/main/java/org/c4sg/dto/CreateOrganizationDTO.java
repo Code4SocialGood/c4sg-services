@@ -29,6 +29,8 @@ public class CreateOrganizationDTO {
 
 	private String contactName;
 	
+	private String contactTitle;
+	
 	private String contactPhone;
 	
 	private String contactEmail;
@@ -116,6 +118,14 @@ public class CreateOrganizationDTO {
 		this.contactName = contactName;
 	}
 
+	public String getContactTitle() {
+		return contactTitle;
+	}
+
+	public void setContactTitle(String contactTitle) {
+		this.contactTitle = contactTitle;
+	}
+	
 	public String getContactPhone() {
 		return contactPhone;
 	}

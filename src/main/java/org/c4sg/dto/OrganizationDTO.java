@@ -15,6 +15,8 @@ public class OrganizationDTO {
 	private String name;
 
 	private String websiteURL;
+	
+    private String logoUrl;
 
 	@Length(max = 500)
 	private String description;
@@ -32,6 +34,8 @@ public class OrganizationDTO {
 	private String zip;
 
 	private String contactName;
+	
+	private String contactTitle;
 	
 	private String contactPhone;
 	
@@ -68,6 +72,13 @@ public class OrganizationDTO {
 
 	public void setWebsiteURL(String websiteURL) {
 		this.websiteURL = websiteURL;
+	}
+	
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
 	}
 	
 	public String getDescription() {
@@ -134,6 +145,14 @@ public class OrganizationDTO {
 		this.contactName = contactName;
 	}
 
+	public String getContactTitle() {
+		return contactTitle;
+	}
+
+	public void setContactTitle(String contactTitle) {
+		this.contactTitle = contactTitle;
+	}
+	
 	public String getContactPhone() {
 		return contactPhone;
 	}

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +18,12 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.UserOrganizationException;
+import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -85,10 +90,15 @@ public class OrganizationController {
 
     @CrossOrigin
     @RequestMapping(value = "/search", produces = {"application/json"}, method = RequestMethod.GET)
-    @ApiOperation(value = "Find organization by keyWord", notes = "Searches the keyword in organization name and description, case insensitive. The search result is sorted by project update time in descending order.")
-    public List<OrganizationDTO> getOrganizations(@ApiParam(value = "Name or description of organization to return", required = true)
-                                                  @RequestParam String keyWord) {
-        return organizationService.findByKeyword(keyWord);
+    @ApiOperation(value = "Find organization by keyWord", notes = " Returns a list of organizations which has the keyword in name / description / country, AND, which has the opportunities open, AND, which is located in the selected country. The search result is sorted by organization name in ascending order.")
+    public List<OrganizationDTO> getOrganizations(@ApiParam(value = "Keyword in Name or description or country of organization to return", required = false)
+                                               		@RequestParam(required=false) String keyWord,
+                                               		@ApiParam(value = "Country of organization to return", required = false)
+    												@RequestParam(required=false) String country,
+                                               		@ApiParam(value = "Opportunities open in the organization", required = false)
+    												@RequestParam(required=false) boolean open    												
+                                                  ) {
+        return organizationService.findByCriteria(keyWord, country, open);
     }
 
     // TODO Define error codes: required input missing, etc 
@@ -186,4 +196,26 @@ public class OrganizationController {
 
 		return organizations;
 	}
+	
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/users/{userId}", method = RequestMethod.POST)
+    @ApiOperation(value = "Create a relation between user and organization")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "ID of organization or user invalid")
+    })
+    //TODO: Replace explicit user{id} with AuthN user id.
+    public ResponseEntity<?> createUserOrganization(@ApiParam(value = "ID of user", required = true)
+                                               @PathVariable("userId") Integer userId,
+                                               @ApiParam(value = "ID of organization", required = true)
+                                               @PathVariable("id") Integer organizationId) {
+        try {
+            organizationService.saveUserOrganization(userId, organizationId);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                                                      .path("/{id}/users/{userId}")
+                                                      .buildAndExpand(organizationId, userId).toUri();
+            return ResponseEntity.created(location).build();
+        } catch (NullPointerException | UserOrganizationException e) {
+            throw new NotFoundException("ID of organization or user invalid, or relationship already exist");
+        }
+    }
 }
