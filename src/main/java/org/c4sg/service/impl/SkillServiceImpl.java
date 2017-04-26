@@ -15,8 +15,10 @@ import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserSkillDAO;
 import org.c4sg.dto.SkillDTO;
 import org.c4sg.dto.SkillUserCountDTO;
+import org.c4sg.entity.Project;
 import org.c4sg.entity.ProjectSkill;
 import org.c4sg.entity.Skill;
+import org.c4sg.entity.User;
 import org.c4sg.entity.UserSkill;
 import org.c4sg.exception.SkillException;
 import org.c4sg.mapper.SkillMapper;
@@ -75,84 +77,66 @@ public class SkillServiceImpl implements SkillService {
 	}
 	@Override
 	public void saveSkillsForUser(Integer id, List<String> skillsList) throws SkillException {
-		requireNonNull(userDAO.findById(id),"User with id: "+id+" doesn't exist. Please provide a valid user id.");
+		User user = userDAO.findById(id);
+		requireNonNull(user,"User with id: "+id+" doesn't exist. Please provide a valid user id.");
+		
 		List<UserSkill> userSkills = new ArrayList<UserSkill>();
-		int skillCount=userSkillDAO.countByUserId(id);
-		int skipCount = 0;//if the skill already exists
-		String skillAlreadyExist = "";
-		String invalidSkillName = "";
+		List<Skill> skills = new ArrayList<Skill>();
+		
+		requireNonNull(skillsList,"Please provide the skills in display order.");
 		for(String skillName: skillsList)	{
 			UserSkill userSkill = new UserSkill();
-			userSkill.setUser(userDAO.findById(id));
+			userSkill.setUser(user); //user
 			
 			Skill skill = skillDAO.findBySkillName(skillName);
+			//user entered skills
 			if(isNull(skill))	{
-				invalidSkillName += skillName +" ";
-				skipCount++;
-				continue;
-			}
+				skill = new Skill();
+				skill.setSkillName(skillName);
 				
-			int skillExist = userSkillDAO.countByUserIdAndSkillId(id,skill.getId());
-			if (skillExist != 0)	{
-				skipCount++;
-				skillAlreadyExist+=skillName+ " ";
-				continue;
-			}
-			userSkill.setSkill(skill);
-			
-			int displayOrder =  skillsList.indexOf(skillName)+1-skipCount+skillCount;
+				skills.add(skill); //new skill to add to Skill table
+			}	
+			userSkill.setSkill(skill); //skill
+			int displayOrder =  skillsList.indexOf(skillName)+1; //displayOrder
 			userSkill.setDisplayOrder(displayOrder);
 			
 			userSkills.add(userSkill);
 		}
-		userSkillDAO.save(userSkills);
-		if(!invalidSkillName.isEmpty() && !skillAlreadyExist.isEmpty())	throw new SkillException("Invalid skill name(s): "+invalidSkillName.trim()
-																						+". Please provide valid skill name(s)."+skillAlreadyExist+"already exist(s).");
-		if(!invalidSkillName.isEmpty())	throw new SkillException("Invalid skill name(s): "+invalidSkillName.trim()
-																		+". Please provide valid skill name(s).");
-		if(!skillAlreadyExist.isEmpty())	throw new SkillException(skillAlreadyExist+"already exist(s).");
 		
+		skillDAO.save(skills);
+		userSkillDAO.deleteByUserId(id);
+		userSkillDAO.save(userSkills);				
 	}
 	@Override
 	public void saveSkillsForProject(Integer id, List<String> skillsList) throws SkillException {
-		requireNonNull(projectDAO.findById(id),"Project with id: "+id+" doesn't exist. Please provide a valid project id.");
+		Project project = projectDAO.findById(id);
+		requireNonNull(project,"Project with id: "+id+" doesn't exist. Please provide a valid project id.");
+		
 		List<ProjectSkill> projectSkills =new ArrayList<ProjectSkill>();
-		int skillCount=projectSkillDAO.countByProjectId(id);
-		int skipCount = 0;//if the skill already exists
-		String skillAlreadyExist = "";
-		String invalidSkillName = "";
+		List<Skill> skills = new ArrayList<Skill>();
+		
+		requireNonNull(skillsList,"Please provide the skills in display order.");
 		for(String skillName: skillsList)	{
 			ProjectSkill projectSkill = new ProjectSkill();
 			projectSkill.setProject(projectDAO.findById(id));
 			
 			Skill skill = skillDAO.findBySkillName(skillName);
+			//user entered skills
 			if(isNull(skill))	{
-				invalidSkillName += skillName +" ";
-				skipCount++;
-				continue;
-			}
-			
-			int skillExist = projectSkillDAO.countByProjectIdAndSkillId(id,skill.getId());
-			if (skillExist != 0)	{
-				skipCount++;
-				skillAlreadyExist+=skillName+ " ";
-				continue;
-			}
+				skill = new Skill();
+				skill.setSkillName(skillName);
+				
+				skills.add(skill); //new skill to add to Skill table
+			}	
 			projectSkill.setSkill(skill);
-			
-			int displayOrder = skillsList.indexOf(skillName)+1-skipCount+skillCount;
+			int displayOrder = skillsList.indexOf(skillName)+1;
 			projectSkill.setDisplayOrder(displayOrder);
 			
 			projectSkills.add(projectSkill);
 		}
-		projectSkillDAO.save(projectSkills);	
 		
-		if(!invalidSkillName.isEmpty() && !skillAlreadyExist.isEmpty())	
-					throw new SkillException("Invalid skill name(s): "+invalidSkillName.trim()
-													+". Please provide valid skill name(s). And also "+skillAlreadyExist+"already exist(s).");
-		if(!invalidSkillName.isEmpty())	throw new SkillException("Invalid skill name(s): "+invalidSkillName.trim()
-													+". Please provide valid skill name(s).");
-		if(!skillAlreadyExist.isEmpty())	throw new SkillException(skillAlreadyExist+"already exist(s).");
-
+		skillDAO.save(skills);
+		projectSkillDAO.deleteByProjectId(id);
+		projectSkillDAO.save(projectSkills);
 	}
 }
