@@ -42,27 +42,27 @@ public class SkillServiceImpl implements SkillService {
 	private ProjectDAO projectDAO;
 	
 	@Override
-    public List<SkillDTO> findSkills() {
-    	List<Skill> skills = skillDAO.findAllByOrderBySkillNameAsc();
-    	List<SkillDTO> skillDTOS = skills.stream().map(o -> skillMapper.getSkillDtoFromEntity(o)).collect(Collectors.toList());
-        return skillDTOS;
-    }
-    @Override
-    public List<SkillUserCountDTO> findSkillsWithUserCount() {
-    	List<SkillUserCountDTO> skillUserCountDTOs = new ArrayList<SkillUserCountDTO>();
-    	List<Map<String, Object>> skillUserCountList = userSkillDAO.findSkillsAndUserCount();
-    	for(Map<String, Object> skillMap: skillUserCountList)	{
-    		skillUserCountDTOs.add(skillMapper.getSkillUserCountDto(skillMap));
+    	public List<SkillDTO> findSkills() {
+    		List<Skill> skills = skillDAO.findAllByOrderBySkillNameAsc();
+    		List<SkillDTO> skillDTOS = skills.stream().map(o -> skillMapper.getSkillDtoFromEntity(o)).collect(Collectors.toList());
+        	return skillDTOS;
     	}
+   	@Override
+    	public List<SkillUserCountDTO> findSkillsWithUserCount() {
+    		List<SkillUserCountDTO> skillUserCountDTOs = new ArrayList<SkillUserCountDTO>();
+    		List<Map<String, Object>> skillUserCountList = userSkillDAO.findSkillsAndUserCount();
+    		for(Map<String, Object> skillMap: skillUserCountList)	{
+    			skillUserCountDTOs.add(skillMapper.getSkillUserCountDto(skillMap));
+    		}
 		return skillUserCountDTOs;
-    }
-    @Override
+    	}
+    	@Override
 	public List<String> findSkillsForUser(Integer id) {
 		List<Map<String, Object>> skillsForUser = userSkillDAO.findSkillsByUserId(id);
 		List<String> userSkills = new ArrayList<String>();
 		for(Map<String, Object> skills: skillsForUser)	{
-    		userSkills.add((String)skills.get("skillName"));
-    	}
+    			userSkills.add((String)skills.get("skillName"));
+    		}
 		return userSkills;
 	}
 	@Override
@@ -70,8 +70,8 @@ public class SkillServiceImpl implements SkillService {
 		List<Map<String, Object>> skillsForProject = projectSkillDAO.findSkillsByProjectId(id);
 		List<String> projectSkills = new ArrayList<String>();
 		for(Map<String, Object> skills: skillsForProject)	{
-    		projectSkills.add((String)skills.get("skillName"));
-    	}
+    			projectSkills.add((String)skills.get("skillName"));
+    		}
 		return projectSkills;
 	}
 	@Override
@@ -117,7 +117,7 @@ public class SkillServiceImpl implements SkillService {
 		requireNonNull(skillsList,"Please provide the skills in display order.");
 		for(String skillName: skillsList)	{
 			ProjectSkill projectSkill = new ProjectSkill();
-			projectSkill.setProject(projectDAO.findById(id));
+			projectSkill.setProject(project); //project
 			
 			Skill skill = skillDAO.findBySkillName(skillName);
 			//user entered skills
@@ -127,9 +127,9 @@ public class SkillServiceImpl implements SkillService {
 				
 				skills.add(skill); //new skill to add to Skill table
 			}	
-			projectSkill.setSkill(skill);
+			projectSkill.setSkill(skill); //skill
 			int displayOrder = skillsList.indexOf(skillName)+1;
-			projectSkill.setDisplayOrder(displayOrder);
+			projectSkill.setDisplayOrder(displayOrder); //displayOrder
 			
 			projectSkills.add(projectSkill);
 		}
