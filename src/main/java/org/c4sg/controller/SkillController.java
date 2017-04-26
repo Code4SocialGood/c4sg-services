@@ -41,7 +41,7 @@ public class SkillController {
     @RequestMapping(value="/user",produces = {"application/json"}, method = RequestMethod.GET)
     @ApiOperation(value = "Get skills for an user by id", notes = "Returns a collection of skills for an user by id")
     public List<String> getSkillsForUser(@ApiParam(value = "ID of user to return", required = true)
-    					 				 @RequestParam Integer id) {
+    					 @RequestParam Integer id) {
         return skillService.findSkillsForUser(id);
     }
     
@@ -49,7 +49,7 @@ public class SkillController {
     @RequestMapping(value="/project",produces = {"application/json"}, method = RequestMethod.GET)
     @ApiOperation(value = "Get skills for a project by id", notes = "Returns a collection of skills for a project")
     public List<String> getSkillsForProject(@ApiParam(value = "ID of project to return", required = true)
-    					    				@RequestParam Integer id) {
+    					    @RequestParam Integer id) {
         return skillService.findSkillsForProject(id);
     }
     
@@ -57,12 +57,12 @@ public class SkillController {
     @RequestMapping(value="/user/skills", method = RequestMethod.PUT)
     @ApiOperation(value = "Add skills for a user", notes = "Adds skills for the user with display order")
     public void createSkillsForUser(@ApiParam(value = "ID of user to add skills",name="id", required = true)
-							 	    @RequestParam Integer id,
-				    				@ApiParam(value = "Skills in display order",name="skillsList", required = true)
-								    @RequestParam List<String> skillsList) {
-		try {
-			skillService.saveSkillsForUser(id,skillsList);
-		} catch (NullPointerException e) {
+				    @RequestParam Integer id,
+				    @ApiParam(value = "Skills in display order",name="skillsList", required = true)
+				    @RequestParam List<String> skillsList) {
+	try {
+		skillService.saveSkillsForUser(id,skillsList);
+	} catch (NullPointerException e) {
         	throw new NotFoundException(e.getMessage());
         } 
     }
@@ -71,13 +71,13 @@ public class SkillController {
     @RequestMapping(value="/project/skills", method = RequestMethod.PUT)
     @ApiOperation(value = "Add skills for a project", notes = "Adds skills for the project with display order")
     public void createSkillsForProject(@ApiParam(value = "ID of project to add skills", required = true)
-							 	       @RequestParam Integer id,
-				    				   @ApiParam(value = "Skills in display order", required = true)
-								       @RequestParam List<String> skillsList) {
+				       @RequestParam Integer id,
+				       @ApiParam(value = "Skills in display order", required = true)
+				       @RequestParam List<String> skillsList) {
     	try {
-			skillService.saveSkillsForProject(id,skillsList);
-		} catch (NullPointerException e) {
-            throw new NotFoundException(e.getMessage());
+		skillService.saveSkillsForProject(id,skillsList);
+	} catch (NullPointerException e) {
+            	throw new NotFoundException(e.getMessage());
         } 
     }
 }
