@@ -8,7 +8,6 @@ import org.c4sg.dto.SkillDTO;
 import org.c4sg.dto.SkillUserCountDTO;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
-import org.c4sg.exception.SkillException;
 import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -65,9 +64,7 @@ public class SkillController {
 			skillService.saveSkillsForUser(id,skillsList);
 		} catch (NullPointerException e) {
         	throw new NotFoundException(e.getMessage());
-        } catch (SkillException e) {
-        	throw new BadRequestException(e.getMessage());
-        }
+        } 
     }
     
     @CrossOrigin
@@ -81,8 +78,6 @@ public class SkillController {
 			skillService.saveSkillsForProject(id,skillsList);
 		} catch (NullPointerException e) {
             throw new NotFoundException(e.getMessage());
-        } catch (SkillException e) {
-        	throw new BadRequestException(e.getMessage());
-        }
+        } 
     }
 }

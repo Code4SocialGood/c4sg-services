@@ -20,7 +20,6 @@ import org.c4sg.entity.ProjectSkill;
 import org.c4sg.entity.Skill;
 import org.c4sg.entity.User;
 import org.c4sg.entity.UserSkill;
-import org.c4sg.exception.SkillException;
 import org.c4sg.mapper.SkillMapper;
 import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,7 @@ public class SkillServiceImpl implements SkillService {
 		return projectSkills;
 	}
 	@Override
-	public void saveSkillsForUser(Integer id, List<String> skillsList) throws SkillException {
+	public void saveSkillsForUser(Integer id, List<String> skillsList) {
 		User user = userDAO.findById(id);
 		requireNonNull(user,"User with id: "+id+" doesn't exist. Please provide a valid user id.");
 		
@@ -108,7 +107,7 @@ public class SkillServiceImpl implements SkillService {
 		userSkillDAO.save(userSkills);				
 	}
 	@Override
-	public void saveSkillsForProject(Integer id, List<String> skillsList) throws SkillException {
+	public void saveSkillsForProject(Integer id, List<String> skillsList) {
 		Project project = projectDAO.findById(id);
 		requireNonNull(project,"Project with id: "+id+" doesn't exist. Please provide a valid project id.");
 		
