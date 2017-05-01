@@ -37,13 +37,12 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
                 
     String UPDATE_SLACK_STATUS = "UPDATE User u set u.chatFlag = :isSlackReg where u.id = :userId";
     
-    //temporary until create date is added
+    // temporary until create date is added
     Page<User> findByStatus(Pageable pageable, UserStatus status);
 
     User findById(int id);
     User findByEmail(String email);
     List<User> findAllByOrderByIdDesc();    
-    List<User> findByDeveloperFlagAndPublicProfileFlagOrderByDeveloperCommitDesc(String devFlag, String publicFlag);
     // List<User> findByRoleAndDisplayFlagOrderByGithubDesc(UserRole role, Boolean display);
   
     @Transactional

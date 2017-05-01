@@ -18,8 +18,6 @@ public interface UserService {
 
     UserDTO findByEmail(String email);
 
-    List<UserDTO> findDevelopers();
-
     UserDTO saveUser(UserDTO userDTO);
 
     void deleteUser(Integer id);

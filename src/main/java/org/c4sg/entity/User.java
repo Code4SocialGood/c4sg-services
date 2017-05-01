@@ -94,9 +94,6 @@ public class User implements Serializable {
     @Column(name = "forum_flag", columnDefinition="char(1)", nullable = false)
     private String forumFlag;
 
-    @Column(name="developer_flag", columnDefinition="char(1)", nullable = false)
-    private String developerFlag;
-  
     @Convert(converter = StatusConverter.class)
     @Column(name = "status", columnDefinition="char(1)", nullable = false)
     private UserStatus status;
@@ -110,9 +107,6 @@ public class User implements Serializable {
 	@Column(name = "title")
 	private String title;	
 
-	@Column(name="developer_commit", columnDefinition="int", nullable=true)
-	private Integer developerCommit;
-	
 	public Integer getId() {
 		return id;
 	}
@@ -281,14 +275,6 @@ public class User implements Serializable {
 		this.forumFlag = forumFlag;
 	}
 
-	public String getDeveloperFlag() {
-		return developerFlag;
-	}
-
-	public void setDeveloperFlag(String developerFlag) {
-		this.developerFlag = developerFlag;
-	}
-
 	public UserStatus getStatus() {
 		return status;
 	}
@@ -329,11 +315,4 @@ public class User implements Serializable {
 		this.gitHubUrl = gitHubUrl;
 	}
 	
-	public Integer getDeveloperCommit(){
-		return developerCommit;
-	}
-	public void setDeveloperCommit(Integer developerCommit){
-		this.developerCommit = developerCommit;
-	}
-   
 }

@@ -119,12 +119,6 @@ public class UserController {
         return userService.saveUser(userDTO);
     }
 
-    @RequestMapping(value = "/developers", method = RequestMethod.GET)
-    @ApiOperation(value = "Find developers", notes = "Retrieve the users who are c4sg developers and who set their public display to be true. Sort the users by their Github commits in descending order.")
-    public List<UserDTO> getDevelopers() {
-        return userService.findDevelopers();
-    }
-
     @CrossOrigin
     @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of projects")
