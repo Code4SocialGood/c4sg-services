@@ -50,6 +50,9 @@ public class Organization {
 	@Column(name = "contact_name")
 	private String contactName;
 	
+	@Column(name = "contact_title")
+	private String contactTitle;
+	
 	@Column(name = "contact_phone")
 	private String contactPhone;
 	
@@ -171,6 +174,14 @@ public class Organization {
 
 	public void setContactName(String contactName) {
 		this.contactName = contactName;
+	}
+	
+	public String getContactTitle() {
+		return contactTitle;
+	}
+
+	public void setContactTitle(String contactTitle) {
+		this.contactTitle = contactTitle;
 	}
 	
 	public String getContactPhone() {

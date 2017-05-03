@@ -65,11 +65,6 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public List<UserDTO> findDevelopers() {        
-    	return userMapper.getDtosFromEntities(userDAO.findByDeveloperFlagAndPublicProfileFlagOrderByDeveloperCommitDesc(Constants.YES, Constants.YES));  
-    }
-
-    @Override
     public UserDTO saveUser(UserDTO userDTO) {
         User user = userMapper.getUserEntityFromDto(userDTO);
 

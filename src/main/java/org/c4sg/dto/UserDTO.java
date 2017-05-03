@@ -26,7 +26,6 @@ public class UserDTO {
     private String publicProfileFlag;
     private String chatFlag;
     private String forumFlag;
-    private String developerFlag;
     private String status;
     private String createdTime;
     private String updatedTime;
@@ -164,12 +163,6 @@ public class UserDTO {
 	}
 	public void setForumFlag(String forumFlag) {
 		this.forumFlag = forumFlag;
-	}
-	public String getDeveloperFlag() {
-		return developerFlag;
-	}
-	public void setDeveloperFlag(String developerFlag) {
-		this.developerFlag = developerFlag;
 	}
 	public String getCreatedTime() {
 		return createdTime;
