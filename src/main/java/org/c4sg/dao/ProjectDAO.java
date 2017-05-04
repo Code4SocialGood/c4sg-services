@@ -33,11 +33,18 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             "OR p.description LIKE CONCAT('%', :description, '%') " +
             "ORDER BY p.createdTime DESC";
 
-    String FIND_BY_CRITERIA = "SELECT DISTINCT p FROM ProjectSkill ps RIGHT OUTER JOIN ps.project p LEFT OUTER JOIN ps.skill s " +
-            "WHERE ((:keyWord is null OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyWord, '%')) " +
-                "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyWord, '%')) OR LOWER(s.skillName) LIKE LOWER(CONCAT('%',:keyWord,'%')))"                
-                + " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)"
-                + ")  ORDER BY p.name ASC";
+    String FIND_ACTIVE_BY_CRITERIA = 
+    		"SELECT DISTINCT p "
+    		+ "FROM ProjectSkill ps "
+    		+ "RIGHT OUTER JOIN ps.project p "
+    		+ "LEFT OUTER JOIN ps.skill s "
+            + "WHERE ("
+            + 	"(:keyWord is null OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyWord, '%'))" 
+            +   " OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyWord, '%')) OR LOWER(s.skillName) LIKE LOWER(CONCAT('%',:keyWord,'%')))"          
+            +   " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)" 
+            +   " AND p.status = 'A'"
+            +   ")  "
+            + "ORDER BY p.createdTime DESC";
 
     
 	Project findById(int id);
@@ -49,7 +56,7 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     @Query(FIND_BY_NAME_OR_DESCRIPTION)
     List<Project> findByNameOrDescription(@Param("name") String name, @Param("description") String description);
 
-    @Query(FIND_BY_CRITERIA)
+    @Query(FIND_ACTIVE_BY_CRITERIA)
     List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("skillCount") Long skillCount);
 
 	@Query(FIND_BY_ORGANIZATION_ID)

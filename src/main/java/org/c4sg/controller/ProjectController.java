@@ -72,7 +72,7 @@ public class ProjectController {
 
     @CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    @ApiOperation(value = "Find project by keyWord or skills list", notes = "Returns a collection of projects")
+    @ApiOperation(value = "Find ACTIVE project by keyWord or skills", notes = "Returns a collection of active projects")
     public List<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
                                         @RequestParam(required=false) String keyWord,
                                         @ApiParam(value = "Skills for projects to return")
