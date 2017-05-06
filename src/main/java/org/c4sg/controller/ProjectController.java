@@ -220,6 +220,29 @@ public class ProjectController {
         }
     }
 
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/image", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Deletes a project's image")
+	public String deleteImage(@ApiParam(value = "Project id to delete image for", required = true) 
+									@PathVariable("id") int id) {
+		Project p = projectService.findById(id);
+		File image = new File(projectService.getImageUploadPath(id));
+		try {
+			boolean del = image.delete();
+			p.setImageUrl(null);
+			projectService.updateProject(p);
+			if (del) {
+				return "success";
+			} else {
+				return "fail";
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+			return "error";
+		}
+	}
+    
     @CrossOrigin
     @RequestMapping(value = "/bookmark/projects/{projectId}/users/{userId}", method = RequestMethod.POST)
     @ApiOperation(value = "Create a bookmark for a project")
