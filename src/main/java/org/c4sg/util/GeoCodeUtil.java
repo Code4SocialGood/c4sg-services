@@ -17,17 +17,13 @@ import net.minidev.json.JSONValue;
 
 public class GeoCodeUtil {
 	
-	String city;
 	String state;
 	String country;
-	String zip;
 	
 	public GeoCodeUtil(UserDTO userDTO)
 	{
-		this.city = userDTO.getCity();
 		this.state = userDTO.getState();
 		this.country = userDTO.getCountry();
-		this.zip = userDTO.getZip();
 	}
 	
 	public Map<String,BigDecimal> getGeoCode() throws Exception 
@@ -98,26 +94,16 @@ public class GeoCodeUtil {
 		
 		return url;
 	}
-	private String getAddress()
-	{
+	
+	private String getAddress() {
 		StringBuffer address = new StringBuffer();
-		if(this.city != null && !this.city.isEmpty()){
-			address.append(this.city);
+
+		if(this.state != null && !this.state.isEmpty())
 			address.append(" ");
-		}
-		if(this.state != null && !this.state.isEmpty()){
-			address.append(this.state==null?"":this.state);
-			address.append(" ");
-		}
-		if(this.zip != null && !this.zip.isEmpty()){
-			address.append(this.zip==null?"":this.zip);
-			address.append(" ");
-		}
-		
-		if(this.country != null && !this.country.isEmpty()){
+				
+		if(this.country != null && !this.country.isEmpty())
 			address.append(this.country);
-		}
-		
+				
 		return address.toString();
 	}
 
