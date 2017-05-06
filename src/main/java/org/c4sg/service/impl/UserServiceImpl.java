@@ -1,6 +1,7 @@
 package org.c4sg.service.impl;
 
 import org.c4sg.constant.UserStatus;
+import org.c4sg.controller.UserController;
 import org.c4sg.constant.Constants;
 import org.c4sg.constant.UserProjectStatus;
 
@@ -9,12 +10,12 @@ import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Format.RESUME;
 import static org.c4sg.constant.Format.IMAGE;
 import org.c4sg.dao.UserDAO;
-import org.c4sg.dao.specification.UserSpecification;
 import org.c4sg.dto.UserDTO;
-import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,10 +30,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-
+	private static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+	
     @Autowired
     private UserDAO userDAO;
-
+    
     @Autowired
     private UserMapper userMapper;
 
@@ -75,7 +77,11 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Integer id) {
         User user = userDAO.findById(id);
         user.setStatus(UserStatus.DELETED);
+        user.setEmail(user.getEmail() + "-deleted");
+        user.setAvatarUrl(null);
         userDAO.save(user);
+        userDAO.deleteUserProjects(id);
+        userDAO.deleteUserSkills(id);        
     }
 
     @Override

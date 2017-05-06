@@ -3,6 +3,7 @@ package org.c4sg.dao;
 import org.c4sg.constant.UserStatus;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
+import org.c4sg.entity.UserProject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +24,7 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
                                 "JOIN up.user u " +
                                 "JOIN up.project p " +
                                 "WHERE p.id =:projId and up.status= :userProjStatus";
-    
+
     String FIND_BY_CRITERIA = "SELECT DISTINCT u FROM UserSkill us RIGHT OUTER JOIN us.user u LEFT OUTER JOIN us.skill s " +
             "WHERE ((:keyWord is null OR LOWER(u.userName) LIKE LOWER(CONCAT('%', :keyWord, '%')) " +
                 "OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :keyWord, '%')) OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :keyWord, '%')) "
@@ -32,9 +33,9 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
                 + " AND (:skillCount = (select count(distinct us2.skill.id) from UserSkill us2 where us2.user.id=us.user.id and us2.skill.id in (:skills)) OR :skillCount=0)"
                 + ")  ORDER BY u.userName ASC";
 
-    //select distinct user_id,skill_id from user_skill us where 4= (SELECT count(distinct us2.skill_id) from user_skill us2 
-                //where us2.skill_id in (7,8,9,10,11) and us2.user_id=us.user_id)
-                
+    String DELETE_USER_PROJECTS = "DELETE FROM UserProject up WHERE up.user.id=:userId";
+    String DELETE_USER_SKILLS = "DELETE FROM UserSkill us WHERE us.user.id=:userId";
+    
     String UPDATE_SLACK_STATUS = "UPDATE User u set u.chatFlag = :isSlackReg where u.id = :userId";
     
     // temporary until create date is added
@@ -55,6 +56,15 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
 
     @Query(FIND_BY_CRITERIA)
     List<User> findByKeyword(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("skillCount") Long skillCount);
-    
+
+    @Modifying
+    @Query(DELETE_USER_PROJECTS)
+    @Transactional
+    void deleteUserProjects(@Param("userId") Integer userId);
+
+    @Modifying
+    @Query(DELETE_USER_SKILLS)
+    @Transactional
+    void deleteUserSkills(@Param("userId") Integer userId);
     
 }

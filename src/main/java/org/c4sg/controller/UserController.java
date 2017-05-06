@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
 import org.c4sg.util.GeoCodeUtil;
@@ -54,6 +55,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrganizationService organizationService;
 
     @CrossOrigin
     @RequestMapping(value = "/active", method = RequestMethod.GET)
@@ -141,7 +144,11 @@ public class UserController {
        LOGGER.debug("************** Delete : id=" + id + "**************");
         try {
             userService.deleteUser(id);
-        } catch (Exception e) {
+            if (userService.findById(id) !=null){
+            	int organizationId=(userService.findById(id)).getId();
+            	organizationService.deleteOrganization(organizationId);
+            }
+        } catch (Exception e) {        	
            LOGGER.error("Exception on delete user:", e);
         }
     }
