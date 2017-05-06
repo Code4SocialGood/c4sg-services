@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.c4sg.dao.OrganizationDAO;
+import org.c4sg.constant.UserProjectStatus;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
@@ -102,7 +103,7 @@ public class ProjectServiceImpl implements ProjectService {
     	// If status is not set, search by user ID only
     	if ((userProjectStatus == null) || userProjectStatus.isEmpty()) {
     		projects = projectDAO.findByUserId(userId);
-    	} else {/*
+    	} else {
     		String statusCode="";
     		for (UserProjectStatus ups: UserProjectStatus.values())	{
     			if (ups.name().equalsIgnoreCase(userProjectStatus) ||
@@ -116,8 +117,7 @@ public class ProjectServiceImpl implements ProjectService {
     		if (statusCode.isEmpty()) 	
     			throw new ProjectServiceException(ProjectServiceException.MSG_INVALID_INPUT);
     		else 
-    			projects = projectDAO.findByUserIdAndUserProjectStatus(userId, statusCode);*/
-    		projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);
+    			projects = projectDAO.findByUserIdAndUserProjectStatus(userId, statusCode);
     	}
     	
     	return projectMapper.getDtosFromEntities(projects);

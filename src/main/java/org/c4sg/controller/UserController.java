@@ -57,7 +57,7 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "/active", method = RequestMethod.GET)
-    @ApiOperation(value = "Find active volunteer users", notes = "Returns a collection of active volunteer users")
+    @ApiOperation(value = "Find users, with status applied", notes = "Returns a collection of active users")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
                 value = "Results page you want to retrieve (0..N)"),
@@ -68,8 +68,8 @@ public class UserController {
                         "Default sort order is ascending. " +
                         "Multiple sort criteria are supported.")})
     public Page<UserDTO> getActiveUsers(Pageable pageable) {
-        LOGGER.debug("**************active**************");
-        return userService.findActiveVolunteers(pageable);
+        LOGGER.debug("**************All**************");
+        return userService.findActiveUsers(pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET)

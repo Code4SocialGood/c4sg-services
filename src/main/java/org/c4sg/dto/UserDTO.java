@@ -8,8 +8,11 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String email;
+    private String phone;
+    private String city;
     private String state;
     private String country;
+    private String zip;
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String title;
@@ -19,8 +22,6 @@ public class UserDTO {
     private String personalUrl;
     private String gitHubUrl;
     private String resumeUrl;
-    private String facebookUrl;
-    private String twitterUrl;
     private String role;
     private String publicProfileFlag;
     private String chatFlag;
@@ -28,6 +29,7 @@ public class UserDTO {
     private String status;
     private String createdTime;
     private String updatedTime;
+
 
 	public Integer getId() {
 		return id;
@@ -59,6 +61,18 @@ public class UserDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
 	public String getState() {
 		return state;
 	}
@@ -70,6 +84,12 @@ public class UserDTO {
 	}
 	public void setCountry(String country) {
 		this.country = country;
+	}
+	public String getZip() {
+		return zip;
+	}
+	public void setZip(String zip) {
+		this.zip = zip;
 	}
 	public BigDecimal getLatitude() {
 		return latitude;
@@ -113,18 +133,6 @@ public class UserDTO {
 	}
 	public void setGitHubUrl(String gitHubUrl){
 		this.gitHubUrl = gitHubUrl;
-	}
-	public String getFacebookUrl() {
-		return facebookUrl;
-	}
-	public void setFacebookUrl(String facebookUrl) {
-		this.facebookUrl = facebookUrl;
-	}
-	public String getTwitterUrl() {
-		return twitterUrl;
-	}
-	public void setTwitterUrl(String twitterUrl) {
-		this.twitterUrl = twitterUrl;
 	}
 	public String getResumeUrl() {
 		return resumeUrl;
