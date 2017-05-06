@@ -12,7 +12,7 @@ public interface UserService {
 	
     List<UserDTO> findAll();
 
-    Page<UserDTO> findActiveUsers(Pageable pageable);
+    Page<UserDTO> findActiveVolunteers(Pageable pageable);
     
     UserDTO findById(int id);
 
