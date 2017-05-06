@@ -48,6 +48,9 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
                 
     String UPDATE_SLACK_STATUS = "UPDATE User u set u.chatFlag = :isSlackReg where u.id = :userId";
     
+    String DELETE_USER_PROJECTS = "DELETE FROM UserProject up WHERE up.user.id=:userId";
+    String DELETE_USER_SKILLS = "DELETE FROM UserSkill us WHERE us.user.id=:userId";    
+    
     @Query(FIND_ACTIVE_VOLUNTEERS)
     Page<User> findActiveVolunteers(Pageable pageable);
 
@@ -67,4 +70,15 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
 
     @Query(FIND_BY_CRITERIA)
     List<User> findByKeyword(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("skillCount") Long skillCount);
+    
+    @Modifying
+    @Query(DELETE_USER_PROJECTS)
+    @Transactional
+    void deleteUserProjects(@Param("userId") Integer userId);
+
+    @Modifying
+    @Query(DELETE_USER_SKILLS)
+    @Transactional
+    void deleteUserSkills(@Param("userId") Integer userId);
+    
 }

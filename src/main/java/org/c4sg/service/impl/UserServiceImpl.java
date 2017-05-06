@@ -58,13 +58,16 @@ public class UserServiceImpl implements UserService {
 		return userMapper.getUserDtoFromEntity(userDAO.save(user));
 	}
 
-	@Override
-	public void deleteUser(Integer id) {
-		User user = userDAO.findById(id);
-		user.setStatus(Constants.USER_STATUS_DELETED);
-		userDAO.save(user);
-	}
-
+    public void deleteUser(Integer id) {
+        User user = userDAO.findById(id);
+        user.setStatus(Constants.USER_STATUS_DELETED);
+        user.setEmail(user.getEmail() + "-deleted");
+        user.setAvatarUrl(null);
+        userDAO.save(user);
+        userDAO.deleteUserProjects(id);
+        userDAO.deleteUserSkills(id);        
+    }
+		
 	@Override
 	public List<UserDTO> getApplicants(Integer projectId) {
 		List<User> users = userDAO.findByUserProjectId(projectId, Constants.USER_PROJECT_STATUS_APPLIED);
