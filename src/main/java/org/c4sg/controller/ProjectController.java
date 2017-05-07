@@ -233,9 +233,9 @@ public class ProjectController {
 			p.setImageUrl(null);
 			projectService.updateProject(p);
 			if (del) {
-				return "success";
+				return "Success";
 			} else {
-				return "fail";
+				return "Fail";
 			}
 		} catch (Exception e) {
 			System.out.println(e);
