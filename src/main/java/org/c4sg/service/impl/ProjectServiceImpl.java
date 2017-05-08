@@ -16,6 +16,7 @@ import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
@@ -24,6 +25,7 @@ import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
+import org.c4sg.service.OrganizationService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,11 +47,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private AsyncEmailService asyncEmailService;
-    
+       
     @Autowired
     private OrganizationDAO organizationDAO;
 
-    public void save(Project project) {
+    public void save(ProjectDTO projectDTO) {
+    	Project project = projectMapper.getProjectEntityFromDto(projectDTO);
         projectDAO.save(project);
     }
 
@@ -58,12 +61,12 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getDtosFromEntities(projects);
     }
 
-    public Project findById(int id) {
-        return projectDAO.findById(id);
+    public ProjectDTO findById(int id) {
+        return projectMapper.getProjectDtoFromEntity(projectDAO.findById(id));
     }
 
-    public Project findByName(String name) {
-        return projectDAO.findByName(name);
+    public ProjectDTO findByName(String name) {
+        return projectMapper.getProjectDtoFromEntity(projectDAO.findByName(name));
     }
 
     public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills) {
@@ -73,27 +76,6 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getDtosFromEntities(projects);
     }
     
-    /* @Override
-    public List<ProjectDTO> findByUser(Integer userId) {
-        User user = userDAO.findById(userId);
-        requireNonNull(user, "Invalid User Id");
-        List<UserProject> userProjects = userProjectDAO.findByUserId(userId);
-        Comparator<UserProject> projectComp = new Comparator<UserProject>() {
-            @Override
-            public int compare(UserProject o1, UserProject o2) {
-                int result = 0;
-                // result = o1.getStatus().compareTo(o2.getStatus());
-                return result * -1;
-            }
-        };
-        Collections.sort(userProjects, projectComp);
-        List<ProjectDTO> projectDtos = new ArrayList<ProjectDTO>();
-        for (UserProject userProject : userProjects) {
-            projectDtos.add(projectMapper.getProjectDtoFromEntity(userProject));
-        }
-        return projectDtos;
-    }*/
-    
     @Override
     public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
     	
@@ -102,21 +84,7 @@ public class ProjectServiceImpl implements ProjectService {
     	// If status is not set, search by user ID only
     	if ((userProjectStatus == null) || userProjectStatus.isEmpty()) {
     		projects = projectDAO.findByUserId(userId);
-    	} else {/*
-    		String statusCode="";
-    		for (UserProjectStatus ups: UserProjectStatus.values())	{
-    			if (ups.name().equalsIgnoreCase(userProjectStatus) ||
-    				ups.getStatus().equalsIgnoreCase(userProjectStatus))	{
-    				statusCode = ups.getStatus();
-    				break;
-    			} 
-    		}
-    		
-    		// If status is not found, return error.
-    		if (statusCode.isEmpty()) 	
-    			throw new ProjectServiceException(ProjectServiceException.MSG_INVALID_INPUT);
-    		else 
-    			projects = projectDAO.findByUserIdAndUserProjectStatus(userId, statusCode);*/
+    	} else {
     		projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);
     	}
     	
@@ -124,27 +92,15 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<Project> findByOrganization(Integer orgId) {
+    public List<ProjectDTO> findByOrganization(Integer orgId) {
         List<Project> projects = projectDAO.getProjectsByOrganization(orgId);
         if (projects == null || projects.size() == 0) {
             System.out.println("No Project available for the provided organization");
         }
-        return projects;
-    }
-    
-    public Project createProject(Project project) {
-        Project localProject = projectDAO.findById(project.getId());
-
-        if (localProject != null) {
-            System.out.println("Project already exist.");
-        } else {
-            localProject = projectDAO.save(project);
-        }
-
-        return localProject;
+        return projectMapper.getDtosFromEntities(projects);
     }
 
-    public Project createProject(CreateProjectDTO createProjectDTO) {
+    public ProjectDTO createProject(CreateProjectDTO createProjectDTO) {
         Project localProject = projectDAO.findByNameAndOrganizationId(
         			createProjectDTO.getName(), createProjectDTO.getOrganizationId());
         
@@ -162,19 +118,19 @@ public class ProjectServiceImpl implements ProjectService {
             //Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
         }
 
-        return localProject;
+        return projectMapper.getProjectDtoFromEntity(localProject);
     }
 
-    public Project updateProject(Project project) {
+    public ProjectDTO updateProject(ProjectDTO project) {
         Project localProject = projectDAO.findById(project.getId());
         
         if (localProject != null) {
-            localProject = projectDAO.save(project);
+            localProject = projectDAO.save(projectMapper.getProjectEntityFromDto(project));
         } else {
             System.out.println("Project does not exist.");
         }
 
-        return localProject;
+        return projectMapper.getProjectDtoFromEntity(localProject);
     }
 
     @Override
@@ -203,8 +159,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
     
-    @Override
-    public void apply(User user, Project project) {
+    private void apply(User user, Project project) {
         String from = "code4socialgood@code4socialgood.com";
         String orgEmail = project.getOrganization().getContactEmail();
         String orgSubject = "You received an application from Code for Social Good";

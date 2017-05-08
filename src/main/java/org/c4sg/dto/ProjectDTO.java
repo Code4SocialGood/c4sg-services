@@ -3,19 +3,16 @@ package org.c4sg.dto;
 public class ProjectDTO {
 
 	private int id;
-	
-	private String name;
-	
-	private String organizationId;
-	
-	private String description;
-	
+	private String name;	
+	private String organizationId;	
+	private String description;	
     private String imageUrl;
-	
-	private String status;
-	
-	private String createdTime;
-	
+    private String state;
+    private String country;
+    private String remoteFlag;	
+	private String status;	
+	private String createdTime;	
+    private String updatedTime;
 	private String organizationName;
 	
 	public int getId() {
@@ -53,10 +50,35 @@ public class ProjectDTO {
 	public String getImageUrl() {
 		return imageUrl;
 	}
+	
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
 
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	
+	public String getRemoteFlag() {
+		return remoteFlag;
+	}
+
+	public void setRemoteFlag(String remoteFlag) {
+		this.remoteFlag = remoteFlag;
+	}
+	
 	public String getStatus() {
 		return status;
 	}
@@ -71,6 +93,14 @@ public class ProjectDTO {
 
 	public void setCreatedTime(String createdTime) {
 		this.createdTime = createdTime;
+	}
+	
+	public String getUpdatedTime() {
+		return updatedTime;
+	}
+
+	public void setUpdatedTime(String updatedTime) {
+		this.updatedTime = updatedTime;
 	}
 
 	public String getOrganizationName() {
