@@ -57,7 +57,7 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "/active", method = RequestMethod.GET)
-    @ApiOperation(value = "Find users, with status applied", notes = "Returns a collection of active users")
+    @ApiOperation(value = "Find active volunteer users", notes = "Returns a collection of active volunteer users")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
                 value = "Results page you want to retrieve (0..N)"),
@@ -68,8 +68,8 @@ public class UserController {
                         "Default sort order is ascending. " +
                         "Multiple sort criteria are supported.")})
     public Page<UserDTO> getActiveUsers(Pageable pageable) {
-        LOGGER.debug("**************All**************");
-        return userService.findActiveUsers(pageable);
+        LOGGER.debug("**************active**************");
+        return userService.findActiveVolunteers(pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -117,12 +117,6 @@ public class UserController {
     public UserDTO updateUser(@ApiParam(value = "Updated user object", required = true)
                               @RequestBody UserDTO userDTO) {
         return userService.saveUser(userDTO);
-    }
-
-    @RequestMapping(value = "/developers", method = RequestMethod.GET)
-    @ApiOperation(value = "Find developers", notes = "Retrieve the users who are c4sg developers and who set their public display to be true. Sort the users by their Github commits in descending order.")
-    public List<UserDTO> getDevelopers() {
-        return userService.findDevelopers();
     }
 
     @CrossOrigin

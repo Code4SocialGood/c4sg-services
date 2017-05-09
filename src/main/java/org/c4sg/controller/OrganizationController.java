@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +18,12 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.UserOrganizationException;
+import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -191,4 +196,26 @@ public class OrganizationController {
 
 		return organizations;
 	}
+	
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/users/{userId}", method = RequestMethod.POST)
+    @ApiOperation(value = "Create a relation between user and organization")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "ID of organization or user invalid")
+    })
+    //TODO: Replace explicit user{id} with AuthN user id.
+    public ResponseEntity<?> createUserOrganization(@ApiParam(value = "ID of user", required = true)
+                                               @PathVariable("userId") Integer userId,
+                                               @ApiParam(value = "ID of organization", required = true)
+                                               @PathVariable("id") Integer organizationId) {
+        try {
+            organizationService.saveUserOrganization(userId, organizationId);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                                                      .path("/{id}/users/{userId}")
+                                                      .buildAndExpand(organizationId, userId).toUri();
+            return ResponseEntity.created(location).build();
+        } catch (NullPointerException | UserOrganizationException e) {
+            throw new NotFoundException("ID of organization or user invalid, or relationship already exist");
+        }
+    }
 }

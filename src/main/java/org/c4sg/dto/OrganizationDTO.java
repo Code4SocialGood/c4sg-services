@@ -14,7 +14,7 @@ public class OrganizationDTO {
 	@NotNull
 	private String name;
 
-	private String websiteURL;
+	private String websiteUrl;
 	
     private String logoUrl;
 
@@ -34,6 +34,8 @@ public class OrganizationDTO {
 	private String zip;
 
 	private String contactName;
+	
+	private String contactTitle;
 	
 	private String contactPhone;
 	
@@ -64,12 +66,12 @@ public class OrganizationDTO {
 		this.name = name;
 	}
 
-	public String getWebsiteURL() {
-		return websiteURL;
+	public String getWebsiteUrl() {
+		return websiteUrl;
 	}
 
-	public void setWebsiteURL(String websiteURL) {
-		this.websiteURL = websiteURL;
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
 	}
 	
 	public String getLogoUrl() {
@@ -143,6 +145,14 @@ public class OrganizationDTO {
 		this.contactName = contactName;
 	}
 
+	public String getContactTitle() {
+		return contactTitle;
+	}
+
+	public void setContactTitle(String contactTitle) {
+		this.contactTitle = contactTitle;
+	}
+	
 	public String getContactPhone() {
 		return contactPhone;
 	}

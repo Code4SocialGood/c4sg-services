@@ -8,7 +8,6 @@ import org.c4sg.dto.SkillDTO;
 import org.c4sg.dto.SkillUserCountDTO;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
-import org.c4sg.exception.SkillException;
 import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,16 +25,9 @@ public class SkillController {
 
     @CrossOrigin
     @RequestMapping(produces = {"application/json"}, method = RequestMethod.GET)
-    @ApiOperation(value = "Get all skills", notes = "Returns a collection of skills (alphabetical)")
+    @ApiOperation(value = "Get all skills", notes = "Returns a collection of skills based on the user ranking")
     public List<SkillDTO> getSkills() {
-        return skillService.findSkills();
-    }
-    
-    @CrossOrigin
-    @RequestMapping(value="/userCount",produces = {"application/json"}, method = RequestMethod.GET)
-    @ApiOperation(value = "Get skills grouped by user count", notes = "Returns a collection of skills with user count")
-    public List<SkillUserCountDTO> getSkillsWithUserCount() {
-        return skillService.findSkillsWithUserCount();
+        return skillService.findSkillsbyCount();
     }
     
     @CrossOrigin
@@ -55,34 +47,30 @@ public class SkillController {
     }
     
     @CrossOrigin
-    @RequestMapping(value="/user/skills", method = RequestMethod.POST)
+    @RequestMapping(value="/user/skills", method = RequestMethod.PUT)
     @ApiOperation(value = "Add skills for a user", notes = "Adds skills for the user with display order")
     public void createSkillsForUser(@ApiParam(value = "ID of user to add skills",name="id", required = true)
-			 	    @RequestParam Integer id,
-    				    @ApiParam(value = "Skills in display order",name="skillsList", required = true)
+				    @RequestParam Integer id,
+				    @ApiParam(value = "Skills in display order",name="skillsList", required = true)
 				    @RequestParam List<String> skillsList) {
 	try {
 		skillService.saveSkillsForUser(id,skillsList);
 	} catch (NullPointerException e) {
         	throw new NotFoundException(e.getMessage());
-        } catch (SkillException e) {
-		throw new BadRequestException(e.getMessage());
-	}
+        } 
     }
     
     @CrossOrigin
-    @RequestMapping(value="/project/skills", method = RequestMethod.POST)
+    @RequestMapping(value="/project/skills", method = RequestMethod.PUT)
     @ApiOperation(value = "Add skills for a project", notes = "Adds skills for the project with display order")
     public void createSkillsForProject(@ApiParam(value = "ID of project to add skills", required = true)
-			 	       @RequestParam Integer id,
-    				       @ApiParam(value = "Skills in display order", required = true)
+				       @RequestParam Integer id,
+				       @ApiParam(value = "Skills in display order", required = true)
 				       @RequestParam List<String> skillsList) {
     	try {
 		skillService.saveSkillsForProject(id,skillsList);
 	} catch (NullPointerException e) {
             	throw new NotFoundException(e.getMessage());
-        } catch (SkillException e) {
-        	throw new BadRequestException(e.getMessage());
-	}
+        } 
     }
 }
