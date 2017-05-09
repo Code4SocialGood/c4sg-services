@@ -14,7 +14,7 @@ public class OrganizationDTO {
 	@NotNull
 	private String name;
 
-	private String websiteURL;
+	private String websiteUrl;
 	
     private String logoUrl;
 
@@ -66,12 +66,12 @@ public class OrganizationDTO {
 		this.name = name;
 	}
 
-	public String getWebsiteURL() {
-		return websiteURL;
+	public String getWebsiteUrl() {
+		return websiteUrl;
 	}
 
-	public void setWebsiteURL(String websiteURL) {
-		this.websiteURL = websiteURL;
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
 	}
 	
 	public String getLogoUrl() {

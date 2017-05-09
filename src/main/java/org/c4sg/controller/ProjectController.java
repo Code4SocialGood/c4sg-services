@@ -4,16 +4,13 @@ import io.swagger.annotations.*;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateProjectDTO;
-import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.dto.ProjectDTO;
-import org.c4sg.entity.Project;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
 import org.c4sg.util.FileUploadUtil;
-import org.hibernate.jpa.criteria.predicate.ExistsPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,7 +52,7 @@ public class ProjectController {
     @CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find project by ID", notes = "Returns a single project")
-    public Project getProject(@ApiParam(value = "ID of project to return", required = true)
+    public ProjectDTO getProject(@ApiParam(value = "ID of project to return", required = true)
                               @PathVariable("id") int id) {
         System.out.println("**************ID**************" + id);
         return projectService.findById(id);
@@ -64,7 +61,7 @@ public class ProjectController {
     @CrossOrigin
     @RequestMapping(value = "/organizations/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find projects by Organization ID", notes = "Returns a list of projects")
-    public List<Project> getProjectsByOrganization(@ApiParam(value = "ID of an organization", required = true)
+    public List<ProjectDTO> getProjectsByOrganization(@ApiParam(value = "ID of an organization", required = true)
                                                    @PathVariable("id") int orgId) {
         System.out.println("**************OrganizationID**************" + orgId);
         return projectService.findByOrganization(orgId);
@@ -72,7 +69,7 @@ public class ProjectController {
 
     @CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    @ApiOperation(value = "Find project by keyWord or skills list", notes = "Returns a collection of projects")
+    @ApiOperation(value = "Find ACTIVE project by keyWord or skills", notes = "Returns a collection of active projects")
     public List<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
                                         @RequestParam(required=false) String keyWord,
                                         @ApiParam(value = "Skills for projects to return")
@@ -110,7 +107,7 @@ public class ProjectController {
 
         Map<String, Object> responseData = null;
         try {
-            Project createProject = projectService.createProject(createProjectDTO);
+            ProjectDTO createProject = projectService.createProject(createProjectDTO);
             responseData = Collections.synchronizedMap(new HashMap<>());
             responseData.put("project", createProject);
         } catch (Exception e) {
@@ -140,14 +137,14 @@ public class ProjectController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ApiOperation(value = "Update an existing project")
     public Map<String, Object> updateProject(@ApiParam(value = "Updated project object", required = true)
-                                             @RequestBody @Valid Project project) {
+                                             @RequestBody @Valid ProjectDTO project) {
 
         System.out.println("**************Update : id=" + project.getId() + "**************");
 
         Map<String, Object> responseData = null;
 
         try {
-            Project updateProject = projectService.updateProject(project);
+            ProjectDTO updateProject = projectService.updateProject(project);
             responseData = Collections.synchronizedMap(new HashMap<>());
             responseData.put("project", updateProject);
         } catch (Exception e) {
@@ -220,6 +217,30 @@ public class ProjectController {
         }
     }
 
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/image", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Deletes a project's images")
+    public String deleteImage(@ApiParam(value = "Project id to delete image for", required = true)
+    							@PathVariable("id") int id) {
+    	ProjectDTO p = projectService.findById(id);
+    	File image = new File(projectService.getImageUploadPath(id));
+    	try {
+    		boolean del = image.delete();
+    		p.setImageUrl(null);
+    		projectService.updateProject(p);
+    		if (del) {
+    			return "Success";
+    		} else {
+    			return "Fail";
+    		}
+    	} catch (Exception e) {
+    		System.out.println(e);
+    		return "Error";
+    	}
+    }
+    
+    
+    
     @CrossOrigin
     @RequestMapping(value = "/bookmark/projects/{projectId}/users/{userId}", method = RequestMethod.POST)
     @ApiOperation(value = "Create a bookmark for a project")

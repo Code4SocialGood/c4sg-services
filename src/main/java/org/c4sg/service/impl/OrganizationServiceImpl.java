@@ -92,7 +92,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     public OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO) {
         Organization organization = organizationDAO.findOne(id);
         if (organization == null) {
-            //TODO: create new?
+        	System.out.println("Project does not exist.");
         } else {
             organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
         }
