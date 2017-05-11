@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
+import org.c4sg.dao.ProjectSkillDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
@@ -41,6 +42,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UserProjectDAO userProjectDAO;
+    
+    @Autowired
+    private ProjectSkillDAO projectSkillDAO;
 
     @Autowired
     private ProjectMapper projectMapper;
@@ -149,11 +153,20 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(project);
     }
 
-    public void deleteProject(int id) {
+    public void deleteProject(int id) throws UserProjectException  {
         Project localProject = projectDAO.findById(id);
 
         if (localProject != null) {
-            projectDAO.delete(localProject);
+        	
+        	    File image = new File(getImageUploadPath(id));        	
+        		boolean del = image.delete();        		  	
+        		if (!del) {        		
+        			 throw new UserProjectException("File does not exist.");   
+        		}
+        
+        	userProjectDAO.updateStatus(new Integer(id),"B");        	
+        	projectSkillDAO.deleteByProjectId(id);            	
+            projectDAO.deleteProject(id,"D");
         } else {
             System.out.println("Project does not exist.");
         }
@@ -177,6 +190,9 @@ public class ProjectServiceImpl implements ProjectService {
     public String getImageUploadPath(Integer projectId) {
         return PROJECT_UPLOAD.getValue() + File.separator + projectId + IMAGE.getValue();
     }
+       
+    
+ 
     
     @Override
     public void saveUserProjectBookmark(Integer userId, Integer projectId) {
