@@ -48,7 +48,8 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             +   " AND p.status = 'A'"
             +   ")  "
             + "ORDER BY p.createdTime DESC";
-  String UPDATE_PROJECT = "UPDATE Project p set p.status = :projectStatus, p.imageUrl = '' where p.id = :projId";
+    
+  String DELETE_PROJECT = "UPDATE Project p set p.status = 'C' where p.id = :projId";
 
     
 	Project findById(int id);
@@ -74,8 +75,8 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
 	
 	@Transactional
     @Modifying
-	@Query(UPDATE_PROJECT)
-	Integer deleteProject(@Param("projId") int projId, @Param("projectStatus") String projectStatus);
+	@Query(DELETE_PROJECT)
+	Integer deleteProject(@Param("projId") int projId);
 	
 	
 }

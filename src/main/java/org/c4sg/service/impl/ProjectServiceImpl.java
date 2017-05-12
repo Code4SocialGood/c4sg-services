@@ -158,15 +158,12 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (localProject != null) {
         	
-        	    File image = new File(getImageUploadPath(id));        	
-        		boolean del = image.delete();        		  	
-        		if (!del) {        		
-        			 throw new UserProjectException("File does not exist.");   
-        		}
+        	File image = new File(getImageUploadPath(id));        	
+        	image.delete();        		  	
         
-        	userProjectDAO.updateStatus(new Integer(id),"B");        	
+        	userProjectDAO.deleteByProjectStatus(new Integer(id),"B");        	
         	projectSkillDAO.deleteByProjectId(id);            	
-            projectDAO.deleteProject(id,"D");
+            projectDAO.deleteProject(id);
         } else {
             System.out.println("Project does not exist.");
         }
