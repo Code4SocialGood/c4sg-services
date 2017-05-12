@@ -1,11 +1,14 @@
 package org.c4sg.dao;
 
 import org.c4sg.entity.Project;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 public interface ProjectDAO extends CrudRepository<Project, Long> {
 
@@ -45,6 +48,8 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             +   " AND p.status = 'A'"
             +   ")  "
             + "ORDER BY p.createdTime DESC";
+    
+  String DELETE_PROJECT = "UPDATE Project p set p.status = 'C' where p.id = :projId";
 
     
 	Project findById(int id);
@@ -67,4 +72,11 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
 	
 	@Query(FIND_BY_USER_ID_AND_STATUS)
 	List<Project> findByUserIdAndUserProjectStatus(@Param("userId") Integer userId, @Param("userProjectStatus") String userProjectStatus);
+	
+	@Transactional
+    @Modifying
+	@Query(DELETE_PROJECT)
+	Integer deleteProject(@Param("projId") int projId);
+	
+	
 }
