@@ -21,6 +21,7 @@ public class UserDTO {
     private String resumeUrl;
     private String facebookUrl;
     private String twitterUrl;
+    private String phone;
     private String role;
     private String publicProfileFlag;
     private String chatFlag;
@@ -137,6 +138,12 @@ public class UserDTO {
 	}
 	public void setRole(String role) {
 		this.role = role;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 	public String getPublicProfileFlag() {
 		return publicProfileFlag;
