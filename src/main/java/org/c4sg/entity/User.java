@@ -75,6 +75,9 @@ public class User implements Serializable {
     @Column(name = "twitter_url")
     private String twitterUrl;
 
+    @Column(name = "phone")
+    private String phone;
+    
     @Column(name = "role", columnDefinition="char(1)", nullable = false)
     private String role;
 
