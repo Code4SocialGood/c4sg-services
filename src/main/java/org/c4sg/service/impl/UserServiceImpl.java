@@ -7,9 +7,12 @@ import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Format.RESUME;
 import static org.c4sg.constant.Format.IMAGE;
 import org.c4sg.dao.UserDAO;
+import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.dto.UserDTO;
+import org.c4sg.entity.Organization;
 import org.c4sg.entity.User;
 import org.c4sg.mapper.UserMapper;
+import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDAO userDAO;
+
+	@Autowired
+    private OrganizationService organizationService;
 
 	@Autowired
 	private UserMapper userMapper;
@@ -65,7 +71,11 @@ public class UserServiceImpl implements UserService {
         user.setAvatarUrl(null);
         userDAO.save(user);
         userDAO.deleteUserProjects(id);
-        userDAO.deleteUserSkills(id);        
+        userDAO.deleteUserSkills(id);  
+        List<OrganizationDTO> organizations = organizationService.findByUser(id);
+        for (OrganizationDTO org:organizations){
+        	organizationService.deleteOrganization(org.getId());
+        }
     }
 		
 	@Override

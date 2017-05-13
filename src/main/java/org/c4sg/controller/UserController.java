@@ -55,8 +55,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private OrganizationService organizationService;
 
     @CrossOrigin
     @RequestMapping(value = "/active", method = RequestMethod.GET)
@@ -144,10 +142,6 @@ public class UserController {
        LOGGER.debug("************** Delete : id=" + id + "**************");
         try {
             userService.deleteUser(id);
-            if (userService.findById(id) !=null){
-            	int organizationId=(userService.findById(id)).getId();
-            	organizationService.deleteOrganization(organizationId);
-            }
         } catch (Exception e) {        	
            LOGGER.error("Exception on delete user:", e);
         }
