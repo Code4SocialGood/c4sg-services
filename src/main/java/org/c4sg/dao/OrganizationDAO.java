@@ -2,8 +2,11 @@ package org.c4sg.dao;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,6 +24,8 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
                 + "AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false) OR :open=false )"
                 + ")  ORDER BY o.name ASC";
 
+    String DELETE_USER_ORGANIZATIONS = "DELETE FROM UserOrganization uo WHERE uo.organization.id=:id";
+    
     Organization findByName(String name);
 
     List<Organization> findAllByOrderByIdDesc();
@@ -35,6 +40,11 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
 
     @Query(FIND_BY_CRITERIA)
     List<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("country") String country,@Param("open") boolean open);
+
+    @Modifying
+    @Query(DELETE_USER_ORGANIZATIONS)
+    @Transactional
+    void deleteUserOrganizations(@Param("id") Integer id);
 
 //	List<Organization> findByNameLikeOrDescriptionLikeAllIgnoreCase(String name, String description);
 }
