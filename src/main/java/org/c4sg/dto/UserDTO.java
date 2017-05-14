@@ -12,20 +12,21 @@ public class UserDTO {
     private String country;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private String phone;    
     private String title;
     private String introduction;
     private String avatarUrl;
     private String linkedinUrl;
     private String personalUrl;
-    private String gitHubUrl;
+    private String githubUrl;
     private String resumeUrl;
     private String facebookUrl;
     private String twitterUrl;
-    private String phone;
-    private String role;
-    private String publicProfileFlag;
+    private String publishFlag;
+    private String notifyFlag;
     private String chatFlag;
     private String forumFlag;
+    private String role;
     private String status;
     private String createdTime;
     private String updatedTime;
@@ -108,12 +109,12 @@ public class UserDTO {
 	public void setPersonalUrl(String personalUrl) {
 		this.personalUrl = personalUrl;
 	}
-	public String getGitHubUrl()
+	public String getGithubUrl()
 	{
-		return gitHubUrl;
+		return githubUrl;
 	}
-	public void setGitHubUrl(String gitHubUrl){
-		this.gitHubUrl = gitHubUrl;
+	public void setGithubUrl(String githubUrl){
+		this.githubUrl = githubUrl;
 	}
 	public String getFacebookUrl() {
 		return facebookUrl;
@@ -145,11 +146,17 @@ public class UserDTO {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public String getPublicProfileFlag() {
-		return publicProfileFlag;
+	public String getPublishFlag() {
+		return publishFlag;
 	}
-	public void setPublicProfileFlag(String publicProfileFlag) {
-		this.publicProfileFlag = publicProfileFlag;
+	public void setPublishFlag(String publishFlag) {
+		this.publishFlag = publishFlag;
+	}
+	public String getNotifyFlag() {
+		return notifyFlag;
+	}
+	public void setNotifyFlag(String notifyFlag) {
+		this.notifyFlag = notifyFlag;
 	}
 	public String getChatFlag() {
 		return chatFlag;
