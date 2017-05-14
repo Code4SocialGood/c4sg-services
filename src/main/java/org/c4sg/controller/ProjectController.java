@@ -222,19 +222,19 @@ public class ProjectController {
     @ApiOperation(value = "Deletes a project's images")
     public String deleteImage(@ApiParam(value = "Project id to delete image for", required = true)
     							@PathVariable("id") int id) {
-    	ProjectDTO p = projectService.findById(id);
+    	ProjectDTO pr = projectService.findById(id);
     	File image = new File(projectService.getImageUploadPath(id));
     	try {
     		boolean del = image.delete();
-    		p.setImageUrl(null);
-    		projectService.updateProject(p);
+    		pr.setImageUrl(null);
+    		projectService.updateProject(pr);
     		if (del) {
     			return "Success";
     		} else {
     			return "Fail";
     		}
     	} catch (Exception e) {
-    		System.out.println(e);
+    		e.printStackTrace();
     		return "Error";
     	}
     }
