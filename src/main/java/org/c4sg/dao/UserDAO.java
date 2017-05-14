@@ -19,7 +19,7 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
 	
     String FIND_ACTIVE_VOLUNTEERS = 
     		"SELECT u FROM User u " +
-            "WHERE u.status = 'A' and u.role = 'V' and u.publicProfileFlag = 'Y' " + 
+            "WHERE u.status = 'A' and u.role = 'V' and u.publishFlag = 'Y' " + 
     		"ORDER BY u.createdTime DESC";
     
     String FIND_BY_ID_QUERY = 
@@ -35,7 +35,7 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     		"LEFT OUTER JOIN us.skill s " + 
     		"WHERE u.role = 'V'" + 
             "AND u.status = 'A'" + 
-            "AND u.publicProfileFlag = 'Y' " + 
+            "AND u.publishFlag = 'Y' " + 
     		"AND ((:keyWord is null " +
     		"OR LOWER(u.userName) LIKE LOWER(CONCAT('%', :keyWord, '%')) " + 
     		"OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :keyWord, '%')) " +

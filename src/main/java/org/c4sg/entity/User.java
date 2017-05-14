@@ -47,6 +47,9 @@ public class User implements Serializable {
     
     @Column(name = "longitude")
     private BigDecimal longitude;
+
+    @Column(name = "phone")
+    private String phone;
     
 	@Column(name = "title")
 	private String title;	
@@ -64,7 +67,7 @@ public class User implements Serializable {
     private String personalUrl;   
     
 	@Column(name = "github_url")
-	private String gitHubUrl;
+	private String githubUrl;
 	
     @Column(name = "resume_url")
     private String resumeUrl;
@@ -75,21 +78,21 @@ public class User implements Serializable {
     @Column(name = "twitter_url")
     private String twitterUrl;
 
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "publish_flag", columnDefinition="char(1)", nullable = false)
+    private String publishFlag;
+
+    @Column(name = "notify_flag", columnDefinition="char(1)", nullable = false)
+    private String notifyFlag;
     
-    @Column(name = "role", columnDefinition="char(1)", nullable = false)
-    private String role;
-
-    @Column(name = "public_profile_flag", columnDefinition="char(1)", nullable = false)
-    private String publicProfileFlag;
-
     @Column(name = "chat_flag", columnDefinition="char(1)", nullable = false)
     private String chatFlag;
             
     @Column(name = "forum_flag", columnDefinition="char(1)", nullable = false)
     private String forumFlag;
 
+    @Column(name = "role", columnDefinition="char(1)", nullable = false)
+    private String role;
+    
     @Column(name = "status", columnDefinition="char(1)", nullable = false)
     private String status;
      
@@ -171,6 +174,14 @@ public class User implements Serializable {
 		this.longitude = longitude;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone= phone;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
@@ -203,12 +214,12 @@ public class User implements Serializable {
 		this.linkedinUrl = linkedinUrl;
 	}
 	
-	public String getGitHubUrl() {
-		return gitHubUrl;
+	public String getGithubUrl() {
+		return githubUrl;
 	}
 
-	public void setGitHubUrl(String gitHubUrl) {
-		this.gitHubUrl = gitHubUrl;
+	public void setGithubUrl(String githubUrl) {
+		this.githubUrl = githubUrl;
 	}
 
 	public String getPersonalUrl() {
@@ -251,14 +262,22 @@ public class User implements Serializable {
 		this.role = role;
 	}
 
-	public String getPublicProfileFlag() {
-		return publicProfileFlag;
+	public String getPublishFlag() {
+		return publishFlag;
 	}
 
-	public void setPublicProfileFlag(String publicProfileFlag) {
-		this.publicProfileFlag = publicProfileFlag;
+	public void setPublishFlag(String publishFlag) {
+		this.publishFlag = publishFlag;
 	}
 
+	public String getNotifyFlag() {
+		return notifyFlag;
+	}
+
+	public void setNotifyFlag(String notifyFlag) {
+		this.notifyFlag = notifyFlag;
+	}
+	
 	public String getChatFlag() {
 		return chatFlag;
 	}
