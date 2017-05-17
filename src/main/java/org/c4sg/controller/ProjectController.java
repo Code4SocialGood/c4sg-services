@@ -73,8 +73,12 @@ public class ProjectController {
     public List<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
                                         @RequestParam(required=false) String keyWord,
                                         @ApiParam(value = "Skills for projects to return")
-                                        @RequestParam(required = false) List<Integer> skills) {
-        return projectService.findByKeyword(keyWord,skills);
+                                        @RequestParam(required = false) List<Integer> skills,
+                                        @ApiParam(value = "Status of the project")
+    									@RequestParam(required = false) String status,
+    									@ApiParam(value = "Location of the project")
+										@RequestParam(required = false) String remote) {
+        return projectService.findByKeyword(keyWord,skills,status,remote);
     }
 
     @CrossOrigin

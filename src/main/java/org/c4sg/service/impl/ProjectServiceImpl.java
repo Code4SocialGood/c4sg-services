@@ -73,10 +73,10 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(projectDAO.findByName(name));
     }
 
-    public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills) {
+    public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote) {
     	long skillCount=0;
     	if (skills != null) skillCount=skills.size(); 
-        List<Project> projects = projectDAO.findByKeyword(keyWord, skills, skillCount);
+        List<Project> projects = projectDAO.findByKeyword(keyWord, skills, skillCount, status, remote);
         return projectMapper.getDtosFromEntities(projects);
     }
     

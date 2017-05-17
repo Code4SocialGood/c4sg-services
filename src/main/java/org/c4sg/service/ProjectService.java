@@ -14,7 +14,7 @@ public interface ProjectService {
 
 	List<ProjectDTO> findProjects();
 
-	List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills);
+	List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote);
 
 	List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException;
 
