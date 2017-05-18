@@ -7,6 +7,7 @@ import static org.c4sg.constant.Format.IMAGE;
 
 import java.io.File;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
@@ -116,7 +117,7 @@ public class ProjectServiceImpl implements ProjectService {
 
             // Updates projectUpdateTime for the organization
             Organization localOrgan = localProject.getOrganization(); 
-            localOrgan.setProjectUpdatedTime(new Date(Calendar.getInstance().getTime().getTime())); 
+            localOrgan.setProjectUpdatedTime(new Timestamp(Calendar.getInstance().getTime().getTime())); 
             organizationDAO.save(localOrgan);
             //Date currentTime = new Date(Calendar.getInstance().getTime().getTime());
             //Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
