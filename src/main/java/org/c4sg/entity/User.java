@@ -2,7 +2,7 @@ package org.c4sg.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -97,10 +97,10 @@ public class User implements Serializable {
     private String status;
      
 	@Column(name = "created_time")
-	private Date createdTime;
+	private Timestamp createdTime;
 		
 	@Column(name = "updated_time")
-	private Date updatedTime;
+	private Timestamp updatedTime;
 	
 	public Integer getId() {
 		return id;
@@ -302,19 +302,19 @@ public class User implements Serializable {
 		this.status = status;
 	}
 
-	public Date getCreatedTime() {
+	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Date createdTime) {
+	public void setCreatedTime(Timestamp createdTime) {
 		this.createdTime = createdTime;
 	}
 
-	public Date getUpdatedTime() {
+	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Date updatedTime) {
+	public void setUpdatedTime(Timestamp updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 	

@@ -1,6 +1,6 @@
 package org.c4sg.entity;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -66,13 +66,13 @@ public class Organization {
     private String status="A";
     
 	@Column(name = "created_time", nullable = false)
-	private Date createdTime;
+	private Timestamp createdTime;
 		
 	@Column(name = "updated_time", nullable = false)
-	private Date updatedTime;
+	private Timestamp updatedTime;
 	
 	@Column(name = "project_updated_time")
-	private Date projectUpdatedTime;	
+	private Timestamp projectUpdatedTime;	
 	
 	@PrePersist
 	void preInsert() {
@@ -216,27 +216,27 @@ public class Organization {
         this.status = status;
     }
     
-	public Date getCreatedTime() {
+	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Date createdTime) {
+	public void setCreatedTime(Timestamp createdTime) {
 		this.createdTime = createdTime;
 	}
 	
-	public Date getUpdatedTime() {
+	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Date updatedTime) {
+	public void setUpdatedTime(Timestamp updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 
-	public Date getProjectUpdatedTime() {
+	public Timestamp getProjectUpdatedTime() {
 		return projectUpdatedTime;
 	}
 
-	public void setProjectUpdatedTime(Date projectUpdatedTime) {
+	public void setProjectUpdatedTime(Timestamp projectUpdatedTime) {
 		this.projectUpdatedTime = projectUpdatedTime;
 	}
 	
