@@ -36,7 +36,30 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             "OR p.description LIKE CONCAT('%', :description, '%') " +
             "ORDER BY p.createdTime DESC";
 
-    String FIND_ACTIVE_BY_CRITERIA = 
+    String FIND_BY_KEYWORD_SKILL_CRITERIA = 
+    		"SELECT DISTINCT p "
+    		+ "FROM ProjectSkill ps "
+    		+ "RIGHT OUTER JOIN ps.project p "
+    		+ "LEFT OUTER JOIN ps.skill s "
+    		+ "LEFT OUTER JOIN p.organization o "
+            + "WHERE ("
+            + 	"(:keyWord is null OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyWord, '%'))" 
+            +   " OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
+            +	" OR LOWER(p.state) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
+            +   " OR LOWER(p.country) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
+            +   " OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
+            +   " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
+            +	" OR LOWER(o.state) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
+            +   " OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
+            +   " OR LOWER(s.skillName) LIKE LOWER(CONCAT('%',:keyWord,'%')))"
+            +   " AND (ps.skill.id in (:skills))"
+            //+   " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)" 
+            +   " AND (:status is null OR p.status = :status)"
+            +   " AND (:remote is null OR p.remoteFlag = :remote)"
+            +   ")  "
+            + "ORDER BY p.createdTime DESC";
+    
+    String FIND_BY_KEYWORD_CRITERIA = 
     		"SELECT DISTINCT p "
     		+ "FROM ProjectSkill ps "
     		+ "RIGHT OUTER JOIN ps.project p "
@@ -52,7 +75,7 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             +	" OR LOWER(o.state) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
             +   " OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
             +   " OR LOWER(s.skillName) LIKE LOWER(CONCAT('%',:keyWord,'%')))"            
-            +   " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)" 
+            //+   " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)" 
             +   " AND (:status is null OR p.status = :status)"
             +   " AND (:remote is null OR p.remoteFlag = :remote)"
             +   ")  "
@@ -70,8 +93,11 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     @Query(FIND_BY_NAME_OR_DESCRIPTION)
     List<Project> findByNameOrDescription(@Param("name") String name, @Param("description") String description);
 
-    @Query(FIND_ACTIVE_BY_CRITERIA)
-    List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("skillCount") Long skillCount, @Param("status") String status, @Param("remote") String remote);
+    @Query(FIND_BY_KEYWORD_SKILL_CRITERIA)
+    List<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote);
+    
+    @Query(FIND_BY_KEYWORD_CRITERIA)
+    List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("remote") String remote);
 
 	@Query(FIND_BY_ORGANIZATION_ID)
 	List<Project> getProjectsByOrganization(@Param("orgId") Integer orgId);

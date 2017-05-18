@@ -31,6 +31,8 @@ import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mysql.fabric.xmlrpc.base.Array;
+
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
@@ -76,7 +78,14 @@ public class ProjectServiceImpl implements ProjectService {
     public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote) {
     	long skillCount=0;
     	if (skills != null) skillCount=skills.size(); 
-        List<Project> projects = projectDAO.findByKeyword(keyWord, skills, skillCount, status, remote);
+    	List<Project> projects = null;
+    	if(skills != null)
+    	{
+    		projects = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote);
+    	}
+    	else{
+    		projects = projectDAO.findByKeyword(keyWord, status, remote);
+    	}
         return projectMapper.getDtosFromEntities(projects);
     }
     
