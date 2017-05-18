@@ -15,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 
 import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
 
@@ -37,6 +39,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/projects")
 @Api(description = "Operations about Projects", tags = "project")
+@Validated
 public class ProjectController {
 
     @Autowired
@@ -75,9 +78,9 @@ public class ProjectController {
                                         @ApiParam(value = "Skills for projects to return")
                                         @RequestParam(required = false) List<Integer> skills,
                                         @ApiParam(value = "Status of the project")
-    									@RequestParam(required = false) String status,
+    									@Pattern(regexp="[AC]")  @RequestParam(required = false) String status,
     									@ApiParam(value = "Location of the project")
-										@RequestParam(required = false) String remote) {
+    									@Pattern(regexp="[YN]") @RequestParam(required = false) String remote) {
         return projectService.findByKeyword(keyWord,skills,status,remote);
     }
 
