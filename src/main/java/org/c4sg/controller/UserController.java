@@ -117,6 +117,8 @@ public class UserController {
     @ApiOperation(value = "Update an existing user")
     public UserDTO updateUser(@ApiParam(value = "Updated user object", required = true)
                               @RequestBody UserDTO userDTO) {
+    	LOGGER.debug("**************updateUser**************");
+    	LOGGER.debug("ID = " + userDTO.getId());
         return userService.saveUser(userDTO);
     }
 

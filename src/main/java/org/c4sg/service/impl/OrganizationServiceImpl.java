@@ -11,17 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.c4sg.constant.Constants;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserOrganizationDAO;
 import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
+import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.User;
 import org.c4sg.entity.UserOrganization;
 import org.c4sg.exception.UserOrganizationException;
 import org.c4sg.mapper.OrganizationMapper;
 import org.c4sg.service.OrganizationService;
+import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +42,9 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	@Autowired
 	private UserOrganizationDAO userOrganizationDAO;
+	
+	@Autowired
+	private ProjectService projectService;
 
     public void save(OrganizationDTO organizationDTO) {
         Organization organization = organizationMapper.getOrganizationEntityFromDto(organizationDTO);
@@ -63,7 +69,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
                             .collect(Collectors.toList());
     }
-
+    
     public List<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, boolean open, String status, String category) {
     	List<Organization> organizations;
     	if(countries != null && countries.size() > 0){
@@ -110,11 +116,18 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void deleteOrganization(int id){
     	Organization organization = organizationDAO.findOne(id);
     	if(organization != null){
+    		organization.setStatus(Constants.ORGANIZATION_STATUS_CLOSED);
+    		organization.setLogoUrl(null);
+    		organizationDAO.save(organization);
+    		List<ProjectDTO> projects=projectService.findByOrganization(id);
+    		for (ProjectDTO project:projects){
+    			projectService.deleteProject(project.getId());
+    		}
+    		organizationDAO.deleteUserOrganizations(id);
     		//TODO: Local or Timezone?
     		//TODO: Format date
     		//organization.setDeleteTime(LocalDateTime.now().toString());
     		//organization.setDeleteBy(user.getUsername());
-    		organizationDAO.save(organization);
     	}
     }
 

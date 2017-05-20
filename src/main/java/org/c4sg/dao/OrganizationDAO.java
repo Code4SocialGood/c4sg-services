@@ -66,13 +66,18 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     List<Organization> findByKeyWord(@Param("keyword") String keyWord, @Param("status") String status, @Param("category") String category);
     
     @Query(FIND_BY_KEYWORD_OPORTUNITES)
-	List<Organization> findByKeyWordOportunites(@Param("keyword") String keyWord, @Param("status")String status, @Param("category") String category);
+	  List<Organization> findByKeyWordOportunites(@Param("keyword") String keyWord, @Param("status")String status, @Param("category") String category);
     
     @Query(FIND_BY_KEYWORD_COUNTRIES)
     List<Organization> findByKeyWordCountries(@Param("keyword") String keyWord, @Param("country") List<String> country, @Param("status") String status, @Param("category") String category);
     
     @Query(FIND_BY_KEYWORD_COUNTRIES_OPORTUNITES)
-	List<Organization> findByKeyWordCountriesOportunites(@Param("keyword") String keyWord, @Param("country") List<String> countries, @Param("status") String status, @Param("category") String category);
-    
+	  List<Organization> findByKeyWordCountriesOportunites(@Param("keyword") String keyWord, @Param("country") List<String> countries, @Param("status") String status, @Param("category") String category);
+  
+    @Modifying
+    @Query(DELETE_USER_ORGANIZATIONS)
+    @Transactional
+    void deleteUserOrganizations(@Param("id") Integer id);
 //	List<Organization> findByNameLikeOrDescriptionLikeAllIgnoreCase(String name, String description);
 }
+

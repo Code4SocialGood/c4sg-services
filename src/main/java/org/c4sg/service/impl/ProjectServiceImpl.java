@@ -7,6 +7,7 @@ import static org.c4sg.constant.Format.IMAGE;
 
 import java.io.File;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
@@ -30,6 +31,8 @@ import org.c4sg.service.OrganizationService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.mysql.fabric.xmlrpc.base.Array;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -73,10 +76,17 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(projectDAO.findByName(name));
     }
 
-    public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills) {
+    public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote) {
     	long skillCount=0;
     	if (skills != null) skillCount=skills.size(); 
-        List<Project> projects = projectDAO.findByKeyword(keyWord, skills, skillCount);
+    	List<Project> projects = null;
+    	if(skills != null)
+    	{
+    		projects = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote);
+    	}
+    	else{
+    		projects = projectDAO.findByKeyword(keyWord, status, remote);
+    	}
         return projectMapper.getDtosFromEntities(projects);
     }
     
@@ -116,7 +126,7 @@ public class ProjectServiceImpl implements ProjectService {
 
             // Updates projectUpdateTime for the organization
             Organization localOrgan = localProject.getOrganization(); 
-            localOrgan.setProjectUpdatedTime(new Date(Calendar.getInstance().getTime().getTime())); 
+            localOrgan.setProjectUpdatedTime(new Timestamp(Calendar.getInstance().getTime().getTime())); 
             organizationDAO.save(localOrgan);
             //Date currentTime = new Date(Calendar.getInstance().getTime().getTime());
             //Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
