@@ -89,10 +89,10 @@ public class OrganizationController {
 
     @CrossOrigin
     @RequestMapping(value = "/search", produces = {"application/json"}, method = RequestMethod.GET)
-    @ApiOperation(value = "Find organization by keyWord", notes = " Returns a list of organizations which has the keyword in name / description / country, AND, which has the opportunities open, AND, which is located in the selected country. The search result is sorted by organization name in ascending order.")
+    @ApiOperation(value = "Find organization by keyWord", notes = " Returns a list of organizations which has the keyword in name / description / state/ country, AND, which has the opportunities open, AND, which is located in the selected list of country, AND, which is selected by status AND category from organization. The search result is sorted by organization name in ascending order.")
     public List<OrganizationDTO> getOrganizations(@ApiParam(value = "Keyword in Name, description, state or country of organization to return", required = false)
                                                		@RequestParam(required=false) String keyWord,
-                                               		@ApiParam(value = "Country of organization to return", required = false)
+                                               		@ApiParam(value = "Country list of organization to return", required = false)
     												@RequestParam(required=false) List<String> country,
                                                		@ApiParam(value = "Opportunities open in the organization", required = false)
     												@RequestParam(required=false) boolean open,
