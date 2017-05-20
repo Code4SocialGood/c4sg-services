@@ -194,6 +194,20 @@ public class UserController {
         }
     }
 
+    @CrossOrigin
+    @RequestMapping(value = "/avatars/{id}", method = RequestMethod.PUT)
+    @ApiOperation(value = "Delete avatar for a user")
+    public ResponseEntity<File> deleteAvatar(@ApiParam(value = "ID of user", required = true)
+    										@PathVariable("id") int id) {
+    	File avatar = new File(userService.getAvatarUploadPath(id));
+    	if (avatar.exists()) {
+    		avatar.delete();
+    		return ResponseEntity.noContent().build();
+    	} else {
+    		throw new NotFoundException("avatar not found");
+    	}
+    }
+    
 	@RequestMapping(value = "/{id}/resume", method = RequestMethod.POST)
 	@ApiOperation(value = "Add new upload resume")
 	public String uploadResume(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
