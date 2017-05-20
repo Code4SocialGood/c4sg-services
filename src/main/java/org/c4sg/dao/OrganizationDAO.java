@@ -3,7 +3,6 @@ package org.c4sg.dao;
 import java.util.List;
 
 import org.c4sg.entity.Organization;
-import org.c4sg.entity.Project;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -14,12 +13,45 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
                                             "WHERE LOWER(o.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
                                                 "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :description, '%')) order by project_updated_time desc";
 
-    String FIND_BY_CRITERIA = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o " +
+    String FIND_BY_KEYWORD = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o " +
             "WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
-                + " AND (LOWER(o.country) LIKE LOWER(CONCAT('%', :country, '%')) OR :country is null) "
-                + "AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false) OR :open=false )"
-                + ")  ORDER BY o.name ASC";
+                "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " + 
+                "OR LOWER(o.state) LIKE LOWER(CONCAT('%', :keyword, '%'))" + 
+                "OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%'))))" +
+                "AND (:status is null OR o.status = :status) "+
+                "AND (:category is null OR o.category = :category) "+
+                "AND p.id is null "+
+                "  ORDER BY o.name ASC";
+    
+    String FIND_BY_KEYWORD_OPORTUNITES = "SELECT DISTINCT o FROM Project p INNER JOIN p.organization o " +
+            "WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " + 
+                "OR LOWER(o.state) LIKE LOWER(CONCAT('%', :keyword, '%'))" + 
+                "OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%'))))" +
+                "AND (:status is null OR o.status = :status) "+
+                "AND (:category is null OR o.category = :category) "+
+                "  ORDER BY o.name ASC";
+    
+    String FIND_BY_KEYWORD_COUNTRIES = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o " +
+            "WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) "+ 
+            "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%'))" + 
+            "OR LOWER(o.state) LIKE LOWER(CONCAT('%', :keyword, '%'))"+
+            "OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))" + 
+            "AND (o.country in (:country))" +
+            "AND (:status is null OR o.status = :status) "+
+            "AND (:category is null OR o.category = :category) " +
+            "AND p.id is null "+
+            " ORDER BY o.name ASC";
+    
+    String FIND_BY_KEYWORD_COUNTRIES_OPORTUNITES = "SELECT DISTINCT o FROM Project p INNER JOIN p.organization o " +
+            "WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) "+ 
+            "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%'))" + 
+            "OR LOWER(o.state) LIKE LOWER(CONCAT('%', :keyword, '%'))"+
+            "OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))" + 
+            "AND (o.country in (:country))" +
+            "AND (:status is null OR o.status = :status) "+
+            "AND (:category is null OR o.category = :category)" +
+            " ORDER BY o.name ASC" ;
 
     Organization findByName(String name);
 
@@ -27,14 +59,20 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     
     Organization findOne(Integer id);
 
-    /*@Query("SELECT o FROM Organization o WHERE LOWER(o.name) LIKE LOWER(CONCAT('%',:keyword,'%')) OR LOWER(o.description) LIKE LOWER(CONCAT('%',:keyword,'%'))")
-    List<Organization> findByKeyword(String keyword);*/
-
     @Query(FIND_BY_NAME_OR_DESCRIPTION)
     List<Organization> findByNameOrDescription(@Param("name") String name, @Param("description") String description);
 
-    @Query(FIND_BY_CRITERIA)
-    List<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("country") String country,@Param("open") boolean open);
-
+    @Query(FIND_BY_KEYWORD)
+    List<Organization> findByKeyWord(@Param("keyword") String keyWord, @Param("status") String status, @Param("category") String category);
+    
+    @Query(FIND_BY_KEYWORD_OPORTUNITES)
+	List<Organization> findByKeyWordOportunites(@Param("keyword") String keyWord, @Param("status")String status, @Param("category") String category);
+    
+    @Query(FIND_BY_KEYWORD_COUNTRIES)
+    List<Organization> findByKeyWordCountries(@Param("keyword") String keyWord, @Param("country") List<String> country, @Param("status") String status, @Param("category") String category);
+    
+    @Query(FIND_BY_KEYWORD_COUNTRIES_OPORTUNITES)
+	List<Organization> findByKeyWordCountriesOportunites(@Param("keyword") String keyWord, @Param("country") List<String> countries, @Param("status") String status, @Param("category") String category);
+    
 //	List<Organization> findByNameLikeOrDescriptionLikeAllIgnoreCase(String name, String description);
 }

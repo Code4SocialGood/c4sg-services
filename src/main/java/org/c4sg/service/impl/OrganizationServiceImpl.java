@@ -1,35 +1,29 @@
 package org.c4sg.service.impl;
 
 
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
+import static org.c4sg.constant.Directory.LOGO_UPLOAD;
+import static org.c4sg.constant.Format.IMAGE;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserOrganizationDAO;
 import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
-import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Organization;
-import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.entity.UserOrganization;
-import org.c4sg.entity.UserProject;
 import org.c4sg.exception.UserOrganizationException;
-import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.OrganizationMapper;
 import org.c4sg.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
-import static org.c4sg.constant.Directory.LOGO_UPLOAD;
-import static org.c4sg.constant.Format.IMAGE;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
@@ -69,9 +63,22 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
                             .collect(Collectors.toList());
     }
-    public List<OrganizationDTO> findByCriteria(String keyWord, String country, boolean open) {
-        List<Organization> organizations = organizationDAO.findByCriteria(keyWord, country, open);
 
+    public List<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, boolean open, String status, String category) {
+    	List<Organization> organizations;
+    	if(countries != null && countries.size() > 0){
+    		if(open){
+    			organizations = organizationDAO.findByKeyWordCountriesOportunites(keyWord, countries, status, category);
+    		}else{
+    			organizations = organizationDAO.findByKeyWordCountries(keyWord, countries, status, category);
+    		}
+    	}else{
+    		if(open){
+    			organizations = organizationDAO.findByKeyWordOportunites(keyWord, status, category);
+    		}else{
+    			organizations = organizationDAO.findByKeyWord(keyWord, status, category);
+    		}
+    	}
         return organizations.stream()
                             .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
                             .collect(Collectors.toList());
