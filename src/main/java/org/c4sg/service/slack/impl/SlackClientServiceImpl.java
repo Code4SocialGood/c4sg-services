@@ -1,11 +1,8 @@
 package org.c4sg.service.slack.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.c4sg.constant.slack.Problem;
@@ -24,9 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class SlackClientServiceImpl implements SlackClientService {
@@ -64,7 +63,9 @@ public class SlackClientServiceImpl implements SlackClientService {
 			return readValue(retNode, "members", new TypeReference<List<User>>() {
 			});
 	}
-	
+    
+    // This method takes an email address and checks whether the user associated with that email 
+    // address has joined the Slack chat
 	@Override
 	public Boolean isJoinedChat(String email){
 		//token=SlackWebApiConstants.SLACK_AUTH_TOKEN;
@@ -75,6 +76,11 @@ public class SlackClientServiceImpl implements SlackClientService {
 			if(user == null){
 				return false;
 			}
+            // If the User object for this user claims to not be part of the Slack chat,
+            // we iterate over all known Slack users, and if it turns out that one of the 
+            // Slack users has the same email address as this User object, we know that
+            // this User is in fact a Slack user. Therefore, we update the User object to reflect
+            // this.
 			if(user.getChatFlag().equalsIgnoreCase("N")){
 				List<User> slackUsers = getUserList();
 				for(User slackUser: slackUsers) {
@@ -84,6 +90,7 @@ public class SlackClientServiceImpl implements SlackClientService {
 							return true;
 						}
 				}
+                // If we did not find this user in the list of known Slack users
 				userDAO.updateIsSlackRegisteredFlag(false, user.getId());
 				return false;
 			}
