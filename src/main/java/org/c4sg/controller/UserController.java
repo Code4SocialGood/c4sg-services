@@ -1,20 +1,10 @@
 package org.c4sg.controller;
 
-import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
-import static org.c4sg.constant.Directory.RESUME_UPLOAD;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-
+import io.swagger.annotations.*;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.exception.NotFoundException;
-import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
 import org.c4sg.util.GeoCodeUtil;
@@ -27,24 +17,19 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
+import static org.c4sg.constant.Directory.RESUME_UPLOAD;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -97,20 +82,20 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new user")
     public UserDTO createUser(@ApiParam(value = "User object to return", required = true)
-                              @RequestBody UserDTO userDTO) {
+                              @RequestBody CreateUserDTO createUserDTO) {
     	//calculate lat and long
     	try {
-        	GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO);
-        	Map<String,BigDecimal> geoCode = geoCodeUtil.getGeoCode();
-			userDTO.setLatitude(geoCode.get("lat"));
-		    userDTO.setLongitude(geoCode.get("lon"));
+        	GeoCodeUtil geoCodeUtil = new GeoCodeUtil(createUserDTO);
+        	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
+			createUserDTO.setLatitude(geoCode.get("lat"));
+		    createUserDTO.setLongitude(geoCode.get("lon"));
 			
 		} catch (Exception e) {
 			
 			throw new NotFoundException("Error getting geocode");
 		}       
        
-    	return userService.saveUser(userDTO);
+    	return userService.saveUser(createUserDTO);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
