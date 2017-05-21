@@ -85,17 +85,18 @@ public class UserController {
                               @RequestBody CreateUserDTO createUserDTO) {
     	//calculate lat and long
     	try {
-        	GeoCodeUtil geoCodeUtil = new GeoCodeUtil(createUserDTO);
+            UserDTO userDTO = userService.createUser(createUserDTO);
+        	GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO);
         	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
-			createUserDTO.setLatitude(geoCode.get("lat"));
-		    createUserDTO.setLongitude(geoCode.get("lon"));
+			userDTO.setLatitude(geoCode.get("lat"));
+		    userDTO.setLongitude(geoCode.get("lon"));
 			
 		} catch (Exception e) {
 			
 			throw new NotFoundException("Error getting geocode");
 		}       
        
-    	return userService.saveUser(createUserDTO);
+    	return userService.saveUser(userService);
     }
 
     @RequestMapping(method = RequestMethod.PUT)

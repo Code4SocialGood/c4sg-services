@@ -3,7 +3,7 @@ package org.c4sg.util;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
-import org.c4sg.dto.CreateUserDTO;
+import org.c4sg.dto.UserDTO;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,7 +21,7 @@ public class GeoCodeUtil {
 	String state;
 	String country;
 	
-	public GeoCodeUtil(CreateUserDTO userDTO) {
+	public GeoCodeUtil(UserDTO userDTO) {
 		this.state = userDTO.getState();
 		this.country = userDTO.getCountry();
 	}
