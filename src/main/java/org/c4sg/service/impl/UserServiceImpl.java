@@ -109,5 +109,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserDTO createUser(CreateUserDTO createUserDTO) {
+        User localUser = userDAO.save(userMapper.getUserEntityFromCreateUserDto(createUserDTO));
+        return userMapper.getUserDtoFromEntity(localUser);
 	}
 }

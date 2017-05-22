@@ -1,16 +1,16 @@
 package org.c4sg.mapper;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.WKTReader;
+import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTReader;
+import java.lang.reflect.Type;
+import java.util.List;
 
 
 @Component
@@ -82,5 +82,9 @@ public class UserMapper extends ModelMapper {
 	public List<UserDTO> getDtosFromEntities(List<User> projects){
 		Type listTypeDTO = new TypeToken<List<UserDTO>>() {}.getType();
 		return map(projects, listTypeDTO);
+	}
+	
+	public User getUserEntityFromCreateUserDto(CreateUserDTO createUserDTO) {
+		return map(createUserDTO, User.class);
 	}
 }
