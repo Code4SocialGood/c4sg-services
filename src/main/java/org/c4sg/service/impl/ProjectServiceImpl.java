@@ -23,6 +23,7 @@ import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.entity.UserProject;
+import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
@@ -148,17 +149,32 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO saveUserProject(Integer userId, Integer projectId) {
+    public ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus ) {
         User user = userDAO.findById(userId);
         requireNonNull(user, "Invalid User Id");
         Project project = projectDAO.findById(projectId);
         requireNonNull(project, "Invalid Project Id");
-        isUserAppliedPresent(userId, projectId);
-        UserProject userProject = new UserProject();
-        userProject.setUser(user);
-        userProject.setProject(project);
-        apply(user, project);
-        userProjectDAO.save(userProject);
+        if (userProjectStatus == null || (!userProjectStatus.trim().equalsIgnoreCase("A") && !userProjectStatus.trim().equalsIgnoreCase("B"))) {
+        	throw new BadRequestException("Invalid Project Status");
+        }
+        
+        else if(userProjectStatus.trim().equalsIgnoreCase("A")){
+	        isUserAppliedPresent(userId, projectId);
+	        UserProject userProject = new UserProject();
+	        userProject.setUser(user);
+	        userProject.setProject(project);
+	        userProject.setStatus("A");
+	        apply(user, project);
+	        userProjectDAO.save(userProject);
+	        }
+        else if(userProjectStatus.trim().equalsIgnoreCase("B")){
+        	isBookmarkPresent(userId, projectId);  
+            UserProject userProject = new UserProject();
+            userProject.setUser(user);
+            userProject.setProject(project);
+            userProject.setStatus("B");
+            userProjectDAO.save(userProject);     	
+        }
 
         return projectMapper.getProjectDtoFromEntity(project);
     }
@@ -197,30 +213,6 @@ public class ProjectServiceImpl implements ProjectService {
     public String getImageUploadPath(Integer projectId) {
         return PROJECT_UPLOAD.getValue() + File.separator + projectId + IMAGE.getValue();
     }
-       
-    
- 
-    
-    @Override
-    public void saveUserProjectBookmark(Integer userId, Integer projectId) {
-        
-    	User user = userDAO.findById(userId);
-        requireNonNull(user, "Invalid User Id");
-        
-        Project project = projectDAO.findById(projectId);
-        requireNonNull(project, "Invalid Project Id");
-        
-        isBookmarkPresent(userId, projectId);
-        
-        UserProject userProject = new UserProject();
-        userProject.setUser(user);
-        userProject.setProject(project);
-        userProject.setStatus("B");
-        //apply(user, project);
-        userProjectDAO.save(userProject);
-
-        //return projectMapper.getProjectDtoFromEntity(project);
-    }
     
     private void isBookmarkPresent(Integer userId, Integer projectId)
     {
@@ -237,9 +229,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
     
     private void isUserAppliedPresent(Integer userId, Integer projectId) throws UserProjectException {
-        UserProject userProject = userProjectDAO.findByUser_IdAndProject_Id(userId, projectId);
-        if (nonNull(userProject)) {
-            throw new UserProjectException("The user already exists in that project");
-        }
+
+    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, "A");
+    	
+    	requireNonNull(userProjects, "Invalid operation");
+    	for(UserProject userProject : userProjects)
+    	{
+    		if(userProject.getStatus().equals("A"))
+        	{
+        		throw new UserProjectException("Project is already applied for");
+        	}
+    	}    	
     }
 }
