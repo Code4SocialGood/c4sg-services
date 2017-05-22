@@ -223,29 +223,21 @@ public class ProjectController {
         return null;
         }
     }
-
+   
+    
     @CrossOrigin
-    @RequestMapping(value = "/{id}/image", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Deletes a project's images")
-    public String deleteImage(@ApiParam(value = "Project id to delete image for", required = true)
-    							@PathVariable("id") int id) {
-    	ProjectDTO p = projectService.findById(id);
+    @RequestMapping(value = "/{id}/image", method = RequestMethod.PUT)
+    @ApiOperation(value = "Delete image for project")
+    public ResponseEntity<File> deleteImage(@ApiParam(value = "ID of project", required = true)
+    										@PathVariable("id") int id) {
     	File image = new File(projectService.getImageUploadPath(id));
-    	try {
-    		boolean del = image.delete();
-    		p.setImageUrl(null);
-    		projectService.updateProject(p);
-    		if (del) {
-    			return "Success";
-    		} else {
-    			return "Fail";
-    		}
-    	} catch (Exception e) {
-    		System.out.println(e);
-    		return "Error";
+    	if (image.exists()) {
+    		image.delete();
+    		return ResponseEntity.noContent().build();
+    	} else {
+    		throw new NotFoundException("project image not found");
     	}
     }
-    
     
     
     @CrossOrigin
