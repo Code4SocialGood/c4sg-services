@@ -22,7 +22,7 @@ public interface ProjectService {
 
 	ProjectDTO createProject(CreateProjectDTO project);
 
-	ProjectDTO saveUserProject(Integer userId, Integer projectId) throws RuntimeException;
+	ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus) throws RuntimeException;
 
 	ProjectDTO updateProject(ProjectDTO project);
 
@@ -32,5 +32,4 @@ public interface ProjectService {
 
 	String getImageUploadPath(Integer projectId);
 
-	void saveUserProjectBookmark(Integer userId, Integer projectId);
 }
