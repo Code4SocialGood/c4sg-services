@@ -234,7 +234,19 @@ public class UserController {
 		}
 	}
 	
-	
+	 @CrossOrigin
+    @RequestMapping(value = "/{id}/resume", method = RequestMethod.PUT)
+    @ApiOperation(value = "Delete resume for a user")
+    public ResponseEntity<File> deleteResume(@ApiParam(value = "ID of user", required = true)
+    										@PathVariable("id") int id) {
+    	File resume = new File(userService.getResumeUploadPath(id));
+    	if (resume.exists()) {
+    		resume.delete();
+    		return ResponseEntity.noContent().build();
+    	} else {
+    		throw new NotFoundException("resume not found");
+    	}
+    }
 	
 	@CrossOrigin
     @RequestMapping(value = "/{id}/resume", method = RequestMethod.GET)
