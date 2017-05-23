@@ -259,4 +259,51 @@ public class UserController {
         return null;
         }
     }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/resume", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Deletes user resume")
+    public String deleteResume(@ApiParam(value = "User id to delete resume for", required = true)
+                                         @PathVariable("id") int id) {
+    	UserDTO u = userService.findById(id);
+    	File res = new File(userService.getResumeUploadPath(id));
+    	try {
+    		boolean del = res.delete();
+    		u.setResumeUrl(null);
+    		userService.saveUser(u);
+    		if (del) {
+    			return "Success";
+    		} else {
+    			return "Fail";
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return "Error";
+    	}
+    }
+
+
+
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/avatar", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Deletes user avatar")
+    public String deleteAvatar(@ApiParam(value = "User id to delete avatar for", required = true)
+                                         @PathVariable("id") int id) {
+    	UserDTO u = userService.findById(id);
+    	File avatar = new File(userService.getAvatarUploadPath(id));
+    	try {
+    		boolean del = avatar.delete();
+    		u.setAvatarUrl(null);
+    		userService.saveUser(u);
+    		if (del) {
+    			return "Success";
+    		} else {
+    			return "Fail";
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return "Error";
+    	}
+    }
+
 }

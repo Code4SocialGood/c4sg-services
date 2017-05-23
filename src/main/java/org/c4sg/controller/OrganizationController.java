@@ -179,6 +179,28 @@ public class OrganizationController {
             return null;
         }
     }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/logo", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Deletes organization logo")
+    public String deleteLogo(@ApiParam(value = "Organization id to delete image for", required = true)
+    							@PathVariable("id") int id) {
+    	OrganizationDTO o = organizationService.findById(id);
+    	File logo = new File(organizationService.getLogoUploadPath(id));
+    	try {
+    		boolean del = logo.delete();
+    		o.setLogoUrl(null);
+    		organizationService.updateOrganization(id, o);
+    		if (del) {
+    			return "Success";
+    		} else {
+    			return "Fail";
+    		}
+    	} catch (Exception e) {
+    		System.out.println(e);
+    		return "Error";
+    	}
+    }
 
 	@CrossOrigin
 	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
