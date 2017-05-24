@@ -2,33 +2,34 @@ package org.c4sg.dto;
 
 public class CreateUserDTO {
     
-    private String username;
+    private String userName;
     private String firstName;
     private String lastName;
     private String email;
-    private String phone;
-    private String city;
     private String state;
     private String country;
-    private int zip;
+    private String phone;
     private String title;
     private String introduction;
+    private String avatarUrl;
     private String linkedInUrl;
     private String personalUrl;
     private String githubUrl;
-    private String avatarUrl;
     private String resumeUrl;
-    private String role;
-    private String publicProfileFlag;
-    private String charFlag;
+    private String facebookUrl;
+    private String twitterUrl;
+    private String publishFlag;
+    private String notifyFlag;
+    private String chatFlag;
     private String forumFlag;
+    private String role;
     
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
     
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
     
     public String getFirstName() {
@@ -63,14 +64,6 @@ public class CreateUserDTO {
         this.phone = phone;
     }
     
-    public String getCity() {
-        return city;
-    }
-    
-    public void setCity(String city) {
-        this.city = city;
-    }
-    
     public String getState() {
         return state;
     }
@@ -85,14 +78,6 @@ public class CreateUserDTO {
     
     public void setCountry(String country) {
         this.country = country;
-    }
-    
-    public int getZip() {
-        return zip;
-    }
-    
-    public void setZip(int zip) {
-        this.zip = zip;
     }
     
     public String getTitle() {
@@ -143,6 +128,22 @@ public class CreateUserDTO {
         this.avatarUrl = avatarUrl;
     }
     
+    public String getFacebookUrl() {
+        return facebookUrl;
+    }
+    
+    public void setFacebookUrl(String facebookUrl) {
+        this.resumeUrl = facebookUrl;
+    }
+    
+    public String getTwitterUrl() {
+        return twitterUrl;
+    }
+    
+    public void setTwitterUrl(String twitterUrl) {
+        this.twitterUrl = twitterUrl;
+    }
+    
     public String getResumeUrl() {
         return resumeUrl;
     }
@@ -159,20 +160,28 @@ public class CreateUserDTO {
         this.role = role;
     }
     
-    public String getPublicProfileFlag() {
-        return publicProfileFlag;
+    public String getPublishFlag() {
+        return publishFlag;
     }
     
-    public void setPublicProfileFlag(String publicProfileFlag) {
-        this.publicProfileFlag = publicProfileFlag;
+    public void setPublishFlag(String publishFlag) {
+        this.publishFlag = publishFlag;
     }
     
-    public String getCharFlag() {
-        return charFlag;
+    public String getNotifyFlag() {
+        return notifyFlag;
     }
     
-    public void setCharFlag(String charFlag) {
-        this.charFlag = charFlag;
+    public void setNotifyFlag(String notifyFlag) {
+        this.notifyFlag = notifyFlag;
+    }
+    
+    public String getChatFlag() {
+        return chatFlag;
+    }
+    
+    public void setChatFlag(String chatFlag) {
+        this.chatFlag = chatFlag;
     }
     
     public String getForumFlag() {
