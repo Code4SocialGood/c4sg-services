@@ -1,15 +1,10 @@
 package org.c4sg.service.impl;
 
 import org.c4sg.constant.Constants;
-
-import static org.c4sg.constant.Directory.RESUME_UPLOAD;
-import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
-import static org.c4sg.constant.Format.RESUME;
-import static org.c4sg.constant.Format.IMAGE;
 import org.c4sg.dao.UserDAO;
+import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.dto.UserDTO;
-import org.c4sg.entity.Organization;
 import org.c4sg.entity.User;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.OrganizationService;
@@ -22,6 +17,11 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
+import static org.c4sg.constant.Directory.RESUME_UPLOAD;
+import static org.c4sg.constant.Format.IMAGE;
+import static org.c4sg.constant.Format.RESUME;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -105,5 +105,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public String getResumeUploadPath(Integer userId) {
 		return RESUME_UPLOAD.getValue() + File.separator + userId + RESUME.getValue();
+	}
+	
+	@Override
+	public UserDTO createUser(CreateUserDTO createUserDTO) {
+        User localUser = userDAO.save(userMapper.getUserEntityFromCreateUserDto(createUserDTO));
+        return userMapper.getUserDtoFromEntity(localUser);
 	}
 }
