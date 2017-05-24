@@ -13,14 +13,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 2014_04_17_001L;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-	
     @Column(name = "id", nullable = false, updatable = false)
     private Integer id;
 	
@@ -77,24 +74,24 @@ public class User implements Serializable {
     
     @Column(name = "twitter_url")
     private String twitterUrl;
-
-    @Column(name = "publish_flag", columnDefinition="char(1)", nullable = false)
-    private String publishFlag;
-
-    @Column(name = "notify_flag", columnDefinition="char(1)", nullable = false)
-    private String notifyFlag;
     
-    @Column(name = "chat_flag", columnDefinition="char(1)", nullable = false)
-    private String chatFlag;
+    @Column(name = "publish_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String publishFlag  = "N";
+
+    @Column(name = "notify_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String notifyFlag  = "N";
+    
+    @Column(name = "chat_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String chatFlag  = "N";
             
-    @Column(name = "forum_flag", columnDefinition="char(1)", nullable = false)
-    private String forumFlag;
+    @Column(name = "forum_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String forumFlag  = "N";
 
     @Column(name = "role", columnDefinition="char(1)", nullable = false)
     private String role;
     
-    @Column(name = "status", columnDefinition="char(1)", nullable = false)
-    private String status;
+    @Column(columnDefinition="char(1) default 'A'", nullable = false)
+    private String status = "A";
      
 	@Column(name = "created_time")
 	private Timestamp createdTime;

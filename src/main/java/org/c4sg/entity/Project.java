@@ -13,8 +13,6 @@ import javax.persistence.ManyToOne;
 
 public class Project {
 
-	private static final String IMAGE_DIRECTORY = "assets/project/";
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false, updatable = false)
