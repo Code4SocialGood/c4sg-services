@@ -74,18 +74,18 @@ public class User implements Serializable {
     
     @Column(name = "twitter_url")
     private String twitterUrl;
-
-    @Column(name = "publish_flag", columnDefinition="char(1)", nullable = false)
-    private String publishFlag;
-
-    @Column(name = "notify_flag", columnDefinition="char(1)", nullable = false)
-    private String notifyFlag;
     
-    @Column(name = "chat_flag", columnDefinition="char(1)", nullable = false)
-    private String chatFlag;
+    @Column(name = "publish_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String publishFlag  = "N";
+
+    @Column(name = "notify_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String notifyFlag  = "N";
+    
+    @Column(name = "chat_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String chatFlag  = "N";
             
-    @Column(name = "forum_flag", columnDefinition="char(1)", nullable = false)
-    private String forumFlag;
+    @Column(name = "forum_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String forumFlag  = "N";
 
     @Column(name = "role", columnDefinition="char(1)", nullable = false)
     private String role;
