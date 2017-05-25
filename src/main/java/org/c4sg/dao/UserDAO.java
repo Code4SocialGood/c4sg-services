@@ -63,7 +63,7 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     @Transactional
     @Modifying
     @Query(UPDATE_SLACK_STATUS)
-    Integer updateIsSlackRegisteredFlag(@Param("isSlackReg") Boolean isSlackReg, @Param("userId") Integer userId);
+    Integer updateIsSlackRegisteredFlag(@Param("isSlackReg") String isSlackReg, @Param("userId") Integer userId);
   
     @Query(FIND_BY_ID_QUERY)
     List<User> findByUserProjectId(@Param("projId") Integer projId, @Param("userProjStatus") String userProjStatus);
