@@ -9,14 +9,18 @@ import org.c4sg.constant.slack.Problem;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.slack.Profile;
 import org.c4sg.dto.slack.User;
+import org.c4sg.dto.slack.channel.Group;
 import org.c4sg.exception.slack.SlackArgumentException;
 import org.c4sg.exception.slack.SlackException;
 import org.c4sg.exception.slack.SlackResponseErrorException;
 import org.c4sg.exception.slack.ValidationError;
 import org.c4sg.service.slack.SlackClientService;
+import org.c4sg.service.slack.method.CreatePrivateChannel;
 import org.c4sg.service.slack.method.SlackMethod;
 import org.c4sg.service.slack.method.UserListMethod;
 import org.c4sg.util.slack.SlackUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,6 +51,10 @@ public class SlackClientServiceImpl implements SlackClientService {
 
     @Autowired
     private UserDAO userDAO;
+
+
+    private static Logger LOGGER = LoggerFactory.getLogger(SlackClientServiceImpl.class);
+
 
     @Override
     public void shutdown() {
@@ -93,6 +101,24 @@ public class SlackClientServiceImpl implements SlackClientService {
         }
 
     }
+
+    @Override
+    public Group createPrivateChannel(String channelName) {
+        httpClient = SlackUtils.createHttpClient(Integer.parseInt(slackDefaultTimeOut));
+        mapper = new ObjectMapper();
+        return getPrivateChannel(channelName);
+
+    }
+
+
+    public Group getPrivateChannel(String channelName) {
+        CreatePrivateChannel c = new CreatePrivateChannel();
+        c.setChannelName(channelName);
+        JsonNode retNode = call(c);
+        return readValue(retNode, "group", new TypeReference<Group>() {
+        });
+    }
+
 
     protected <T> T readValue(JsonNode node, String findPath, Class<T> valueType) {
         try {

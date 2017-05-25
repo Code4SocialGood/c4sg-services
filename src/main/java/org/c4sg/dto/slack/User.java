@@ -10,7 +10,7 @@ public class User {
 	protected Boolean deleted;
 	protected String color;
 	protected Profile profile;
-	protected Boolean is_admin;
+	protected Boolean is_admin; //TODO these should be rewritten with @JsonProperty() to follow Java naming conventions.
 	protected Boolean is_owner;
 	protected Boolean is_primary_owner;
 	protected Boolean is_restricted;
