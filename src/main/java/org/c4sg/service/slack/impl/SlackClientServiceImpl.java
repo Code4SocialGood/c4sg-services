@@ -79,11 +79,11 @@ public class SlackClientServiceImpl implements SlackClientService {
                 for (User slackUser : slackUsers) {
                     Profile slackUserProfile = slackUser.getProfile();
                     if (slackUserProfile != null && slackUserProfile.getEmail() != null && slackUserProfile.getEmail().equalsIgnoreCase(email)) {
-                        userDAO.updateIsSlackRegisteredFlag(true, user.getId());
+                        userDAO.updateIsSlackRegisteredFlag("Y", user.getId()); //dies here, in db it is CHAR type
                         return true;
                     }
                 }
-                userDAO.updateIsSlackRegisteredFlag(false, user.getId());
+                userDAO.updateIsSlackRegisteredFlag("N", user.getId());
                 return false;
             } else {
                 return true;
