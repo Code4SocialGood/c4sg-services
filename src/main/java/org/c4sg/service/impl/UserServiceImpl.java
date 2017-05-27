@@ -10,6 +10,7 @@ import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Organization;
+import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.OrganizationService;
@@ -85,11 +86,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDTO> search(String keyWord, List<Integer> skills) {
+	public List<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag) {
 		long skillCount = 0;
 		if (skills != null)
 			skillCount = skills.size();
-		List<User> users = userDAO.findByKeyword(keyWord, skills, skillCount);
+		List<User> users = null;
+		if(skills != null)
+    	{
+			users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag);
+    	}
+    	else{
+    		users = userDAO.findByKeyword(keyWord, status, role, publishFlag);
+    	}       
 		return mapUsersToUserDtos(users);
 	}
 
