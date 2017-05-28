@@ -31,6 +31,7 @@ import java.util.Map;
 
 import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Directory.RESUME_UPLOAD;
+import javax.validation.constraints.Pattern;
 
 @CrossOrigin(origins = "*")
 @RestController
