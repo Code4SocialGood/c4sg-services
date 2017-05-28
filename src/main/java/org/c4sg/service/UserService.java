@@ -1,6 +1,7 @@
 
 package org.c4sg.service;
 
+import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,4 +29,6 @@ public interface UserService {
     String getAvatarUploadPath(Integer userId);
     
     String getResumeUploadPath(Integer userId);
+    
+    UserDTO createUser(CreateUserDTO createUserDTO);
 }

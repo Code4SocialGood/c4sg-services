@@ -30,7 +30,6 @@ public class ProjectMapper extends ModelMapper{
 	public ProjectDTO getProjectDtoFromEntity(UserProject userProject){
 		Type projectTypeDTO = new TypeToken<ProjectDTO>() {}.getType();
 		ProjectDTO projectDTO = map(userProject.getProject(), projectTypeDTO);
-		//projectDTO.setStatus(userProject.getStatus());
 		return projectDTO;
 	}
 
