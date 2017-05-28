@@ -1,5 +1,6 @@
 package org.c4sg.controller;
 
+
 import io.swagger.annotations.*;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateUserDTO;
@@ -30,6 +31,7 @@ import java.util.Map;
 
 import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
 import static org.c4sg.constant.Directory.RESUME_UPLOAD;
+import javax.validation.constraints.Pattern;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -133,10 +135,18 @@ public class UserController {
     }
     
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    @ApiOperation(value = "Find a user by keyWord", notes = "Returns a collection of users")
-    public List<UserDTO> search(@RequestParam(required = false) String keyWord,
-                                @RequestParam(required = false) List<Integer> skills){
-        return userService.search(keyWord,skills);
+    @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
+    public List<UserDTO> getProjects(@ApiParam(value = "Keyword like name , title, introduction, state, country")
+                                        @RequestParam(required=false) String keyWord,
+                                        @ApiParam(value = "Skills of the User")
+                                        @RequestParam(required = false) List<Integer> skills,
+                                        @ApiParam(value = "Status of the User")
+    									@Pattern(regexp="[AD]")  @RequestParam(required = false) String status,
+    									@ApiParam(value = "User Role")
+    									@Pattern(regexp="[VOA]") @RequestParam(required = false) String role,
+									    @ApiParam(value = "User Public Flag")
+										@Pattern(regexp="[YN]") @RequestParam(required = false) String publishFlag){
+        return userService.search(keyWord,skills,status,role,publishFlag);
     }
     
     @RequestMapping(value = "/{id}/avatar", method = RequestMethod.POST)
