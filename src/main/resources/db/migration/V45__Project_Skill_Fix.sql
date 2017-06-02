@@ -1,5 +1,5 @@
 -- Fix FK by refencing project table instead of user table
-DROP TABLE project_skill;
+DROP TABLE project_skill; 
 
 CREATE TABLE project_skill (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
