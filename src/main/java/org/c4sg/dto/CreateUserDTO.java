@@ -1,5 +1,7 @@
 package org.c4sg.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class CreateUserDTO {
     
     private String userName;
@@ -18,10 +20,10 @@ public class CreateUserDTO {
     private String resumeUrl;
     private String facebookUrl;
     private String twitterUrl;
-    private String publishFlag;
-    private String notifyFlag;
-    private String chatFlag;
-    private String forumFlag;
+    private String publishFlag="N";
+    private String notifyFlag="N";
+    private String chatFlag="N";
+    private String forumFlag="N";
     private String role;
     
     public String getUserName() {
@@ -176,6 +178,7 @@ public class CreateUserDTO {
         this.notifyFlag = notifyFlag;
     }
     
+    @ApiModelProperty(value = "N-nonprofit, O-opensource, default to N")
     public String getChatFlag() {
         return chatFlag;
     }
@@ -191,4 +194,5 @@ public class CreateUserDTO {
     public void setForumFlag(String forumFlag) {
         this.forumFlag = forumFlag;
     }
+    
 }
