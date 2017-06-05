@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +56,7 @@ public class UserController {
                     value = "Sorting criteria in the format: property(,asc|desc). " +
                             "Default sort order is ascending. " +
                             "Multiple sort criteria are supported.")})
-    public Page<UserDTO> getActiveUsers(Pageable pageable) {
+    public Page<UserDTO> getActiveUsers(@ApiIgnore Pageable pageable) {
         LOGGER.debug("**************active**************");
         return userService.findActiveVolunteers(pageable);
     }
