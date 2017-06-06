@@ -17,6 +17,6 @@ public interface OrganizationService {
 	OrganizationDTO saveUserOrganization(Integer userId, Integer organizationId)  throws UserOrganizationException;
     List<OrganizationDTO> findOrganizations();
     List<OrganizationDTO> findByKeyword(String name);
-    List<OrganizationDTO> findByCriteria(String keyWord, String country, boolean open);
+    List<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category);
     List<OrganizationDTO> findByUser(Integer userId);
 }

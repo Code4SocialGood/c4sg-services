@@ -17,11 +17,38 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
                                             "WHERE LOWER(o.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
                                                 "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :description, '%')) order by project_updated_time desc";
 
-    String FIND_BY_CRITERIA = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o " +
-            "WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
-                + " AND (LOWER(o.country) LIKE LOWER(CONCAT('%', :country, '%')) OR :country is null) "
-                + "AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false) OR :open=false )"
+    String FIND_BY_CRITERIA_AND_COUNTRIES = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o" +
+            " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+                " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
+                + " AND (:status is null OR o.status = :status)"
+                + " AND (:category is null OR o.category = :category)"
+                + " AND (o.country in (:countries))"
+                + " AND (:open is null )"
+                + ")  ORDER BY o.name ASC";
+    
+    String FIND_BY_CRITERIA_AND_COUNTRIES_AND_OPEN = "SELECT DISTINCT o FROM Project p JOIN p.organization o" +
+            " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+                " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
+                + " AND (:status is null OR o.status = :status)"
+                + " AND (:category is null OR o.category = :category)"
+                + " AND (o.country in (:countries))"
+                + " AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false))"
+                + ")  ORDER BY o.name ASC";
+    
+    String FIND_BY_CRITERIA = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o" +
+            " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+                " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
+                + " AND (:status is null OR o.status = :status)"
+                + " AND (:category is null OR o.category = :category)"                
+                + " AND (:open is null )"
+                + ")  ORDER BY o.name ASC";
+    
+    String FIND_BY_CRITERIA_AND_OPEN = "SELECT DISTINCT o FROM Project p JOIN p.organization o" +
+            " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+                " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
+                + " AND (:status is null OR o.status = :status)"
+                + " AND (:category is null OR o.category = :category)"                
+                + " AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false))"
                 + ")  ORDER BY o.name ASC";
 
     String DELETE_USER_ORGANIZATIONS = "DELETE FROM UserOrganization uo WHERE uo.organization.id=:id";
@@ -38,8 +65,21 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     @Query(FIND_BY_NAME_OR_DESCRIPTION)
     List<Organization> findByNameOrDescription(@Param("name") String name, @Param("description") String description);
 
+    @Query(FIND_BY_CRITERIA_AND_COUNTRIES)
+    List<Organization> findByCriteriaAndCountries(@Param("keyword") String keyWord, @Param("countries") List<String> countries,@Param("open") Boolean open
+    		, @Param("status") String status, @Param("category") String category);
+    
+    @Query(FIND_BY_CRITERIA_AND_COUNTRIES_AND_OPEN)
+    List<Organization> findByCriteriaAndCountriesAndOpen(@Param("keyword") String keyWord, @Param("countries") List<String> countries,@Param("open") Boolean open
+    		, @Param("status") String status, @Param("category") String category);
+    
     @Query(FIND_BY_CRITERIA)
-    List<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("country") String country,@Param("open") boolean open);
+    List<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("open") Boolean open
+    		, @Param("status") String status, @Param("category") String category);
+    
+    @Query(FIND_BY_CRITERIA_AND_OPEN)
+    List<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord, @Param("open") Boolean open
+    		, @Param("status") String status, @Param("category") String category);
 
     @Modifying
     @Query(DELETE_USER_ORGANIZATIONS)
