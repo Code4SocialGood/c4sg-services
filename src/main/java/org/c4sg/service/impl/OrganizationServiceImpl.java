@@ -70,8 +70,26 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .collect(Collectors.toList());
     }
     
-    public List<OrganizationDTO> findByCriteria(String keyWord, String country, boolean open) {
-        List<Organization> organizations = organizationDAO.findByCriteria(keyWord, country, open);
+    public List<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category) {
+    	List<Organization> organizations; 
+    	if(countries != null && !countries.isEmpty()){
+    		if(open != null){
+    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, category);
+    		}
+    		else{    			
+    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, category);
+    		}	
+    		
+        }
+    	else{
+    		if(open != null){
+    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, category);
+    		}
+    		else{    			
+    			organizations = organizationDAO.findByCriteria(keyWord, open, status, category);
+    		}    		
+    	}
+    	
 
         return organizations.stream()
                             .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
