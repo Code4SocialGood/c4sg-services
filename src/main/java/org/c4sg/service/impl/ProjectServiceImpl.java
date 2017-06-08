@@ -1,12 +1,10 @@
 package org.c4sg.service.impl;
 
-import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
 import static org.c4sg.constant.Format.IMAGE;
 
 import java.io.File;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
@@ -18,7 +16,6 @@ import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
-import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
@@ -28,12 +25,9 @@ import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
-import org.c4sg.service.OrganizationService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.mysql.fabric.xmlrpc.base.Array;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -78,8 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote) {
-    	long skillCount=0;
-    	if (skills != null) skillCount=skills.size(); 
+ 
     	List<Project> projects = null;
     	if(skills != null)
     	{
@@ -94,24 +87,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
     	
-    	List<Project> projects = null;
-    	
-    	// If status is not set, search by user ID only
-    	if ((userProjectStatus == null) || userProjectStatus.isEmpty()) {
-    		projects = projectDAO.findByUserId(userId);
-    	} else {
-    		projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);
-    	}
-    	
+    	List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);  	
     	return projectMapper.getDtosFromEntities(projects);
     }
 
     @Override
-    public List<ProjectDTO> findByOrganization(Integer orgId) {
-        List<Project> projects = projectDAO.getProjectsByOrganization(orgId);
-        if (projects == null || projects.size() == 0) {
-            System.out.println("No Project available for the provided organization");
-        }
+    public List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus) {
+        List<Project> projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
         return projectMapper.getDtosFromEntities(projects);
     }
 

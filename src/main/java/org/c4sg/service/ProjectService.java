@@ -18,7 +18,7 @@ public interface ProjectService {
 
 	List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException;
 
-	List<ProjectDTO> findByOrganization(Integer orgId);
+	List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus);
 
 	ProjectDTO createProject(CreateProjectDTO project);
 

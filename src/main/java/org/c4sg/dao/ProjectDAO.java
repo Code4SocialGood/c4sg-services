@@ -12,22 +12,17 @@ import javax.transaction.Transactional;
 
 public interface ProjectDAO extends CrudRepository<Project, Long> {
 
-    String FIND_BY_USER_ID = 
-    		"SELECT p FROM UserProject up " +
-        	"JOIN up.project p " +
-            "WHERE up.user.id = :userId " +
-            "ORDER BY up.createdTime DESC";
-
     String FIND_BY_USER_ID_AND_STATUS = 
     		"SELECT p FROM UserProject up " +
             "JOIN up.project p " +
-            "WHERE up.user.id = :userId AND up.status = :userProjectStatus " +
+            "WHERE up.user.id = :userId" +
+            " AND (:userProjectStatus is null OR up.status = :userProjectStatus)" +
             "ORDER BY up.createdTime DESC";
 
-	// TODO JW order by
-    String FIND_BY_ORGANIZATION_ID = 
+    String FIND_BY_ORGANIZATION_ID_AND_STATUS = 
     		"SELECT p FROM Project p " +
-    		"WHERE p.organization.id = :orgId " +
+    		"WHERE p.organization.id = :orgId" +
+            " AND (:projectStatus is null OR p.status = :projectStatus)" +
             "ORDER BY p.createdTime DESC";
 
     String FIND_BY_NAME_OR_DESCRIPTION = 
@@ -99,11 +94,8 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     @Query(FIND_BY_KEYWORD_CRITERIA)
     List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("remote") String remote);
 
-	@Query(FIND_BY_ORGANIZATION_ID)
-	List<Project> getProjectsByOrganization(@Param("orgId") Integer orgId);
-
-	@Query(FIND_BY_USER_ID)
-	List<Project> findByUserId(@Param("userId") Integer userId);
+	@Query(FIND_BY_ORGANIZATION_ID_AND_STATUS)
+	List<Project> getProjectsByOrganization(@Param("orgId") Integer orgId, @Param("projectStatus") String projectStatus);
 	
 	@Query(FIND_BY_USER_ID_AND_STATUS)
 	List<Project> findByUserIdAndUserProjectStatus(@Param("userId") Integer userId, @Param("userProjectStatus") String userProjectStatus);
