@@ -62,12 +62,15 @@ public class ProjectController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/organizations/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find projects by Organization ID", notes = "Returns a list of projects")
+    @RequestMapping(value = "/organization", method = RequestMethod.GET)
+    @ApiOperation(value = "Find projects by Organization ID and projet status", notes = "Returns a list of projects")
     public List<ProjectDTO> getProjectsByOrganization(@ApiParam(value = "ID of an organization", required = true)
-                                                   @PathVariable("id") int orgId) {
-        System.out.println("**************OrganizationID**************" + orgId);
-        return projectService.findByOrganization(orgId);
+    											@RequestParam("organizationId") int organizationId,
+                                               	@ApiParam(value = "project status, A-ACTIVE, C-Closed", allowableValues = "A, C")
+           										@RequestParam (required = false) String projectStatus)	
+                                               	throws ProjectServiceException {
+        System.out.println("**************OrganizationID**************" + organizationId);
+        return projectService.findByOrganization(organizationId, projectStatus);
     }
 
     @CrossOrigin

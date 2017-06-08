@@ -123,7 +123,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     		organization.setStatus(Constants.ORGANIZATION_STATUS_CLOSED);
     		organization.setLogoUrl(null);
     		organizationDAO.save(organization);
-    		List<ProjectDTO> projects=projectService.findByOrganization(id);
+    		List<ProjectDTO> projects=projectService.findByOrganization(id, null);
     		for (ProjectDTO project:projects){
     			projectService.deleteProject(project.getId());
     		}
