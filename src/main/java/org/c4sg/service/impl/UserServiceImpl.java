@@ -119,4 +119,9 @@ public class UserServiceImpl implements UserService {
         User localUser = userDAO.save(userMapper.getUserEntityFromCreateUserDto(createUserDTO));
         return userMapper.getUserDtoFromEntity(localUser);
 	}
+	
+	@Override
+	public void saveAvatar(Integer id, String imgUrl) {
+		userDAO.updateAvatar(imgUrl, id);
+	}
 }

@@ -76,6 +76,9 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     String DELETE_USER_PROJECTS = "DELETE FROM UserProject up WHERE up.user.id=:userId";
     String DELETE_USER_SKILLS = "DELETE FROM UserSkill us WHERE us.user.id=:userId";    
     
+    String SAVE_AVATAR = "UPDATE User u set u.avatarUrl = :imgUrl where u.id = :userId";
+    
+    
     @Query(FIND_ACTIVE_VOLUNTEERS)
     Page<User> findActiveVolunteers(Pageable pageable);
 
@@ -108,5 +111,10 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     @Query(DELETE_USER_SKILLS)
     @Transactional
     void deleteUserSkills(@Param("userId") Integer userId);
-    
+ 
+    @Transactional
+    @Modifying
+    @Query(SAVE_AVATAR)
+    void updateAvatar(@Param("imgUrl") String imgUrl, @Param("userId") Integer userId);
+   
 }
