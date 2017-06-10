@@ -10,7 +10,7 @@ public class CreateProjectDTO {
 	
 	private String description;
 	
-	private String remoteFlag;// possible values Y or N 
+	private String remoteFlag="N";// possible values Y or N 
 	
 	private String address1;
 	

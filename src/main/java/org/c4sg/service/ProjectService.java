@@ -14,15 +14,15 @@ public interface ProjectService {
 
 	List<ProjectDTO> findProjects();
 
-	List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills);
+	List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote);
 
 	List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException;
 
-	List<ProjectDTO> findByOrganization(Integer orgId);
+	List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus);
 
 	ProjectDTO createProject(CreateProjectDTO project);
 
-	ProjectDTO saveUserProject(Integer userId, Integer projectId) throws RuntimeException;
+	ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus) throws RuntimeException;
 
 	ProjectDTO updateProject(ProjectDTO project);
 
@@ -32,5 +32,4 @@ public interface ProjectService {
 
 	String getImageUploadPath(Integer projectId);
 
-	void saveUserProjectBookmark(Integer userId, Integer projectId);
 }

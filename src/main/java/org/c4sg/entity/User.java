@@ -2,7 +2,7 @@ package org.c4sg.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,14 +13,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 2014_04_17_001L;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-	
     @Column(name = "id", nullable = false, updatable = false)
     private Integer id;
 	
@@ -47,6 +44,9 @@ public class User implements Serializable {
     
     @Column(name = "longitude")
     private BigDecimal longitude;
+
+    @Column(name = "phone")
+    private String phone;
     
 	@Column(name = "title")
 	private String title;	
@@ -64,7 +64,7 @@ public class User implements Serializable {
     private String personalUrl;   
     
 	@Column(name = "github_url")
-	private String gitHubUrl;
+	private String githubUrl;
 	
     @Column(name = "resume_url")
     private String resumeUrl;
@@ -74,27 +74,30 @@ public class User implements Serializable {
     
     @Column(name = "twitter_url")
     private String twitterUrl;
+    
+    @Column(name = "publish_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String publishFlag  = "N";
+
+    @Column(name = "notify_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String notifyFlag  = "N";
+    
+    @Column(name = "chat_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String chatFlag  = "N";
+            
+    @Column(name = "forum_flag", columnDefinition="char(1) default 'N'", nullable = false)
+    private String forumFlag  = "N";
 
     @Column(name = "role", columnDefinition="char(1)", nullable = false)
     private String role;
-
-    @Column(name = "public_profile_flag", columnDefinition="char(1)", nullable = false)
-    private String publicProfileFlag;
-
-    @Column(name = "chat_flag", columnDefinition="char(1)", nullable = false)
-    private String chatFlag;
-            
-    @Column(name = "forum_flag", columnDefinition="char(1)", nullable = false)
-    private String forumFlag;
-
-    @Column(name = "status", columnDefinition="char(1)", nullable = false)
-    private String status;
+    
+    @Column(columnDefinition="char(1) default 'A'", nullable = false)
+    private String status = "A";
      
 	@Column(name = "created_time")
-	private Date createdTime;
+	private Timestamp createdTime;
 		
 	@Column(name = "updated_time")
-	private Date updatedTime;
+	private Timestamp updatedTime;
 	
 	public Integer getId() {
 		return id;
@@ -168,6 +171,14 @@ public class User implements Serializable {
 		this.longitude = longitude;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone= phone;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
@@ -200,12 +211,12 @@ public class User implements Serializable {
 		this.linkedinUrl = linkedinUrl;
 	}
 	
-	public String getGitHubUrl() {
-		return gitHubUrl;
+	public String getGithubUrl() {
+		return githubUrl;
 	}
 
-	public void setGitHubUrl(String gitHubUrl) {
-		this.gitHubUrl = gitHubUrl;
+	public void setGithubUrl(String githubUrl) {
+		this.githubUrl = githubUrl;
 	}
 
 	public String getPersonalUrl() {
@@ -248,14 +259,22 @@ public class User implements Serializable {
 		this.role = role;
 	}
 
-	public String getPublicProfileFlag() {
-		return publicProfileFlag;
+	public String getPublishFlag() {
+		return publishFlag;
 	}
 
-	public void setPublicProfileFlag(String publicProfileFlag) {
-		this.publicProfileFlag = publicProfileFlag;
+	public void setPublishFlag(String publishFlag) {
+		this.publishFlag = publishFlag;
 	}
 
+	public String getNotifyFlag() {
+		return notifyFlag;
+	}
+
+	public void setNotifyFlag(String notifyFlag) {
+		this.notifyFlag = notifyFlag;
+	}
+	
 	public String getChatFlag() {
 		return chatFlag;
 	}
@@ -280,19 +299,19 @@ public class User implements Serializable {
 		this.status = status;
 	}
 
-	public Date getCreatedTime() {
+	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Date createdTime) {
+	public void setCreatedTime(Timestamp createdTime) {
 		this.createdTime = createdTime;
 	}
 
-	public Date getUpdatedTime() {
+	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Date updatedTime) {
+	public void setUpdatedTime(Timestamp updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 	

@@ -1,6 +1,7 @@
 
 package org.c4sg.service;
 
+import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +22,13 @@ public interface UserService {
 
     void deleteUser(Integer id);
 
-    List<UserDTO> search(String keyWord, List<Integer> skills);
+    List<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag);
 
     List<UserDTO> getApplicants(Integer projectId);
     
     String getAvatarUploadPath(Integer userId);
     
     String getResumeUploadPath(Integer userId);
+    
+    UserDTO createUser(CreateUserDTO createUserDTO);
 }
