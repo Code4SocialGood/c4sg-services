@@ -6,6 +6,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.UserServiceException;
 import org.c4sg.service.UserService;
 import org.c4sg.util.FileUploadUtil;
 import org.c4sg.util.GeoCodeUtil;
@@ -90,12 +91,17 @@ public class UserController {
         try {
             UserDTO userDTO = userService.createUser(createUserDTO);
             GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO);
-            Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
-            userDTO.setLatitude(geoCode.get("lat"));
-            userDTO.setLongitude(geoCode.get("lon"));
+            try {
+            	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
+                userDTO.setLatitude(geoCode.get("lat"));
+                userDTO.setLongitude(geoCode.get("lon"));
+            }
+            catch (Exception e) {
+            	throw new NotFoundException("Error getting geocode");
+			}
             return userService.saveUser(userDTO);
         } catch (Exception e) {
-            throw new NotFoundException("Error getting geocode");
+            throw new UserServiceException("Error creating user entity: " + e.getCause().getMessage());
         }
     }
     
