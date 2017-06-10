@@ -15,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 
 import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
 
@@ -37,6 +39,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/projects")
 @Api(description = "Operations about Projects", tags = "project")
+@Validated
 public class ProjectController {
 
     @Autowired
@@ -59,12 +62,15 @@ public class ProjectController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/organizations/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find projects by Organization ID", notes = "Returns a list of projects")
+    @RequestMapping(value = "/organization", method = RequestMethod.GET)
+    @ApiOperation(value = "Find projects by Organization ID and projet status", notes = "Returns a list of projects")
     public List<ProjectDTO> getProjectsByOrganization(@ApiParam(value = "ID of an organization", required = true)
-                                                   @PathVariable("id") int orgId) {
-        System.out.println("**************OrganizationID**************" + orgId);
-        return projectService.findByOrganization(orgId);
+    											@RequestParam("organizationId") int organizationId,
+                                               	@ApiParam(value = "project status, A-ACTIVE, C-Closed", allowableValues = "A, C")
+           										@RequestParam (required = false) String projectStatus)	
+                                               	throws ProjectServiceException {
+        System.out.println("**************OrganizationID**************" + organizationId);
+        return projectService.findByOrganization(organizationId, projectStatus);
     }
 
     @CrossOrigin
@@ -73,8 +79,12 @@ public class ProjectController {
     public List<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
                                         @RequestParam(required=false) String keyWord,
                                         @ApiParam(value = "Skills for projects to return")
-                                        @RequestParam(required = false) List<Integer> skills) {
-        return projectService.findByKeyword(keyWord,skills);
+                                        @RequestParam(required = false) List<Integer> skills,
+                                        @ApiParam(value = "Status of the project")
+    									@Pattern(regexp="[AC]")  @RequestParam(required = false) String status,
+    									@ApiParam(value = "Location of the project")
+    									@Pattern(regexp="[YN]") @RequestParam(required = false) String remote) {
+        return projectService.findByKeyword(keyWord,skills,status,remote);
     }
 
     @CrossOrigin
@@ -164,15 +174,20 @@ public class ProjectController {
     public ResponseEntity<?> createUserProject(@ApiParam(value = "ID of user", required = true)
                                                @PathVariable("userId") Integer userId,
                                                @ApiParam(value = "ID of project", required = true)
-                                               @PathVariable("id") Integer projectId) {
+                                               @PathVariable("id") Integer projectId,
+                                               @ApiParam(value = "User project status, A-Applied, B-Bookmarked", allowableValues = "A, B", required = true)
+                                               @RequestParam("userProjectStatus") String userProjectStatus){
         try {
-            projectService.saveUserProject(userId, projectId);
+            projectService.saveUserProject(userId, projectId, userProjectStatus);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                       .path("/{id}/users/{userId}")
-                                                      .buildAndExpand(projectId, userId).toUri();
+                                                      .buildAndExpand(projectId, userId, userProjectStatus).toUri();
             return ResponseEntity.created(location).build();
-        } catch (NullPointerException | UserProjectException e) {
+        } catch (NullPointerException e) {
             throw new NotFoundException("ID of project or user invalid");
+        }
+        catch (UserProjectException | BadRequestException e) {
+        	throw e;
         }
     }
 
@@ -216,55 +231,20 @@ public class ProjectController {
         return null;
         }
     }
-
+   
+    
     @CrossOrigin
-    @RequestMapping(value = "/{id}/image", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Deletes a project's images")
-    public String deleteImage(@ApiParam(value = "Project id to delete image for", required = true)
-    							@PathVariable("id") int id) {
-    	ProjectDTO p = projectService.findById(id);
+    @RequestMapping(value = "/{id}/image", method = RequestMethod.PUT)
+    @ApiOperation(value = "Delete image for project")
+    public ResponseEntity<File> deleteImage(@ApiParam(value = "ID of project", required = true)
+    										@PathVariable("id") int id) {
     	File image = new File(projectService.getImageUploadPath(id));
-    	try {
-    		boolean del = image.delete();
-    		p.setImageUrl(null);
-    		projectService.updateProject(p);
-    		if (del) {
-    			return "Success";
-    		} else {
-    			return "Fail";
-    		}
-    	} catch (Exception e) {
-    		System.out.println(e);
-    		return "Error";
+    	if (image.exists()) {
+    		image.delete();
+    		return ResponseEntity.noContent().build();
+    	} else {
+    		throw new NotFoundException("project image not found");
     	}
     }
-    
-    
-    
-    @CrossOrigin
-    @RequestMapping(value = "/bookmark/projects/{projectId}/users/{userId}", method = RequestMethod.POST)
-    @ApiOperation(value = "Create a bookmark for a project")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Invalid project or user")
-    })
-    //TODO: Replace explicit user{id} with AuthN user id.
-    public ResponseEntity<?> createUserProjectBookmark(@ApiParam(value = "Project ID", required = true)
-                                               @PathVariable("projectId") Integer projectId,
-                                               @ApiParam(value = "User ID", required = true)
-                                               @PathVariable("userId") Integer userId) {
-        try {
-            projectService.saveUserProjectBookmark(userId, projectId);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                                                      .path("/bookmark/projects/{projectId}/users/{userId}")
-                                                      .buildAndExpand(projectId, userId).toUri();
-            return ResponseEntity.created(location).build();
-        } catch (NullPointerException e) {
-            throw new NotFoundException(e.getMessage());
-        }
-        catch(UserProjectException e){
-        	throw new BadRequestException(e.getErrorMessage());
-        }
-    }
-    
 }
 

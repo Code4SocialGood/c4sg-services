@@ -25,6 +25,7 @@ out/
 .idea/
 *.iws
 *.ipr
+c4sg-services.iml
 
 # NetBeans
 nbproject/private/

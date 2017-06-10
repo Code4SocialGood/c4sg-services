@@ -1,31 +1,30 @@
 package org.c4sg.service.impl;
 
-import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
 import static org.c4sg.constant.Format.IMAGE;
 
 import java.io.File;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
+import org.c4sg.dao.ProjectSkillDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.ProjectDTO;
-import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.entity.UserProject;
+import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
-import org.c4sg.service.OrganizationService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +40,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UserProjectDAO userProjectDAO;
+    
+    @Autowired
+    private ProjectSkillDAO projectSkillDAO;
 
     @Autowired
     private ProjectMapper projectMapper;
@@ -69,34 +71,29 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(projectDAO.findByName(name));
     }
 
-    public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills) {
-    	long skillCount=0;
-    	if (skills != null) skillCount=skills.size(); 
-        List<Project> projects = projectDAO.findByKeyword(keyWord, skills, skillCount);
+    public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote) {
+ 
+    	List<Project> projects = null;
+    	if(skills != null)
+    	{
+    		projects = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote);
+    	}
+    	else{
+    		projects = projectDAO.findByKeyword(keyWord, status, remote);
+    	}
         return projectMapper.getDtosFromEntities(projects);
     }
     
     @Override
     public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
     	
-    	List<Project> projects = null;
-    	
-    	// If status is not set, search by user ID only
-    	if ((userProjectStatus == null) || userProjectStatus.isEmpty()) {
-    		projects = projectDAO.findByUserId(userId);
-    	} else {
-    		projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);
-    	}
-    	
+    	List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);  	
     	return projectMapper.getDtosFromEntities(projects);
     }
 
     @Override
-    public List<ProjectDTO> findByOrganization(Integer orgId) {
-        List<Project> projects = projectDAO.getProjectsByOrganization(orgId);
-        if (projects == null || projects.size() == 0) {
-            System.out.println("No Project available for the provided organization");
-        }
+    public List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus) {
+        List<Project> projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
         return projectMapper.getDtosFromEntities(projects);
     }
 
@@ -112,7 +109,7 @@ public class ProjectServiceImpl implements ProjectService {
 
             // Updates projectUpdateTime for the organization
             Organization localOrgan = localProject.getOrganization(); 
-            localOrgan.setProjectUpdatedTime(new Date(Calendar.getInstance().getTime().getTime())); 
+            localOrgan.setProjectUpdatedTime(new Timestamp(Calendar.getInstance().getTime().getTime())); 
             organizationDAO.save(localOrgan);
             //Date currentTime = new Date(Calendar.getInstance().getTime().getTime());
             //Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
@@ -134,26 +131,47 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO saveUserProject(Integer userId, Integer projectId) {
+    public ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus ) {
         User user = userDAO.findById(userId);
         requireNonNull(user, "Invalid User Id");
         Project project = projectDAO.findById(projectId);
         requireNonNull(project, "Invalid Project Id");
-        isUserAppliedPresent(userId, projectId);
-        UserProject userProject = new UserProject();
-        userProject.setUser(user);
-        userProject.setProject(project);
-        apply(user, project);
-        userProjectDAO.save(userProject);
+        if (userProjectStatus == null || (!userProjectStatus.trim().equalsIgnoreCase("A") && !userProjectStatus.trim().equalsIgnoreCase("B"))) {
+        	throw new BadRequestException("Invalid Project Status");
+        }
+        
+        else if(userProjectStatus.trim().equalsIgnoreCase("A")){
+	        isUserAppliedPresent(userId, projectId);
+	        UserProject userProject = new UserProject();
+	        userProject.setUser(user);
+	        userProject.setProject(project);
+	        userProject.setStatus("A");
+	        apply(user, project);
+	        userProjectDAO.save(userProject);
+	        }
+        else if(userProjectStatus.trim().equalsIgnoreCase("B")){
+        	isBookmarkPresent(userId, projectId);  
+            UserProject userProject = new UserProject();
+            userProject.setUser(user);
+            userProject.setProject(project);
+            userProject.setStatus("B");
+            userProjectDAO.save(userProject);     	
+        }
 
         return projectMapper.getProjectDtoFromEntity(project);
     }
 
-    public void deleteProject(int id) {
+    public void deleteProject(int id) throws UserProjectException  {
         Project localProject = projectDAO.findById(id);
 
         if (localProject != null) {
-            projectDAO.delete(localProject);
+        	
+        	File image = new File(getImageUploadPath(id));        	
+        	image.delete();        		  	
+        
+        	userProjectDAO.deleteByProjectStatus(new Integer(id),"B");        	
+        	projectSkillDAO.deleteByProjectId(id);            	
+            projectDAO.deleteProject(id);
         } else {
             System.out.println("Project does not exist.");
         }
@@ -178,27 +196,6 @@ public class ProjectServiceImpl implements ProjectService {
         return PROJECT_UPLOAD.getValue() + File.separator + projectId + IMAGE.getValue();
     }
     
-    @Override
-    public void saveUserProjectBookmark(Integer userId, Integer projectId) {
-        
-    	User user = userDAO.findById(userId);
-        requireNonNull(user, "Invalid User Id");
-        
-        Project project = projectDAO.findById(projectId);
-        requireNonNull(project, "Invalid Project Id");
-        
-        isBookmarkPresent(userId, projectId);
-        
-        UserProject userProject = new UserProject();
-        userProject.setUser(user);
-        userProject.setProject(project);
-        userProject.setStatus("B");
-        //apply(user, project);
-        userProjectDAO.save(userProject);
-
-        //return projectMapper.getProjectDtoFromEntity(project);
-    }
-    
     private void isBookmarkPresent(Integer userId, Integer projectId)
     {
     	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, "B");
@@ -214,9 +211,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
     
     private void isUserAppliedPresent(Integer userId, Integer projectId) throws UserProjectException {
-        UserProject userProject = userProjectDAO.findByUser_IdAndProject_Id(userId, projectId);
-        if (nonNull(userProject)) {
-            throw new UserProjectException("The user already exists in that project");
-        }
+
+    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, "A");
+    	
+    	requireNonNull(userProjects, "Invalid operation");
+    	for(UserProject userProject : userProjects)
+    	{
+    		if(userProject.getStatus().equals("A"))
+        	{
+        		throw new UserProjectException("Project is already applied for");
+        	}
+    	}    	
     }
 }

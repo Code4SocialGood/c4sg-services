@@ -1,0 +1,1 @@
+ALTER TABLE user add phone varchar(30);
