@@ -31,4 +31,6 @@ public interface UserService {
     String getResumeUploadPath(Integer userId);
     
     UserDTO createUser(CreateUserDTO createUserDTO);
+    
+    void saveAvatar(Integer id, String imgUrl);
 }
