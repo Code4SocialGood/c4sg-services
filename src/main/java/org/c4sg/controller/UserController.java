@@ -174,6 +174,15 @@ public class UserController {
     }
     
     @CrossOrigin
+    @RequestMapping(value = "/{id}/avatar", params = "imgUrl", method = RequestMethod.PUT)
+	@ApiOperation(value = "Upload a user avatar image")
+	public void saveAvatar(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
+			@ApiParam(value = "Image Url", required = true) @RequestParam("imgUrl") String url) {
+
+    	userService.saveAvatar(id, url);
+	}
+    
+    @CrossOrigin
     @RequestMapping(value = "/{id}/avatar", method = RequestMethod.GET)
     @ApiOperation(value = "Retrieves user avatar")
     public String retrieveAvatar(@ApiParam(value = "User id to get avatar for", required = true)
