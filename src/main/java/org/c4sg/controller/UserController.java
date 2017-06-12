@@ -133,7 +133,7 @@ public class UserController {
             LOGGER.error("Exception on delete user:", e);
         }
     }
-    
+    /*
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
     public List<UserDTO> getProjects(@ApiParam(value = "Keyword like name , title, introduction, state, country")
@@ -147,6 +147,27 @@ public class UserController {
 									    @ApiParam(value = "User Public Flag")
 										@Pattern(regexp="[YN]") @RequestParam(required = false) String publishFlag){
         return userService.search(keyWord,skills,status,role,publishFlag);
+    }
+    */
+    
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
+    public Page<UserDTO> getUsers(@ApiParam(value = "Keyword like name , title, introduction, state, country")
+                                        @RequestParam(required=false) String keyWord,
+                                        @ApiParam(value = "Skills of the User")
+                                        @RequestParam(required = false) List<Integer> skills,
+                                        @ApiParam(value = "Status of the User")
+    									@Pattern(regexp="[AD]")  @RequestParam(required = false) String status,
+    									@ApiParam(value = "User Role")
+    									@Pattern(regexp="[VOA]") @RequestParam(required = false) String role,
+									    @ApiParam(value = "User Public Flag")
+										@Pattern(regexp="[YN]") @RequestParam(required = false) String publishFlag,
+    @ApiParam(value = "Results page you want to retrieve (0..N)", defaultValue="0",required=true)
+    @RequestParam(required=true) int page,
+    @ApiParam(value = "Number of records per page", defaultValue="5",required=true)
+    @RequestParam(required=true) int size)
+    {
+        return userService.search(keyWord,skills,status,role,publishFlag,page,size);
     }
     
     @RequestMapping(value = "/{id}/avatar", method = RequestMethod.POST)

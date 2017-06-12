@@ -94,10 +94,10 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     List<User> findByUserProjectId(@Param("projId") Integer projId, @Param("userProjStatus") String userProjStatus);
 
     @Query(FIND_BY_KEYWORD_SKILL_CRITERIA)
-    List<User> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);
+    Page<User> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag, Pageable pageable);
     
     @Query(FIND_BY_KEYWORD_CRITERIA)
-    List<User> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);
+    Page<User> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag,Pageable pageable);
     
     @Modifying
     @Query(DELETE_USER_PROJECTS)

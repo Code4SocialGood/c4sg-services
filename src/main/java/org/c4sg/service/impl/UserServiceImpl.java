@@ -1,5 +1,4 @@
 package org.c4sg.service.impl;
-
 import org.c4sg.constant.Constants;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.CreateUserDTO;
@@ -11,6 +10,7 @@ import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -83,9 +83,9 @@ public class UserServiceImpl implements UserService {
 		List<User> users = userDAO.findByUserProjectId(projectId, Constants.USER_PROJECT_STATUS_APPLIED);
 		return userMapper.getDtosFromEntities(users);
 	}
-
-	@Override
-	public List<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag) {
+/*
+	//@Override
+	public List<UserDTO> searchOld(String keyWord, List<Integer> skills, String status, String role, String publishFlag) {
 		long skillCount = 0;
 		if (skills != null)
 			skillCount = skills.size();
@@ -99,7 +99,25 @@ public class UserServiceImpl implements UserService {
     	}       
 		return mapUsersToUserDtos(users);
 	}
-
+*/
+	@Override
+	public Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag, int page, int size) {
+		long skillCount = 0;
+		if (skills != null)
+			skillCount = skills.size();
+		Page<User> users = null;
+		Pageable pageable=new PageRequest(page,size);
+		if(skills != null)
+    	{
+			users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag,pageable);
+    	}
+    	else{
+    		users = userDAO.findByKeyword(keyWord, status, role, publishFlag,pageable);
+    	}       
+		Page<UserDTO> userDTOS = users.map(p -> userMapper.getUserDtoFromEntity(p));
+		return userDTOS;// mapUsersToUserDtos(users);
+	}
+	
 	private List<UserDTO> mapUsersToUserDtos(List<User> users) {
 		return users.stream().map(p -> userMapper.getUserDtoFromEntity(p)).collect(Collectors.toList());
 	}
