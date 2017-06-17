@@ -225,4 +225,13 @@ public class OrganizationController {
 			throw new NotFoundException("ID of organization or user invalid, or relationship already exist");
 		}
 	}
+	
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/logo", params = "imgUrl", method = RequestMethod.PUT)
+	@ApiOperation(value = "Upload an organization logo image")
+	public void saveLogo(@ApiParam(value = "organization Id", required = true) @PathVariable("id") Integer id,
+			@ApiParam(value = "Image Url", required = true) @RequestParam("imgUrl") String url) {
+
+    	organizationService.saveLogo(id, url);
+	}
 }

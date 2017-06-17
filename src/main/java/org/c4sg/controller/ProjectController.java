@@ -245,6 +245,15 @@ public class ProjectController {
     	} else {
     		throw new NotFoundException("project image not found");
     	}
-    }
+    }    
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/image", params = "imgUrl", method = RequestMethod.PUT)
+	@ApiOperation(value = "Upload a project image")
+	public void saveImage(@ApiParam(value = "project Id", required = true) @PathVariable("id") Integer id,
+			@ApiParam(value = "Image Url", required = true) @RequestParam("imgUrl") String url) {
+
+    	projectService.saveImage(id, url);
+	}
 }
 

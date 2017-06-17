@@ -31,5 +31,7 @@ public interface ProjectService {
 	//void apply(UserDTO user, ProjectDTO project) throws IOException, EmailException;
 
 	String getImageUploadPath(Integer projectId);
+	
+    void saveImage(Integer id, String imgUrl);
 
 }
