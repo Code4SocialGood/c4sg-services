@@ -53,6 +53,8 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
 
     String DELETE_USER_ORGANIZATIONS = "DELETE FROM UserOrganization uo WHERE uo.organization.id=:id";
     
+    String SAVE_LOGO = "UPDATE Organization o set o.logoUrl = :imgUrl where o.id = :organizationId";
+    
     Organization findByName(String name);
 
     List<Organization> findAllByOrderByIdDesc();
@@ -87,4 +89,10 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     void deleteUserOrganizations(@Param("id") Integer id);
 
 //	List<Organization> findByNameLikeOrDescriptionLikeAllIgnoreCase(String name, String description);
+    
+    @Transactional
+    @Modifying
+    @Query(SAVE_LOGO)
+    void updateLogo(@Param("imgUrl") String imgUrl, @Param("organizationId") Integer organizationId);
+   
 }

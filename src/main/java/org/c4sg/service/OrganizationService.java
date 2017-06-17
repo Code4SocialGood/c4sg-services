@@ -19,4 +19,5 @@ public interface OrganizationService {
     List<OrganizationDTO> findByKeyword(String name);
     List<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category);
     List<OrganizationDTO> findByUser(Integer userId);
+    void saveLogo(Integer id, String imgUrl);
 }

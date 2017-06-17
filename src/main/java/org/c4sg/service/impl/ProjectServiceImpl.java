@@ -223,4 +223,9 @@ public class ProjectServiceImpl implements ProjectService {
         	}
     	}    	
     }
+    
+	@Override
+	public void saveImage(Integer id, String imgUrl) {
+		projectDAO.updateImage(imgUrl, id);
+	}
 }
