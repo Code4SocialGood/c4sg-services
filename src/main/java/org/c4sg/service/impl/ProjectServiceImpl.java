@@ -27,6 +27,9 @@ import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -71,17 +74,20 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(projectDAO.findByName(name));
     }
 
-    public List<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote) {
- 
-    	List<Project> projects = null;
+    public Page<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote,int page, int size) {
+    	long skillCount=0;
+    	if (skills != null) skillCount=skills.size(); 
+		Page<Project> projects = null;
+		Pageable pageable=new PageRequest(page,size);    	
     	if(skills != null)
     	{
-    		projects = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote);
+    		projects = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote,pageable);
     	}
     	else{
-    		projects = projectDAO.findByKeyword(keyWord, status, remote);
+    		projects = projectDAO.findByKeyword(keyWord, status, remote,pageable);
     	}
-        return projectMapper.getDtosFromEntities(projects);
+        //return projectMapper.getDtosFromEntities(projects);
+        return projects.map(p -> projectMapper.getProjectDtoFromEntity(p));
     }
     
     @Override

@@ -24,6 +24,7 @@ import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -108,13 +109,18 @@ public class OrganizationController {
 	@CrossOrigin
 	@RequestMapping(value = "/search", produces = { "application/json" }, method = RequestMethod.GET)
 	@ApiOperation(value = "Find organization by keyWord", notes = " Returns a list of organizations which has the keyword in name / description / country, AND, which has the opportunities open, AND, which is located in the selected country. The search result is sorted by organization name in ascending order.")
-	public List<OrganizationDTO> getOrganizations(
+	public Page<OrganizationDTO> getOrganizations(
 			@ApiParam(value = "Keyword in Name or description or country of organization to return", required = false) @RequestParam(required = false) String keyWord,
 			@ApiParam(value = "Countries of organization to return", required = false) @RequestParam(required = false) List<String> countries,
 			@ApiParam(value = "Opportunities open in the organization", required = false) @RequestParam(required = false) Boolean open,
 			@ApiParam(value = "Status of the organization to return", required = false) @Pattern(regexp="[AD]") @RequestParam(required = false) String status,
-			@ApiParam(value = "Category of the organization to return", required = false) @Pattern(regexp="[NOM]") @RequestParam(required = false) String category) {
-		return organizationService.findByCriteria(keyWord, countries, open, status, category);
+			@ApiParam(value = "Category of the organization to return", required = false) @Pattern(regexp="[NOM]") @RequestParam(required = false) String category,
+		    @ApiParam(value = "Results page you want to retrieve (0..N)", defaultValue="0",required=true)
+		    @RequestParam(required=true) int page,
+		    @ApiParam(value = "Number of records per page", defaultValue="5",required=true)
+		    @RequestParam(required=true) int size)	
+	{
+		return organizationService.findByCriteria(keyWord, countries, open, status, category,page,size);
 	}
 
 	// TODO Define error codes: required input missing, etc

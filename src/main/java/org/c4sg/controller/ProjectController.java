@@ -12,6 +12,7 @@ import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
 import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -76,15 +77,20 @@ public class ProjectController {
     @CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find ACTIVE project by keyWord or skills", notes = "Returns a collection of active projects")
-    public List<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
+    public Page<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
                                         @RequestParam(required=false) String keyWord,
                                         @ApiParam(value = "Skills for projects to return")
                                         @RequestParam(required = false) List<Integer> skills,
                                         @ApiParam(value = "Status of the project")
     									@Pattern(regexp="[AC]")  @RequestParam(required = false) String status,
     									@ApiParam(value = "Location of the project")
-    									@Pattern(regexp="[YN]") @RequestParam(required = false) String remote) {
-        return projectService.findByKeyword(keyWord,skills,status,remote);
+    									@Pattern(regexp="[YN]") @RequestParam(required = false) String remote,
+    @ApiParam(value = "Results page you want to retrieve (0..N)", defaultValue="0",required=true)
+    @RequestParam(required=true) int page,
+    @ApiParam(value = "Number of records per page", defaultValue="5",required=true)
+    @RequestParam(required=true) int size)
+    {
+        return projectService.findByKeyword(keyWord,skills,status,remote,page,size);
     }
 
     @CrossOrigin

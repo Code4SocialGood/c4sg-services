@@ -16,6 +16,9 @@ import org.c4sg.mapper.OrganizationMapper;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -70,30 +73,27 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .collect(Collectors.toList());
     }
     
-    public List<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category) {
-    	List<Organization> organizations; 
+    public Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category, int page, int size) {
+    	Page<Organization> organizations; 
+		Pageable pageable=new PageRequest(page,size);    	    	
     	if(countries != null && !countries.isEmpty()){
     		if(open != null){
-    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, category);
+    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, category,pageable);
     		}
     		else{    			
-    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, category);
+    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, category,pageable);
     		}	
     		
         }
     	else{
     		if(open != null){
-    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, category);
+    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, category,pageable);
     		}
     		else{    			
-    			organizations = organizationDAO.findByCriteria(keyWord, open, status, category);
+    			organizations = organizationDAO.findByCriteria(keyWord, open, status, category,pageable);
     		}    		
     	}
-    	
-
-        return organizations.stream()
-                            .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
-                            .collect(Collectors.toList());
+    	return organizations.map(o -> organizationMapper.getOrganizationDtoFromEntity(o));    	
     }
     
 //    public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
