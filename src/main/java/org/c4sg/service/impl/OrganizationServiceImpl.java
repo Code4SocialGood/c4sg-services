@@ -21,15 +21,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static org.c4sg.constant.Directory.LOGO_UPLOAD;
-import static org.c4sg.constant.Format.IMAGE;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
@@ -121,7 +118,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     	Organization organization = organizationDAO.findOne(id);
     	if(organization != null){
     		organization.setStatus(Constants.ORGANIZATION_STATUS_CLOSED);
-    		organization.setLogoUrl(null);
+    		// TODO Delete logo from S3 by frontend
     		organizationDAO.save(organization);
     		List<ProjectDTO> projects=projectService.findByOrganization(id, null);
     		for (ProjectDTO project:projects){
@@ -134,11 +131,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     		//organization.setDeleteBy(user.getUsername());
     	}
     }
-
-    public String getLogoUploadPath(Integer organizationId) {
-        return LOGO_UPLOAD.getValue() + File.separator + organizationId + IMAGE.getValue();
-    }
-
 
     @Override
     public List<OrganizationDTO> findByUser(Integer userId) {

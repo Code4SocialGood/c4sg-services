@@ -11,7 +11,6 @@ public interface OrganizationService {
 
 	void save(OrganizationDTO organizationDTO);
     void deleteOrganization(int id);
-    String getLogoUploadPath(Integer organizationId);
     OrganizationDTO findById(int id);
     OrganizationDTO createOrganization(CreateOrganizationDTO createOrganizationDTO);
     OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO);

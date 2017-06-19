@@ -14,14 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
-import static org.c4sg.constant.Directory.RESUME_UPLOAD;
-import static org.c4sg.constant.Format.IMAGE;
-import static org.c4sg.constant.Format.RESUME;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -68,7 +61,7 @@ public class UserServiceImpl implements UserService {
         User user = userDAO.findById(id);
         user.setStatus(Constants.USER_STATUS_DELETED);
         user.setEmail(user.getEmail() + "-deleted");
-        user.setAvatarUrl(null);
+        // TODO delete avatar from S3 by frontend
         userDAO.save(user);
         userDAO.deleteUserProjects(id);
         userDAO.deleteUserSkills(id);  
@@ -83,28 +76,10 @@ public class UserServiceImpl implements UserService {
 		List<User> users = userDAO.findByUserProjectId(projectId, Constants.USER_PROJECT_STATUS_APPLIED);
 		return userMapper.getDtosFromEntities(users);
 	}
-/*
-	//@Override
-	public List<UserDTO> searchOld(String keyWord, List<Integer> skills, String status, String role, String publishFlag) {
-		long skillCount = 0;
-		if (skills != null)
-			skillCount = skills.size();
-		List<User> users = null;
-		if(skills != null)
-    	{
-			users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag);
-    	}
-    	else{
-    		users = userDAO.findByKeyword(keyWord, status, role, publishFlag);
-    	}       
-		return mapUsersToUserDtos(users);
-	}
-*/
+
 	@Override
 	public Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag, int page, int size) {
-		long skillCount = 0;
-		if (skills != null)
-			skillCount = skills.size();
+
 		Page<User> users = null;
 		Pageable pageable=new PageRequest(page,size);
 		if(skills != null)
@@ -117,21 +92,7 @@ public class UserServiceImpl implements UserService {
 		Page<UserDTO> userDTOS = users.map(p -> userMapper.getUserDtoFromEntity(p));
 		return userDTOS;// mapUsersToUserDtos(users);
 	}
-	
-	private List<UserDTO> mapUsersToUserDtos(List<User> users) {
-		return users.stream().map(p -> userMapper.getUserDtoFromEntity(p)).collect(Collectors.toList());
-	}
 
-	@Override
-	public String getAvatarUploadPath(Integer userId) {
-		return AVATAR_UPLOAD.getValue() + File.separator + userId + IMAGE.getValue();
-	}
-
-	@Override
-	public String getResumeUploadPath(Integer userId) {
-		return RESUME_UPLOAD.getValue() + File.separator + userId + RESUME.getValue();
-	}
-	
 	@Override
 	public UserDTO createUser(CreateUserDTO createUserDTO) {
         User localUser = userDAO.save(userMapper.getUserEntityFromCreateUserDto(createUserDTO));
