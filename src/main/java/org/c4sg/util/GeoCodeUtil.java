@@ -34,19 +34,19 @@ public class GeoCodeUtil {
 			if(response != null) {
 				Object obj = JSONValue.parse(response);
 				
-				if (obj instanceof JSONArray) {
-					JSONArray array = (JSONArray) obj;
-					if (array.size() > 0) {
-						JSONObject jsonObject = (JSONObject) array.get(0);
-						
-						String lon = (String) jsonObject.get("lon");
-						String lat = (String) jsonObject.get("lat");
-						geocode.put("lon", new BigDecimal(lon));
-						geocode.put("lat", new BigDecimal(lat));
-						
-					}
+				if(obj instanceof JSONObject)
+				{
+					JSONObject jsonObject = (JSONObject) obj;
+					JSONArray array = (JSONArray) jsonObject.get("results");					
+					JSONObject element = (JSONObject) array.get(0);
+					JSONObject geometry = (JSONObject) element.get("geometry");
+					JSONObject location = (JSONObject) geometry.get("location");
+					Double lng = (Double) location.get("lng");
+					Double lat = (Double) location.get("lat");
+					geocode.put("lng", new BigDecimal(lng));
+					geocode.put("lat", new BigDecimal(lat));
 				}
-				return geocode;
+				return geocode;				
 			}
 			else {
 				throw new Exception("Fail to convert to geocode");
@@ -78,10 +78,10 @@ public class GeoCodeUtil {
 	}
 	
 	private URL getRequestUrl() throws MalformedURLException, UnsupportedEncodingException {
-		StringBuilder query = new StringBuilder();
-		query.append("http://nominatim.openstreetmap.org/search?q=");
+		StringBuilder query = new StringBuilder();		
+		query.append("https://maps.googleapis.com/maps/api/geocode/json?address=");
 		query.append(URLEncoder.encode(getAddress(), "UTF-8"));
-		query.append("&format=json&addressdetails=1");
+		query.append("&key=");
 		
 		return new URL(query.toString());
 	}
@@ -90,7 +90,8 @@ public class GeoCodeUtil {
 		StringBuilder address = new StringBuilder();
 		
 		if (this.state != null && !this.state.isEmpty()) {
-			address.append(" ");
+			address.append(this.state);
+			address.append(",");
 		}
 		if (this.country != null && !this.country.isEmpty()) {
 			address.append(this.country);
