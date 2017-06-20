@@ -77,7 +77,7 @@ public class UserController {
             try {
             	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
                 userDTO.setLatitude(geoCode.get("lat"));
-                userDTO.setLongitude(geoCode.get("lon"));
+                userDTO.setLongitude(geoCode.get("lng"));
             }
             catch (Exception e) {
             	throw new NotFoundException("Error getting geocode");
