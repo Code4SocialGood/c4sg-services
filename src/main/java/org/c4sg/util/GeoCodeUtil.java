@@ -81,7 +81,7 @@ public class GeoCodeUtil {
 		StringBuilder query = new StringBuilder();		
 		query.append("https://maps.googleapis.com/maps/api/geocode/json?address=");
 		query.append(URLEncoder.encode(getAddress(), "UTF-8"));
-		query.append("&key=");
+		query.append("&key=AIzaSyBViSnTCKnFTEc7l3hc02TxnmQXXr0IRh0");
 		
 		return new URL(query.toString());
 	}
