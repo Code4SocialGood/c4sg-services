@@ -27,7 +27,12 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
             "JOIN up.user u " +
             "JOIN up.project p " +
             "WHERE p.id =:projId and up.status= :userProjStatus";
-    
+
+    String FIND_BY_ORG_ID = 
+    		"SELECT u FROM UserOrganization uo " +
+            "JOIN uo.user u " +
+            "JOIN uo.organization o " +
+            "WHERE o.id =:orgId";
 
     String FIND_BY_KEYWORD_SKILL_CRITERIA = 
     		"SELECT DISTINCT u"
@@ -94,6 +99,9 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
   
     @Query(FIND_BY_ID_QUERY)
     List<User> findByUserProjectId(@Param("projId") Integer projId, @Param("userProjStatus") String userProjStatus);
+    
+    @Query(FIND_BY_ORG_ID)
+    List<User> findByOrgId(@Param("orgId") Integer orgId);
 
     @Query(FIND_BY_KEYWORD_SKILL_CRITERIA)
     Page<User> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag, Pageable pageable);
