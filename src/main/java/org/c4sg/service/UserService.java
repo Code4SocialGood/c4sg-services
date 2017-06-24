@@ -28,4 +28,6 @@ public interface UserService {
     UserDTO createUser(CreateUserDTO createUserDTO);
     
     void saveAvatar(Integer id, String imgUrl);
+
+	List<UserDTO> findByOrgId(int orgId);
 }

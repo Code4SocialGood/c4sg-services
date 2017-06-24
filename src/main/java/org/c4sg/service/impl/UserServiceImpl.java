@@ -45,7 +45,12 @@ public class UserServiceImpl implements UserService {
 	public UserDTO findById(int id) {
 		return userMapper.getUserDtoFromEntity(userDAO.findById(id));
 	}
-
+	
+	@Override
+	public List<UserDTO> findByOrgId(int orgId) {
+		return userMapper.getDtosFromEntities(userDAO.findByOrgId(orgId));
+	}
+	
 	@Override
 	public UserDTO findByEmail(String email) {
 		return userMapper.getUserDtoFromEntity(userDAO.findByEmail(email));
