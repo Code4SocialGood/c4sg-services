@@ -72,6 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public Page<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote,int page, int size) {
+
 		Page<Project> projects = null;
 		Pageable pageable=new PageRequest(page,size);    	
     	if(skills != null) {

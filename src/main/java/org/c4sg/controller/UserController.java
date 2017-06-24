@@ -57,13 +57,6 @@ public class UserController {
                            @PathVariable("id") int id) {
         return userService.findById(id);
     }
-
-    @RequestMapping(value = "/organization/{orgId}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find users by Organization ID", notes = "Returns a list of users from this organization")
-    public List<UserDTO> getUsersInOrganization(@ApiParam(value = "ID of organization to return users", required = true)
-                           @PathVariable("orgId") int orgId) {
-        return userService.findByOrgId(orgId);
-    }
     
     @CrossOrigin
     @RequestMapping(value = "/email/{email}/", method = RequestMethod.GET)
