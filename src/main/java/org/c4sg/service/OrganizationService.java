@@ -11,7 +11,6 @@ public interface OrganizationService {
 
 	void save(OrganizationDTO organizationDTO);
     void deleteOrganization(int id);
-    String getLogoUploadPath(Integer organizationId);
     OrganizationDTO findById(int id);
     OrganizationDTO createOrganization(CreateOrganizationDTO createOrganizationDTO);
     OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO);
@@ -20,4 +19,5 @@ public interface OrganizationService {
     List<OrganizationDTO> findByKeyword(String name);
     Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category,int page,int size);
     List<OrganizationDTO> findByUser(Integer userId);
+    void saveLogo(Integer id, String imgUrl);
 }

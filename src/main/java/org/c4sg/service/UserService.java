@@ -1,4 +1,3 @@
-
 package org.c4sg.service;
 
 import org.c4sg.dto.CreateUserDTO;
@@ -25,11 +24,7 @@ public interface UserService {
     Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag,int page, int size);
 
     List<UserDTO> getApplicants(Integer projectId);
-    
-    String getAvatarUploadPath(Integer userId);
-    
-    String getResumeUploadPath(Integer userId);
-    
+           
     UserDTO createUser(CreateUserDTO createUserDTO);
     
     void saveAvatar(Integer id, String imgUrl);

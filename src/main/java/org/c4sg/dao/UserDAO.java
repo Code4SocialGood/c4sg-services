@@ -83,7 +83,6 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     
     String SAVE_AVATAR = "UPDATE User u set u.avatarUrl = :imgUrl where u.id = :userId";
     
-    
     @Query(FIND_ACTIVE_VOLUNTEERS)
     Page<User> findActiveVolunteers(Pageable pageable);
 

@@ -28,9 +28,7 @@ public interface ProjectService {
 	ProjectDTO updateProject(ProjectDTO project);
 
 	void deleteProject(int id);
-
-	//void apply(UserDTO user, ProjectDTO project) throws IOException, EmailException;
-
-	String getImageUploadPath(Integer projectId);
+	
+    void saveImage(Integer id, String imgUrl);
 
 }
