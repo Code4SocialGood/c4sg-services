@@ -1,11 +1,5 @@
 package org.c4sg.controller;
 
-import static org.c4sg.constant.Directory.LOGO_UPLOAD;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,14 +9,11 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.UserOrganizationException;
-import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.OrganizationService;
-import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.annotations.Api;

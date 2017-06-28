@@ -1,38 +1,23 @@
 package org.c4sg.controller;
 
-
 import io.swagger.annotations.*;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.UserServiceException;
 import org.c4sg.service.UserService;
-import org.c4sg.util.FileUploadUtil;
 import org.c4sg.util.GeoCodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
-import static org.c4sg.constant.Directory.RESUME_UPLOAD;
 import javax.validation.constraints.Pattern;
 
 @CrossOrigin(origins = "*")
@@ -57,6 +42,13 @@ public class UserController {
                            @PathVariable("id") int id) {
         return userService.findById(id);
     }
+
+    @RequestMapping(value = "/organization/{orgId}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find users by Organization ID", notes = "Returns a list of users from this organization")
+    public List<UserDTO> getUsersInOrganization(@ApiParam(value = "ID of organization to return users", required = true)
+                           @PathVariable("orgId") int orgId) {
+        return userService.findByOrgId(orgId);
+    }
     
     @CrossOrigin
     @RequestMapping(value = "/email/{email}/", method = RequestMethod.GET)
@@ -70,16 +62,15 @@ public class UserController {
     @ApiOperation(value = "Add a new user")
     public UserDTO createUser(@ApiParam(value = "User object to return", required = true)
                               @RequestBody CreateUserDTO createUserDTO) {
-        //calculate lat and long
+
         try {
             UserDTO userDTO = userService.createUser(createUserDTO);
-            GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO);
+            GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO); //calculate lat and long
             try {
             	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
                 userDTO.setLatitude(geoCode.get("lat"));
                 userDTO.setLongitude(geoCode.get("lng"));
-            }
-            catch (Exception e) {
+            }  catch (Exception e) {
             	throw new NotFoundException("Error getting geocode");
 			}
             return userService.saveUser(userDTO);
@@ -92,9 +83,19 @@ public class UserController {
     @ApiOperation(value = "Update an existing user")
     public UserDTO updateUser(@ApiParam(value = "Updated user object", required = true)
                               @RequestBody UserDTO userDTO) {
-        LOGGER.debug("**************updateUser**************");
-        LOGGER.debug("ID = " + userDTO.getId());
-        return userService.saveUser(userDTO);
+        try {
+            GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO);
+            try {
+            	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
+                userDTO.setLatitude(geoCode.get("lat"));
+                userDTO.setLongitude(geoCode.get("lng"));
+            } catch (Exception e) {
+            	throw new NotFoundException("Error getting geocode");
+			}
+        	return userService.saveUser(userDTO);
+        } catch (Exception e) {
+            throw new UserServiceException("Error creating user entity: " + e.getCause().getMessage());
+        }
     }
     
     @CrossOrigin
