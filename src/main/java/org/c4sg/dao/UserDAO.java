@@ -75,13 +75,13 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
                +   " AND (:role is null OR u.role = :role)"               +   " AND (:publishFlag is null OR u.publishFlag = :publishFlag)"
                +   ")  "
                + "ORDER BY u.createdTime DESC";
-                
-    String UPDATE_SLACK_STATUS = "UPDATE User u set u.chatFlag = :isSlackReg where u.id = :userId";
     
     String DELETE_USER_PROJECTS = "DELETE FROM UserProject up WHERE up.user.id=:userId";
     String DELETE_USER_SKILLS = "DELETE FROM UserSkill us WHERE us.user.id=:userId";    
     
     String SAVE_AVATAR = "UPDATE User u set u.avatarUrl = :imgUrl where u.id = :userId";
+    
+    // String UPDATE_SLACK_STATUS = "UPDATE User u set u.chatUserName = u.userName where u.id = :userId";
     
     @Query(FIND_ACTIVE_VOLUNTEERS)
     Page<User> findActiveVolunteers(Pageable pageable);
@@ -91,12 +91,7 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     User findByEmail(String email);
     
     List<User> findAllByOrderByIdDesc();    
-  
-    @Transactional
-    @Modifying
-    @Query(UPDATE_SLACK_STATUS)
-    Integer updateIsSlackRegisteredFlag(@Param("isSlackReg") String isSlackReg, @Param("userId") Integer userId);
-  
+    
     @Query(FIND_BY_ID_QUERY)
     List<User> findByUserProjectId(@Param("projId") Integer projId, @Param("userProjStatus") String userProjStatus);
     
@@ -123,5 +118,11 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     @Modifying
     @Query(SAVE_AVATAR)
     void updateAvatar(@Param("imgUrl") String imgUrl, @Param("userId") Integer userId);
-   
+       
+    /*
+    @Transactional
+    @Modifying
+    @Query(UPDATE_SLACK_STATUS)
+    Integer updateIsSlackRegisteredFlag(@Param("isSlackReg") String isSlackReg, @Param("userId") Integer userId);
+    */
 }
