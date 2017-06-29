@@ -24,8 +24,7 @@ public class UserDTO {
     private String twitterUrl;
     private String publishFlag;
     private String notifyFlag;
-    private String chatFlag;
-    private String forumFlag;
+    private String chatUsername;
     private String role;
     private String status;
     private String createdTime;
@@ -158,17 +157,11 @@ public class UserDTO {
 	public void setNotifyFlag(String notifyFlag) {
 		this.notifyFlag = notifyFlag;
 	}
-	public String getChatFlag() {
-		return chatFlag;
+	public String getChatUsername() {
+		return chatUsername;
 	}
-	public void setChatFlag(String chatFlag) {
-		this.chatFlag = chatFlag;
-	}
-	public String getForumFlag() {
-		return forumFlag;
-	}
-	public void setForumFlag(String forumFlag) {
-		this.forumFlag = forumFlag;
+	public void setChatUsername(String chatUsername) {
+		this.chatUsername = chatUsername;
 	}
 	public String getCreatedTime() {
 		return createdTime;
