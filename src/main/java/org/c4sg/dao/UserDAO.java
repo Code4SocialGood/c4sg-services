@@ -22,6 +22,10 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
             "WHERE u.status = 'A' and u.role = 'V' and u.publishFlag = 'Y' " + 
     		"ORDER BY u.createdTime DESC";
     
+    String FIND_BY_NOTIFY = 
+    		"SELECT u FROM User u " +
+            "WHERE u.status = 'A' and u.role = 'V' and u.notifyFlag = 'Y'";
+    
     String FIND_BY_ID_QUERY = 
     		"SELECT u FROM UserProject up " +
             "JOIN up.user u " +
@@ -86,6 +90,9 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     @Query(FIND_ACTIVE_VOLUNTEERS)
     Page<User> findActiveVolunteers(Pageable pageable);
 
+    @Query(FIND_BY_NOTIFY)
+    List<User> findByNotify();
+    
     User findById(int id);
     
     User findByEmail(String email);

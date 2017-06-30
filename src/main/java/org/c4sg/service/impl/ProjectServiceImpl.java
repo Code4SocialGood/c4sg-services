@@ -23,7 +23,6 @@ import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.ProjectService;
-import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,12 +49,20 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private AsyncEmailService asyncEmailService;
-    
-    @Autowired
-    private UserService userService;
        
     @Autowired
     private OrganizationDAO organizationDAO;
+    
+    private static final String FROM_EMAIL = "info@code4socialgood.org";
+    private static final String SUBJECT_ORGANIZATION = "You received an application from Code for Social Good";
+    private static final String BODY_ORGANIZATION= "You received an application from Code for Social Good. " 
+    				+ "Please login to the dashboard to review the application.";
+    private static final String SUBJECT_APPLICANT = "You submitted an application from Code for Social Good";
+    private static final String BODY_APPLICANT= "You submitted an application from Code for Social Good. " 
+    				+ "Organization is notified to review your application and contact you.";
+    private static final String SUBJECT_NOTIFICATION = "Code for Social Good: New Project Notification";
+    private static final String BODY_NOTIIFCATION= "You have registered to recieve notification on new projects.\n" 
+    				+ "The following new project has been created:\n" + "http://dev.code4socialgood.org/project/view/";
 
     public void save(ProjectDTO projectDTO) {
     	Project project = projectMapper.getProjectEntityFromDto(projectDTO);
@@ -101,24 +108,31 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public ProjectDTO createProject(CreateProjectDTO createProjectDTO) {
-        Project localProject = projectDAO.findByNameAndOrganizationId(
+        Project project = projectDAO.findByNameAndOrganizationId(
         			createProjectDTO.getName(), createProjectDTO.getOrganizationId());
         
-        if (localProject != null) {
+        if (project != null) {
             System.out.println("Project already exist.");
         } else {
-            localProject = projectDAO.save(
+            project = projectDAO.save(
             		projectMapper.getProjectEntityFromCreateProjectDto(createProjectDTO));
 
             // Updates projectUpdateTime for the organization
-            Organization localOrgan = localProject.getOrganization(); 
+            Organization localOrgan = project.getOrganization(); 
             localOrgan.setProjectUpdatedTime(new Timestamp(Calendar.getInstance().getTime().getTime())); 
             organizationDAO.save(localOrgan);
-            //Date currentTime = new Date(Calendar.getInstance().getTime().getTime());
-            //Integer organizationId = organizationDAO.updateProjectUpdatedTime(currentTime, createProjectDTO.getOrganizationId());
+
+            // Notify volunteer users of new project
+            List<User> notifyUsers = userDAO.findByNotify();
+            for (int i=0; i<notifyUsers.size(); i++) {
+            	String to = notifyUsers.get(i).getEmail();
+              	String subject = SUBJECT_NOTIFICATION;
+            	String body = BODY_NOTIIFCATION + project.getId();
+            	asyncEmailService.send(FROM_EMAIL, to, subject, body);
+            }
         }
 
-        return projectMapper.getProjectDtoFromEntity(localProject);
+        return projectMapper.getProjectDtoFromEntity(project);
     }
 
     public ProjectDTO updateProject(ProjectDTO project) {
@@ -179,19 +193,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
     
     private void apply(User user, Project project) {
-        String from = "info@code4socialgood.org";
+
         Integer orgId = project.getOrganization().getId();
-        String orgEmail = userService.findByOrgId(orgId.intValue()).get(0).getEmail();
-        String orgSubject = "You received an application from Code for Social Good";
-        String orgText = "You received an application from Code for Social Good. " +
-                "Please login to the dashboard to review the application.";
-        asyncEmailService.send(from, orgEmail, orgSubject, orgText);
+        String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
+        asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
 
         String userEmail = user.getEmail();
-        String userSubject = "You submitted an application from Code for Social Good";
-        String userText = "You submitted an application from Code for Social Good. " +
-                "Organization is notified to review your application and contact you.";
-        asyncEmailService.send(from, userEmail, userSubject, userText);
+        asyncEmailService.send(FROM_EMAIL, userEmail, SUBJECT_APPLICANT, BODY_APPLICANT);
         
     	System.out.println("Application email sent: Project=" + project.getId() 
     		+ " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail + " ; ApplicantEmail=" + userEmail);

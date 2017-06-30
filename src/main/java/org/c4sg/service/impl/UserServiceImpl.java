@@ -42,6 +42,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<UserDTO> findUsersToNotify() {
+		List<User> users = userDAO.findByNotify();
+		return userMapper.getDtosFromEntities(users);
+	}
+	
+	@Override
 	public UserDTO findById(int id) {
 		return userMapper.getUserDtoFromEntity(userDAO.findById(id));
 	}
@@ -55,7 +61,7 @@ public class UserServiceImpl implements UserService {
 	public UserDTO findByEmail(String email) {
 		return userMapper.getUserDtoFromEntity(userDAO.findByEmail(email));
 	}
-
+	
 	@Override
 	public UserDTO saveUser(UserDTO userDTO) {
 		User user = userMapper.getUserEntityFromDto(userDTO);
