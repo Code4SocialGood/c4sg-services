@@ -23,6 +23,7 @@ import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.ProjectService;
+import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
-
+	
     @Autowired
     private ProjectDAO projectDAO;
 
@@ -49,6 +50,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private AsyncEmailService asyncEmailService;
+    
+    @Autowired
+    private UserService userService;
        
     @Autowired
     private OrganizationDAO organizationDAO;
@@ -131,6 +135,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus ) {
+
         User user = userDAO.findById(userId);
         requireNonNull(user, "Invalid User Id");
         Project project = projectDAO.findById(projectId);
@@ -174,8 +179,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
     
     private void apply(User user, Project project) {
-        String from = "code4socialgood@code4socialgood.com";
-        String orgEmail = project.getOrganization().getContactEmail();
+        String from = "info@code4socialgood.org";
+        Integer orgId = project.getOrganization().getId();
+        String orgEmail = userService.findByOrgId(orgId.intValue()).get(0).getEmail();
         String orgSubject = "You received an application from Code for Social Good";
         String orgText = "You received an application from Code for Social Good. " +
                 "Please login to the dashboard to review the application.";
@@ -186,10 +192,12 @@ public class ProjectServiceImpl implements ProjectService {
         String userText = "You submitted an application from Code for Social Good. " +
                 "Organization is notified to review your application and contact you.";
         asyncEmailService.send(from, userEmail, userSubject, userText);
+        
+    	System.out.println("Application email sent: Project=" + project.getId() 
+    		+ " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail + " ; ApplicantEmail=" + userEmail);
     }
     
-    private void isBookmarkPresent(Integer userId, Integer projectId)
-    {
+    private void isBookmarkPresent(Integer userId, Integer projectId) {
     	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, "B");
     	
     	requireNonNull(userProjects, "Invalid operation");
