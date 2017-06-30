@@ -10,7 +10,9 @@ import java.util.List;
 public interface UserService {
 	
     List<UserDTO> findAll();
-
+    
+	List<UserDTO> findUsersToNotify();
+	
     Page<UserDTO> findActiveVolunteers(Pageable pageable);
     
     UserDTO findById(int id);
