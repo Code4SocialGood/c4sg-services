@@ -23,7 +23,7 @@ public interface UserService {
 
     void deleteUser(Integer id);
 
-    Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag,int page, int size);
+    Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag,Integer page, Integer size);
 
     List<UserDTO> getApplicants(Integer projectId);
            

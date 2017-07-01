@@ -10,6 +10,7 @@ import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -89,18 +90,31 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag, int page, int size) {
+	public Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag, Integer page, Integer size) {
 
-		Page<User> users = null;
-		Pageable pageable=new PageRequest(page,size);
-		if(skills != null)
-    	{
-			users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag,pageable);
-    	}
-    	else{
-    		users = userDAO.findByKeyword(keyWord, status, role, publishFlag,pageable);
-    	}       
-		Page<UserDTO> userDTOS = users.map(p -> userMapper.getUserDtoFromEntity(p));
+		Page<User> userPages = null;
+		List<User> users=null;
+		if (page==null) page=0;
+		if (size==null){
+			if(skills != null)
+	    	{
+				users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag);
+	    	}
+	    	else{
+	    		users = userDAO.findByKeyword(keyWord, status, role, publishFlag);
+	    	}
+			userPages=new PageImpl<User>(users);
+		}else{
+			Pageable pageable=new PageRequest(page,size);
+			if(skills != null)
+	    	{
+				userPages = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag,pageable);
+	    	}
+	    	else{
+	    		userPages = userDAO.findByKeyword(keyWord, status, role, publishFlag,pageable);
+	    	}			
+		}
+		Page<UserDTO> userDTOS = userPages.map(p -> userMapper.getUserDtoFromEntity(p));
 		return userDTOS;// mapUsersToUserDtos(users);
 	}
 

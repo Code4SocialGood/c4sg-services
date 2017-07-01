@@ -76,10 +76,10 @@ public class ProjectController {
     									@Pattern(regexp="[AC]")  @RequestParam(required = false) String status,
     									@ApiParam(value = "Location of the project")
     									@Pattern(regexp="[YN]") @RequestParam(required = false) String remote,
-    @ApiParam(value = "Results page you want to retrieve (0..N)", defaultValue="0",required=true)
-    @RequestParam(required=true) int page,
-    @ApiParam(value = "Number of records per page", defaultValue="5",required=true)
-    @RequestParam(required=true) int size)
+    @ApiParam(value = "Results page you want to retrieve (0..N)", required=false)
+    @RequestParam(required=false) Integer page,
+    @ApiParam(value = "Number of records per page",required=false)
+    @RequestParam(required=false) Integer size)
     {
         return projectService.findByKeyword(keyWord,skills,status,remote,page,size);
     }

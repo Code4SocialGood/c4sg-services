@@ -97,6 +97,12 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     @Query(FIND_BY_KEYWORD_CRITERIA)
     Page<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
 
+    @Query(FIND_BY_KEYWORD_SKILL_CRITERIA)
+    List<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote);
+    
+    @Query(FIND_BY_KEYWORD_CRITERIA)
+    List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("remote") String remote);
+    
 	@Query(FIND_BY_ORGANIZATION_ID_AND_STATUS)
 	List<Project> getProjectsByOrganization(@Param("orgId") Integer orgId, @Param("projectStatus") String projectStatus);
 	

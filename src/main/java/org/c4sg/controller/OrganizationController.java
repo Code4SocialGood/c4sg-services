@@ -67,10 +67,10 @@ public class OrganizationController {
 			@ApiParam(value = "Opportunities open in the organization", required = false) @RequestParam(required = false) Boolean open,
 			@ApiParam(value = "Status of the organization to return", required = false) @Pattern(regexp="[AD]") @RequestParam(required = false) String status,
 			@ApiParam(value = "Category of the organization to return", required = false) @Pattern(regexp="[NOM]") @RequestParam(required = false) String category,
-		    @ApiParam(value = "Results page you want to retrieve (0..N)", defaultValue="0",required=true)
-		    @RequestParam(required=true) int page,
-		    @ApiParam(value = "Number of records per page", defaultValue="5",required=true)
-		    @RequestParam(required=true) int size)	
+		    @ApiParam(value = "Results page you want to retrieve (0..N)",required=false)
+		    @RequestParam(required=false) Integer page,
+		    @ApiParam(value = "Number of records per page", required=false)
+		    @RequestParam(required=false) Integer size)	
 	{
 		return organizationService.findByCriteria(keyWord, countries, open, status, category,page,size);
 	}
