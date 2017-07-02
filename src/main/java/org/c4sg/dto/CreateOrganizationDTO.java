@@ -11,7 +11,7 @@ public class CreateOrganizationDTO {
 	@NotBlank
 	private String name;//required
 	
-	private String websiteURL;
+	private String websiteUrl;
 	
 	private String description;
 	
@@ -46,12 +46,12 @@ public class CreateOrganizationDTO {
 		this.name = name;
 	}
 
-	public String getWebsiteURL() {
-		return websiteURL;
+	public String getWebsiteUrl() {
+		return websiteUrl;
 	}
 
-	public void setWebsiteURL(String websiteURL) {
-		this.websiteURL = websiteURL;
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
 	}
 
 	public String getDescription() {
