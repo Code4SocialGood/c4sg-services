@@ -17,6 +17,7 @@ import org.c4sg.service.OrganizationService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -70,27 +71,50 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .collect(Collectors.toList());
     }
     
-    public Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category, int page, int size) {
-    	Page<Organization> organizations; 
-		Pageable pageable=new PageRequest(page,size);    	    	
-    	if(countries != null && !countries.isEmpty()){
-    		if(open != null){
-    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, category,pageable);
-    		}
-    		else{    			
-    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, category,pageable);
-    		}	
-    		
-        }
-    	else{
-    		if(open != null){
-    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, category,pageable);
-    		}
-    		else{    			
-    			organizations = organizationDAO.findByCriteria(keyWord, open, status, category,pageable);
-    		}    		
+    public Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category, Integer page, Integer size) {
+    	Page<Organization> organizationPages=null;
+    	List<Organization> organizations=null;
+    	if (page==null) page=0;
+    	if (size==null){
+	    	if(countries != null && !countries.isEmpty()){
+	    		if(open != null){
+	    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, category);
+	    		}
+	    		else{    			
+	    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, category);
+	    		}	
+	    		
+	        }
+	    	else{
+	    		if(open != null){
+	    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, category);
+	    		}
+	    		else{    			
+	    			organizations = organizationDAO.findByCriteria(keyWord, open, status, category);
+	    		}    		
+	    	}
+	    	organizationPages=new PageImpl<Organization>(organizations);
+    	}else{
+			Pageable pageable=new PageRequest(page,size);    	    	
+	    	if(countries != null && !countries.isEmpty()){
+	    		if(open != null){
+	    			organizationPages = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, category,pageable);
+	    		}
+	    		else{    			
+	    			organizationPages = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, category,pageable);
+	    		}	
+	    		
+	        }
+	    	else{
+	    		if(open != null){
+	    			organizationPages = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, category,pageable);
+	    		}
+	    		else{    			
+	    			organizationPages = organizationDAO.findByCriteria(keyWord, open, status, category,pageable);
+	    		}    		
+	    	}    		
     	}
-    	return organizations.map(o -> organizationMapper.getOrganizationDtoFromEntity(o));    	
+    	return organizationPages.map(o -> organizationMapper.getOrganizationDtoFromEntity(o));    	
     }
     
 //    public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {

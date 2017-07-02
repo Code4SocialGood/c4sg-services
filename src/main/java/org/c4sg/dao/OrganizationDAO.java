@@ -85,6 +85,22 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     Page<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord, @Param("open") Boolean open
     		, @Param("status") String status, @Param("category") String category, Pageable pageable);
 
+    @Query(FIND_BY_CRITERIA_AND_COUNTRIES)
+    List<Organization> findByCriteriaAndCountries(@Param("keyword") String keyWord, @Param("countries") List<String> countries,@Param("open") Boolean open
+    		, @Param("status") String status, @Param("category") String category);
+    
+    @Query(FIND_BY_CRITERIA_AND_COUNTRIES_AND_OPEN)
+    List<Organization> findByCriteriaAndCountriesAndOpen(@Param("keyword") String keyWord, @Param("countries") List<String> countries,@Param("open") Boolean open
+    		, @Param("status") String status, @Param("category") String category);
+    
+    @Query(FIND_BY_CRITERIA)
+    List<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("open") Boolean open
+    		, @Param("status") String status, @Param("category") String category);
+    
+    @Query(FIND_BY_CRITERIA_AND_OPEN)
+    List<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord, @Param("open") Boolean open
+    		, @Param("status") String status, @Param("category") String category);
+    
     @Modifying
     @Query(DELETE_USER_ORGANIZATIONS)
     @Transactional
