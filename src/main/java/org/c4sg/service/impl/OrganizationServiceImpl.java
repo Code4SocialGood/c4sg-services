@@ -71,26 +71,26 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .collect(Collectors.toList());
     }
     
-    public Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, String category, Integer page, Integer size) {
+    public Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, List<String> categories, Integer page, Integer size) {
     	Page<Organization> organizationPages=null;
     	List<Organization> organizations=null;
     	if (page==null) page=0;
     	if (size==null){
 	    	if(countries != null && !countries.isEmpty()){
 	    		if(open != null){
-	    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, category);
+	    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories);
 	    		}
 	    		else{    			
-	    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, category);
+	    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories);
 	    		}	
 	    		
 	        }
 	    	else{
 	    		if(open != null){
-	    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, category);
+	    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories);
 	    		}
 	    		else{    			
-	    			organizations = organizationDAO.findByCriteria(keyWord, open, status, category);
+	    			organizations = organizationDAO.findByCriteria(keyWord, open, status, categories);
 	    		}    		
 	    	}
 	    	organizationPages=new PageImpl<Organization>(organizations);
@@ -98,19 +98,19 @@ public class OrganizationServiceImpl implements OrganizationService {
 			Pageable pageable=new PageRequest(page,size);    	    	
 	    	if(countries != null && !countries.isEmpty()){
 	    		if(open != null){
-	    			organizationPages = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, category,pageable);
+	    			organizationPages = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories,pageable);
 	    		}
 	    		else{    			
-	    			organizationPages = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, category,pageable);
+	    			organizationPages = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories,pageable);
 	    		}	
 	    		
 	        }
 	    	else{
 	    		if(open != null){
-	    			organizationPages = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, category,pageable);
+	    			organizationPages = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories,pageable);
 	    		}
 	    		else{    			
-	    			organizationPages = organizationDAO.findByCriteria(keyWord, open, status, category,pageable);
+	    			organizationPages = organizationDAO.findByCriteria(keyWord, open, status, categories,pageable);
 	    		}    		
 	    	}    		
     	}
