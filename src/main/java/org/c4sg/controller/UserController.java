@@ -100,17 +100,10 @@ public class UserController {
     
     @CrossOrigin
     @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of projects")
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "Applicants not found")})
-    public ResponseEntity<List<UserDTO>> getApplicants(@ApiParam(value = "ID of project", required = true)
+    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
+    public List<UserDTO> getApplicants(@ApiParam(value = "ID of project", required = true)
                                                        @PathVariable("id") Integer projectId) {
-        List<UserDTO> applicants = userService.getApplicants(projectId);
-        
-        if (!applicants.isEmpty()) {
-            return ResponseEntity.ok().body(applicants);
-        } else {
-            throw new NotFoundException("Applicants not found");
-        }
+        return userService.getApplicants(projectId);
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
