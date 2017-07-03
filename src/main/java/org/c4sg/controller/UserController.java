@@ -6,7 +6,6 @@ import org.c4sg.dto.UserDTO;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.UserServiceException;
 import org.c4sg.service.UserService;
-import org.c4sg.util.GeoCodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
-
 import javax.validation.constraints.Pattern;
 
 @CrossOrigin(origins = "*")
@@ -64,16 +60,7 @@ public class UserController {
                               @RequestBody CreateUserDTO createUserDTO) {
 
         try {
-            UserDTO userDTO = userService.createUser(createUserDTO);
-            GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO); //calculate lat and long
-            try {
-            	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
-                userDTO.setLatitude(geoCode.get("lat"));
-                userDTO.setLongitude(geoCode.get("lng"));
-            }  catch (Exception e) {
-            	throw new NotFoundException("Error getting geocode");
-			}
-            return userService.saveUser(userDTO);
+            return userService.createUser(createUserDTO);
         } catch (Exception e) {
             throw new UserServiceException("Error creating user entity: " + e.getCause().getMessage());
         }
@@ -84,14 +71,6 @@ public class UserController {
     public UserDTO updateUser(@ApiParam(value = "Updated user object", required = true)
                               @RequestBody UserDTO userDTO) {
         try {
-            GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO);
-            try {
-            	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
-                userDTO.setLatitude(geoCode.get("lat"));
-                userDTO.setLongitude(geoCode.get("lng"));
-            } catch (Exception e) {
-            	throw new NotFoundException("Error getting geocode");
-			}
         	return userService.saveUser(userDTO);
         } catch (Exception e) {
             throw new UserServiceException("Error creating user entity: " + e.getCause().getMessage());

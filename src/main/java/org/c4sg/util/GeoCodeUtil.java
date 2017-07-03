@@ -26,6 +26,11 @@ public class GeoCodeUtil {
 		this.country = userDTO.getCountry();
 	}
 	
+	public GeoCodeUtil(String state, String country) {
+		this.state = state;
+		this.country = country;
+	}
+	
 	public Map<String,BigDecimal> getGeoCode() throws Exception {
 		Map<String,BigDecimal> geocode = new HashMap<String,BigDecimal>();
 		try {
