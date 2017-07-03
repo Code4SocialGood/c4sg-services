@@ -1,7 +1,5 @@
 package org.c4sg.mapper;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTReader;
 import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.User;
