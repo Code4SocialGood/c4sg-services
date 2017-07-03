@@ -5,9 +5,11 @@ import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.User;
+import org.c4sg.exception.NotFoundException;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
+import org.c4sg.util.GeoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -16,7 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -70,6 +74,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO saveUser(UserDTO userDTO) {
 		User user = userMapper.getUserEntityFromDto(userDTO);
+		GeoCodeUtil geoCodeUtil = new GeoCodeUtil(user.getState(), user.getCountry()); //calculate lat and long
+		try {
+        	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
+            user.setLatitude(geoCode.get("lat"));
+            user.setLongitude(geoCode.get("lng"));
+        }  catch (Exception e) {
+        	throw new NotFoundException("Error getting geocode");
+		}
 		return userMapper.getUserDtoFromEntity(userDAO.save(user));
 	}
 
@@ -124,7 +136,18 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDTO createUser(CreateUserDTO createUserDTO) {
-        User localUser = userDAO.save(userMapper.getUserEntityFromCreateUserDto(createUserDTO));
+		
+		GeoCodeUtil geoCodeUtil = new GeoCodeUtil(createUserDTO.getState(), createUserDTO.getCountry()); //calculate lat and long
+		User user = userMapper.getUserEntityFromCreateUserDto(createUserDTO);
+		try {
+        	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
+            user.setLatitude(geoCode.get("lat"));
+            user.setLongitude(geoCode.get("lng"));
+        }  catch (Exception e) {
+        	throw new NotFoundException("Error getting geocode");
+		}
+        
+        User localUser = userDAO.save(user);
         return userMapper.getUserDtoFromEntity(localUser);
 	}
 	
