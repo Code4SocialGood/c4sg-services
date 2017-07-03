@@ -27,15 +27,20 @@ public class GeoCodeUtil {
 	}
 	
 	public Map<String,BigDecimal> getGeoCode() throws Exception {
+		
 		Map<String,BigDecimal> geocode = new HashMap<String,BigDecimal>();
+		String address = getAddress();
+		if(address.isEmpty()) {
+			return geocode;
+		}
+		
 		try {
-			URL url = getRequestUrl();
+			URL url = getRequestUrl(address);
 			String response = getResponse(url);
 			if(response != null) {
 				Object obj = JSONValue.parse(response);
 				
-				if(obj instanceof JSONObject)
-				{
+				if(obj instanceof JSONObject) {
 					JSONObject jsonObject = (JSONObject) obj;
 					JSONArray array = (JSONArray) jsonObject.get("results");					
 					JSONObject element = (JSONObject) array.get(0);
@@ -47,8 +52,7 @@ public class GeoCodeUtil {
 					geocode.put("lat", new BigDecimal(lat));
 				}
 				return geocode;				
-			}
-			else {
+			} else {
 				throw new Exception("Fail to convert to geocode");
 			}
 		}
@@ -77,26 +81,40 @@ public class GeoCodeUtil {
 		}
 	}
 	
-	private URL getRequestUrl() throws MalformedURLException, UnsupportedEncodingException {
+	private URL getRequestUrl(String url) throws MalformedURLException, UnsupportedEncodingException {
 		StringBuilder query = new StringBuilder();		
 		query.append("https://maps.googleapis.com/maps/api/geocode/json?address=");
-		query.append(URLEncoder.encode(getAddress(), "UTF-8"));
+		query.append(URLEncoder.encode(url, "UTF-8"));
 		query.append("&key=AIzaSyBViSnTCKnFTEc7l3hc02TxnmQXXr0IRh0");
 		
 		return new URL(query.toString());
 	}
 	
 	private String getAddress() {
-		StringBuilder address = new StringBuilder();
-		
-		if (this.state != null && !this.state.isEmpty()) {
+		if((this.state != null && !this.state.isEmpty()) && (this.country != null && !this.country.isEmpty())) {
+			StringBuilder address = new StringBuilder();
 			address.append(this.state);
 			address.append(",");
-		}
-		if (this.country != null && !this.country.isEmpty()) {
 			address.append(this.country);
+			return address.toString();
 		}
-		return address.toString();
+		return "";
+		
+	}
+	
+	public static void main(String[] args) throws Exception {
+		UserDTO u = new UserDTO();
+		u.setState("Lagos");
+		u.setCountry("Nigeria");
+		
+		GeoCodeUtil gu = new GeoCodeUtil(u);
+		Map<String, BigDecimal> geoCode = gu.getGeoCode();
+		System.out.println(geoCode);
+		
+		u = new UserDTO();
+		gu = new GeoCodeUtil(u);
+		geoCode = gu.getGeoCode();
+		System.out.println(geoCode);
 	}
 	
 }

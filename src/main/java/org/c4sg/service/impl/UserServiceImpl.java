@@ -9,6 +9,7 @@ import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Value("${googleapis.maps.key}")
+	private String googleApiKey;
 
 	@Override
 	public List<UserDTO> findAll() {
