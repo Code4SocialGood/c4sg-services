@@ -18,9 +18,11 @@ public class GeoCodeUtil {
 	
 	private String state;
 	private String country;
+	private String apiKey;
 	
-	public GeoCodeUtil(String state, String country) {
+	public GeoCodeUtil(String state, String country, String apiKey) {
 		this.state = state;
+		this.apiKey = apiKey;
 		this.country = country;
 	}
 	
@@ -83,7 +85,7 @@ public class GeoCodeUtil {
 		StringBuilder query = new StringBuilder();		
 		query.append("https://maps.googleapis.com/maps/api/geocode/json?address=");
 		query.append(URLEncoder.encode(url, "UTF-8"));
-		query.append("&key=AIzaSyBViSnTCKnFTEc7l3hc02TxnmQXXr0IRh0");
+		query.append("&key=" + apiKey);
 		
 		return new URL(query.toString());
 	}
@@ -101,16 +103,12 @@ public class GeoCodeUtil {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		UserDTO u = new UserDTO();
-		u.setState("Lagos");
-		u.setCountry("Nigeria");
 		
-		GeoCodeUtil gu = new GeoCodeUtil(u);
+		GeoCodeUtil gu = new GeoCodeUtil("Lagos", "Nigeria", "jj"); // switch jj with valid key
 		Map<String, BigDecimal> geoCode = gu.getGeoCode();
 		System.out.println(geoCode);
 		
-		u = new UserDTO();
-		gu = new GeoCodeUtil(u);
+		gu = new GeoCodeUtil(null, null, "jj");
 		geoCode = gu.getGeoCode();
 		System.out.println(geoCode);
 	}

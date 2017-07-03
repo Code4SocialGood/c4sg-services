@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO saveUser(UserDTO userDTO) {
 		User user = userMapper.getUserEntityFromDto(userDTO);
-		GeoCodeUtil geoCodeUtil = new GeoCodeUtil(user.getState(), user.getCountry()); //calculate lat and long
+		GeoCodeUtil geoCodeUtil = new GeoCodeUtil(user.getState(), user.getCountry(), googleApiKey); //calculate lat and long
 		try {
         	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
             user.setLatitude(geoCode.get("lat"));
@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO createUser(CreateUserDTO createUserDTO) {
 		
-		GeoCodeUtil geoCodeUtil = new GeoCodeUtil(createUserDTO.getState(), createUserDTO.getCountry()); //calculate lat and long
+		GeoCodeUtil geoCodeUtil = new GeoCodeUtil(createUserDTO.getState(), createUserDTO.getCountry(), googleApiKey); //calculate lat and long
 		User user = userMapper.getUserEntityFromCreateUserDto(createUserDTO);
 		try {
         	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
