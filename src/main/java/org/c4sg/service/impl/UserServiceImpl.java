@@ -1,11 +1,18 @@
 package org.c4sg.service.impl;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
 import org.c4sg.constant.Constants;
 import org.c4sg.dao.UserDAO;
+import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.OrganizationDTO;
+import org.c4sg.dto.SkillDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.User;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.mapper.SkillMapper;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.GeocodeService;
 import org.c4sg.service.OrganizationService;
@@ -16,10 +23,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -99,9 +102,13 @@ public class UserServiceImpl implements UserService {
     }
 		
 	@Override
-	public List<UserDTO> getApplicants(Integer projectId) {
-		List<User> users = userDAO.findByUserProjectId(projectId, Constants.USER_PROJECT_STATUS_APPLIED);
-		return userMapper.getDtosFromEntities(users);
+	public List<ApplicantDTO> getApplicants(Integer projectId) {
+		//List<User> users = userDAO.findByUserProjectId(projectId, Constants.USER_PROJECT_STATUS_APPLIED);
+		//List<Applicant> users = userDAO.findApplicants(projectId);
+		List<Object[]> applicants = userDAO.findApplicants(projectId);
+   		List<ApplicantDTO> applicantDTOS = new UserMapper().getApplicantDTOs(applicants);
+       	return applicantDTOS;     
+		//return userMapper.getDtosFromEntities(users);
 	}
 
 	@Override

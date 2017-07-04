@@ -1,11 +1,12 @@
 package org.c4sg.service;
 
+import java.util.List;
+
+import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface UserService {
 	
@@ -25,7 +26,7 @@ public interface UserService {
 
     Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag,Integer page, Integer size);
 
-    List<UserDTO> getApplicants(Integer projectId);
+    List<ApplicantDTO> getApplicants(Integer projectId);
            
     UserDTO createUser(CreateUserDTO createUserDTO);
     

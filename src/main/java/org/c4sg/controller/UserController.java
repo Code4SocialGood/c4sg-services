@@ -1,16 +1,16 @@
 package org.c4sg.controller;
 
 import io.swagger.annotations.*;
+
+import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
-import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.UserServiceException;
 import org.c4sg.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -80,7 +80,7 @@ public class UserController {
     @CrossOrigin
     @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
-    public List<UserDTO> getApplicants(@ApiParam(value = "ID of project", required = true)
+    public List<ApplicantDTO> getApplicants(@ApiParam(value = "ID of project", required = true)
                                                        @PathVariable("id") Integer projectId) {
         return userService.getApplicants(projectId);
     }
