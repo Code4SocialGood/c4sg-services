@@ -172,7 +172,7 @@ public class ProjectController {
                                                @PathVariable("userId") Integer userId,
                                                @ApiParam(value = "ID of project", required = true)
                                                @PathVariable("id") Integer projectId,
-                                               @ApiParam(value = "User project status, A-Applied, B-Bookmarked", allowableValues = "A, B", required = true)
+                                               @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
                                                @RequestParam("userProjectStatus") String userProjectStatus){
         try {
             projectService.saveUserProject(userId, projectId, userProjectStatus);

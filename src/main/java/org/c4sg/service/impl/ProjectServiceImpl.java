@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
-import org.c4sg.controller.UserController;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.ProjectSkillDAO;
@@ -35,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
-	private static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
     @Autowired
     private ProjectDAO projectDAO;
@@ -162,34 +160,26 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus ) {
+    public ProjectDTO saveUserProject(Integer userId, Integer projectId, String status ) {
 
         User user = userDAO.findById(userId);
         requireNonNull(user, "Invalid User Id");
         Project project = projectDAO.findById(projectId);
         requireNonNull(project, "Invalid Project Id");
-        if (userProjectStatus == null || (!userProjectStatus.trim().equalsIgnoreCase("A") && !userProjectStatus.trim().equalsIgnoreCase("B"))) {
+        if (status == null || (!status.equals("A") && !status.equals("B") && !status.equals("C") && !status.equals("D"))) {
         	throw new BadRequestException("Invalid Project Status");
-        }
-        
-        else if(userProjectStatus.trim().equalsIgnoreCase("A")){
-	        isUserAppliedPresent(userId, projectId);
+        } else {
+	        isRecordExist(userId, projectId, status);
 	        UserProject userProject = new UserProject();
 	        userProject.setUser(user);
 	        userProject.setProject(project);
-	        userProject.setStatus("A");
-	        apply(user, project);
+	        userProject.setStatus(status);
 	        userProjectDAO.save(userProject);
-	        }
-        else if(userProjectStatus.trim().equalsIgnoreCase("B")){
-        	isBookmarkPresent(userId, projectId);  
-            UserProject userProject = new UserProject();
-            userProject.setUser(user);
-            userProject.setProject(project);
-            userProject.setStatus("B");
-            userProjectDAO.save(userProject);     	
-        }
-
+	    }
+        
+        if (status.equals("A"))
+        	apply(user, project);
+        		
         return projectMapper.getProjectDtoFromEntity(project);
     }
 
@@ -209,36 +199,24 @@ public class ProjectServiceImpl implements ProjectService {
     private void apply(User user, Project project) {
 
         Integer orgId = project.getOrganization().getId();
-        String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
-        asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
+        List<User> users = userDAO.findByOrgId(orgId);
+        if (users != null) {
+        	String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
+        	asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
+        	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
+        }
+    }
         
-    	System.out.println("Application email sent: Project=" + project.getId() 
-    		+ " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
-    }
-    
-    private void isBookmarkPresent(Integer userId, Integer projectId) {
-    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, "B");
-    	
-    	requireNonNull(userProjects, "Invalid operation");
-    	for(UserProject userProject : userProjects)
-    	{
-    		if(userProject.getStatus().equals("B"))
-        	{
-        		throw new UserProjectException("Project is already bookmarked");
-        	}
-    	}    	
-    }
-    
-    private void isUserAppliedPresent(Integer userId, Integer projectId) throws UserProjectException {
+    private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
 
-    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, "A");
+    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
     	
     	requireNonNull(userProjects, "Invalid operation");
     	for(UserProject userProject : userProjects)
     	{
-    		if(userProject.getStatus().equals("A"))
+    		if(userProject.getStatus().equals(status))
         	{
-        		throw new UserProjectException("Project is already applied for");
+        		throw new UserProjectException("Record already exist");
         	}
     	}    	
     }

@@ -80,6 +80,14 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
                +   ")  "
                + "ORDER BY u.createdTime DESC";
     
+     String FIND_APPLICANT_QUERY =     
+     		"SELECT upa.user_id, upa.project_id, u.first_name, u.last_name, u.title, upa.created_time as applied_time, upc.created_time as approved_time, upd.created_time as declined_time " +  
+     		"FROM user u " + 
+     		"LEFT OUTER JOIN user_project upa ON u.id = upa.user_id AND upa.status = 'A' " +
+     		"LEFT OUTER JOIN user_project upc ON u.id = upc.user_id AND upc.status = 'C' " +
+     		"LEFT OUTER JOIN user_project upd ON u.id = upd.user_id AND upd.status = 'D' " +
+     		"WHERE upa.project_id = :projectId";
+     
     String DELETE_USER_PROJECTS = "DELETE FROM UserProject up WHERE up.user.id=:userId";
     String DELETE_USER_SKILLS = "DELETE FROM UserSkill us WHERE us.user.id=:userId";    
     
@@ -131,7 +139,14 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     @Modifying
     @Query(SAVE_AVATAR)
     void updateAvatar(@Param("imgUrl") String imgUrl, @Param("userId") Integer userId);
-       
+
+    // Native query for temporal table
+    @Query(value = FIND_APPLICANT_QUERY, nativeQuery = true)
+    List<Object[]> findApplicants(@Param("projectId") Integer projectId);
+    
+    //@Query(FIND_APPLICANT_QUERY)
+    //List<Applicant> findApplicants(@Param("projectId") Integer projectId);
+    
     /*
     @Transactional
     @Modifying
