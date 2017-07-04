@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
+import org.c4sg.constraint.C4sgCategory;
 import org.c4sg.dto.CreateOrganizationDTO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.exception.NotFoundException;
@@ -66,7 +67,7 @@ public class OrganizationController {
 			@ApiParam(value = "Countries of organization to return", required = false) @RequestParam(required = false) List<String> countries,
 			@ApiParam(value = "Opportunities open in the organization", required = false) @RequestParam(required = false) Boolean open,
 			@ApiParam(value = "Status of the organization to return", required = false) @Pattern(regexp="[AD]") @RequestParam(required = false) String status,
-			@ApiParam(value = "Category of the organization to return", required = false) @Pattern(regexp="[NOUSTM]") @RequestParam(required = false) List<String> category,
+			@ApiParam(value = "Category of the organization to return", required = false) @C4sgCategory @RequestParam(required = false) List<String> category,
 		    @ApiParam(value = "Results page you want to retrieve (0..N)",required=false)
 		    @RequestParam(required=false) Integer page,
 		    @ApiParam(value = "Number of records per page", required=false)

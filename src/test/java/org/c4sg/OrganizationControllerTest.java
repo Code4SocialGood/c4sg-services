@@ -3,8 +3,12 @@ package org.c4sg;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.c4sg.controller.OrganizationController;
 import org.c4sg.dto.CreateOrganizationDTO;
@@ -18,12 +22,13 @@ import org.mockito.Mock;
 import org.mockito.internal.matchers.GreaterThan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@Ignore
+//@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {C4SgApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OrganizationControllerTest extends C4SGTest {
@@ -48,6 +53,7 @@ public class OrganizationControllerTest extends C4SGTest {
 		POST /api/organizations/{id}/logo Upload Logo as Image File
     */
     private static final String URI_ADD_ORGANIZATION = "/api/organizations";
+    private static final String URI_SEARCH_ORGANIZATION = "/api/organizations/search";
     
     @Before
     public void setup() throws Exception {
@@ -112,5 +118,25 @@ public class OrganizationControllerTest extends C4SGTest {
     		.andExpect(jsonPath("$.organization.category",is("O")))
     		.andExpect(jsonPath("$.organization.status",is("A")))
  			.andExpect(jsonPath("$.organization.createdTime", is(nullValue())));
+    }
+    
+    @Test
+    public void testSearchOrganization() throws Exception {
+    	
+    	// 1. Only required input field is name
+    	    	 
+    	mockMvc.perform(request(HttpMethod.GET, URI_SEARCH_ORGANIZATION)
+    			.param("keyword", "Michigan")
+    			.param("countries", "")
+    			.param("open", "true")
+    			.param("status", "A")
+    			.param("category", "N", "P")
+    			.param("page", "0")
+    			.param("size", "100")
+    			
+    			.accept(MediaType.APPLICATION_JSON))
+    		.andExpect(status().isOk()); // default status is A
+    	
+    	
     }
 }
