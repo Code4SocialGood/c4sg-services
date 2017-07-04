@@ -7,9 +7,9 @@ import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.User;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.mapper.UserMapper;
+import org.c4sg.service.GeocodeService;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
-import org.c4sg.util.GeoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,7 +32,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserMapper userMapper;
-
+	
+	@Autowired
+	private GeocodeService geocodeService;
+	
 	@Override
 	public List<UserDTO> findAll() {
 		List<User> users = userDAO.findAllByOrderByIdDesc();
@@ -70,11 +73,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO saveUser(UserDTO userDTO) {
 		User user = userMapper.getUserEntityFromDto(userDTO);
-		GeoCodeUtil geoCodeUtil = new GeoCodeUtil(user.getState(), user.getCountry()); //calculate lat and long
+		
 		try {
-        	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
-            user.setLatitude(geoCode.get("lat"));
-            user.setLongitude(geoCode.get("lng"));
+			Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(user.getState(), user.getCountry());
+	        user.setLatitude(geoCode.get("lat"));
+	        user.setLongitude(geoCode.get("lng"));
         }  catch (Exception e) {
         	throw new NotFoundException("Error getting geocode");
 		}
@@ -133,12 +136,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO createUser(CreateUserDTO createUserDTO) {
 		
-		GeoCodeUtil geoCodeUtil = new GeoCodeUtil(createUserDTO.getState(), createUserDTO.getCountry()); //calculate lat and long
 		User user = userMapper.getUserEntityFromCreateUserDto(createUserDTO);
 		try {
-        	Map<String, BigDecimal> geoCode = geoCodeUtil.getGeoCode();
-            user.setLatitude(geoCode.get("lat"));
-            user.setLongitude(geoCode.get("lng"));
+			Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(user.getState(), user.getCountry());
+	        user.setLatitude(geoCode.get("lat"));
+	        user.setLongitude(geoCode.get("lng"));
         }  catch (Exception e) {
         	throw new NotFoundException("Error getting geocode");
 		}
