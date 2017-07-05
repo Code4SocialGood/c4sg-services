@@ -89,7 +89,8 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
      		"LEFT OUTER JOIN user_project upa ON u.id = upa.user_id AND upa.status = 'A' " +
      		"LEFT OUTER JOIN user_project upc ON u.id = upc.user_id AND upc.status = 'C' " +
      		"LEFT OUTER JOIN user_project upd ON u.id = upd.user_id AND upd.status = 'D' " +
-     		"WHERE upa.project_id = :projectId";
+     		"WHERE upa.project_id = :projectId " + 
+            "ORDER BY upa.createdTime DESC";
      
     String DELETE_USER_PROJECTS = "DELETE FROM UserProject up WHERE up.user.id=:userId";
     String DELETE_USER_SKILLS = "DELETE FROM UserSkill us WHERE us.user.id=:userId";    
