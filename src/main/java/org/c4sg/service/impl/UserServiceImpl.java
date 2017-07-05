@@ -1,4 +1,5 @@
 package org.c4sg.service.impl;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -112,28 +113,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<UserDTO> search(String keyWord, List<Integer> skills, String status, String role, String publishFlag, Integer page, Integer size) {
+	public Page<UserDTO> search(String keyWord, Integer jobTitleId, List<Integer> skills, String status, String role, String publishFlag, Integer page, Integer size) {
 
 		Page<User> userPages = null;
 		List<User> users=null;
 		if (page==null) page=0;
-		if (size==null){
-			if(skills != null)
-	    	{
-				users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag);
-	    	}
-	    	else{
-	    		users = userDAO.findByKeyword(keyWord, status, role, publishFlag);
+		if (size==null) {
+			if(skills != null) {
+				users = userDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, role, publishFlag);
+	    	} else{
+	    		users = userDAO.findByKeyword(keyWord, jobTitleId, status, role, publishFlag);
 	    	}
 			userPages=new PageImpl<User>(users);
-		}else{
+		} else {
 			Pageable pageable=new PageRequest(page,size);
-			if(skills != null)
-	    	{
-				userPages = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag,pageable);
-	    	}
-	    	else{
-	    		userPages = userDAO.findByKeyword(keyWord, status, role, publishFlag,pageable);
+			if(skills != null) {
+				userPages = userDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, role, publishFlag,pageable);
+	    	} else{
+	    		userPages = userDAO.findByKeyword(keyWord, jobTitleId, status, role, publishFlag,pageable);
 	    	}			
 		}
 		Page<UserDTO> userDTOS = userPages.map(p -> userMapper.getUserDtoFromEntity(p));

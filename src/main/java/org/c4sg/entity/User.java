@@ -96,6 +96,9 @@ public class User implements Serializable {
 	@Column(name = "updated_time")
 	private Timestamp updatedTime;
 	
+    @Column(name = "job_title_id")
+    private Integer jobTitleId;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -304,4 +307,11 @@ public class User implements Serializable {
 		this.updatedTime = updatedTime;
 	}
 	
+	public Integer getJobTitleId() {
+		return jobTitleId;
+	}
+
+	public void setJobTitleId(Integer jobTitleId) {
+		this.jobTitleId = jobTitleId;
+	}
 }

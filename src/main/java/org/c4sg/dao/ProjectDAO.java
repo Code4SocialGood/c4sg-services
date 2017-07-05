@@ -1,5 +1,6 @@
 package org.c4sg.dao;
 
+import org.c4sg.entity.JobTitle;
 import org.c4sg.entity.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +53,7 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             +   " AND (ps.skill.id in (:skills))"
             //+   " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)" 
             +   " AND (:status is null OR p.status = :status)"
+            +   " AND (:jobTitleId is null OR p.jobTitleId = :jobTitleId)"
             +   " AND (:remote is null OR p.remoteFlag = :remote)"
             +   ")  "
             + "ORDER BY p.createdTime DESC";
@@ -74,6 +76,7 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             +   " OR LOWER(s.skillName) LIKE LOWER(CONCAT('%',:keyWord,'%')))"            
             //+   " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)" 
             +   " AND (:status is null OR p.status = :status)"
+            +   " AND (:jobTitleId is null OR p.jobTitleId = :jobTitleId)"
             +   " AND (:remote is null OR p.remoteFlag = :remote)"
             +   ")  "
             + "ORDER BY p.createdTime DESC";
@@ -81,6 +84,8 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     String DELETE_PROJECT = "UPDATE Project p set p.status = 'C' where p.id = :projId";
 
   	String SAVE_IMAGE = "UPDATE Project p set p.imageUrl = :imgUrl where p.id = :projectId";
+  	
+    String FIND_JOB_TITLES = "SELECT j FROM JobTitle j order by j.displayOrder";
   
 	Project findById(int id);
 	Project findByName(String name);
@@ -92,16 +97,16 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     List<Project> findByNameOrDescription(@Param("name") String name, @Param("description") String description);
 
     @Query(FIND_BY_KEYWORD_SKILL_CRITERIA)
-    Page<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
+    Page<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("jobTitleId") Integer jobTitleId, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
     
     @Query(FIND_BY_KEYWORD_CRITERIA)
-    Page<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
+    Page<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("jobTitleId") Integer jobTitleId, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
 
     @Query(FIND_BY_KEYWORD_SKILL_CRITERIA)
-    List<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote);
+    List<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("jobTitleId") Integer jobTitleId, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote);
     
     @Query(FIND_BY_KEYWORD_CRITERIA)
-    List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("remote") String remote);
+    List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("jobTitleId") Integer jobTitleId, @Param("status") String status, @Param("remote") String remote);
     
 	@Query(FIND_BY_ORGANIZATION_ID_AND_STATUS)
 	List<Project> getProjectsByOrganization(@Param("orgId") Integer orgId, @Param("projectStatus") String projectStatus);
@@ -119,4 +124,6 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     @Query(SAVE_IMAGE)
     void updateImage(@Param("imgUrl") String imgUrl, @Param("projectId") Integer projectId);
    
+    @Query(FIND_JOB_TITLES)
+    List<JobTitle> findJobTitles();
 }

@@ -2,7 +2,9 @@ package org.c4sg.mapper;
 
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dto.CreateProjectDTO;
+import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.JobTitle;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.UserProject;
 import org.modelmapper.ModelMapper;
@@ -49,4 +51,9 @@ public class ProjectMapper extends ModelMapper{
 		project.setOrganization(organizationDAO.findOne(createProjectDTO.getOrganizationId()));
 		return project;
 	}	
+	
+	public List<JobTitleDTO> getJobTitleDtosFromEntities(List<JobTitle> jobTitles){
+        Type listTypeDTO = new TypeToken<List<JobTitleDTO>>() {}.getType();
+		return map(jobTitles, listTypeDTO);
+	}
 }

@@ -4,8 +4,10 @@ import io.swagger.annotations.*;
 
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.CreateUserDTO;
+import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.exception.UserServiceException;
+import org.c4sg.service.ProjectService;
 import org.c4sg.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,9 @@ import javax.validation.constraints.Pattern;
 @Api(description = "Operations about Users", tags = "user")
 public class UserController {
     private static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    
+    @Autowired
+    private ProjectService projectService;
     
     @Autowired
     private UserService userService;
@@ -101,6 +106,8 @@ public class UserController {
     @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
     public Page<UserDTO> getUsers(@ApiParam(value = "Keyword like name , title, introduction, state, country")
                                         @RequestParam(required=false) String keyWord,
+                                        @ApiParam(value = "Job Title ID of the user")
+    									@RequestParam(required = false)  Integer jobTitleId,
                                         @ApiParam(value = "Skills of the User")
                                         @RequestParam(required = false) List<Integer> skills,
                                         @ApiParam(value = "Status of the User")
@@ -109,12 +116,12 @@ public class UserController {
     									@Pattern(regexp="[VOA]") @RequestParam(required = false) String role,
 									    @ApiParam(value = "User Public Flag")
 										@Pattern(regexp="[YN]") @RequestParam(required = false) String publishFlag,
-    @ApiParam(value = "Results page you want to retrieve (0..N)", required=false)
-    @RequestParam(required=false) Integer page,
-    @ApiParam(value = "Number of records per page", required=false)
-    @RequestParam(required=false) Integer size)
+										@ApiParam(value = "Results page you want to retrieve (0..N)", required=false)
+    									@RequestParam(required=false) Integer page,
+    									@ApiParam(value = "Number of records per page", required=false)
+    									@RequestParam(required=false) Integer size)
     {
-        return userService.search(keyWord,skills,status,role,publishFlag,page,size);
+        return userService.search(keyWord, jobTitleId, skills, status, role, publishFlag, page, size);
     }
         
     @CrossOrigin
@@ -125,6 +132,13 @@ public class UserController {
 
     	userService.saveAvatar(id, url);
 	}
+    
+    @CrossOrigin
+    @RequestMapping(value="/jobTitles", method = RequestMethod.GET)
+    @ApiOperation(value = "Get a list of job titles")
+    public List<JobTitleDTO> getJobTitles() {
+        return projectService.findJobTitles();
+    }
     
     /* Obsolete, replaced with search endpoint  
     @CrossOrigin
