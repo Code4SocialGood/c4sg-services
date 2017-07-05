@@ -100,7 +100,7 @@ public class ProjectController {
     		@ApiResponse(code = 404, message = "Missing required input")})  
     public List<ProjectDTO> getUserProjects(@ApiParam(value = "User ID", required = true)
     										@RequestParam Integer userId,
-                                        	@ApiParam(value = "User project status, A-Applied, B-Bookmarked", allowableValues = "A, B")
+                                        	@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
     										@RequestParam (required = false) String userProjectStatus)	
                                         			throws ProjectServiceException {
     	System.out.println("************** Find Projects for User **************");
