@@ -3,6 +3,7 @@ package org.c4sg.controller;
 import io.swagger.annotations.*;
 
 import org.c4sg.dto.CreateProjectDTO;
+import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
@@ -68,20 +69,22 @@ public class ProjectController {
     @CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find ACTIVE project by keyWord or skills", notes = "Returns a collection of active projects")
-    public Page<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
+    public Page<ProjectDTO> getProjects(@ApiParam(value = "Keyword of the project")
                                         @RequestParam(required=false) String keyWord,
-                                        @ApiParam(value = "Skills for projects to return")
+                                        @ApiParam(value = "Job Title ID of the project")
+    									@RequestParam(required = false)  Integer jobTitleId,
+                                        @ApiParam(value = "Skills of the project")
                                         @RequestParam(required = false) List<Integer> skills,
                                         @ApiParam(value = "Status of the project")
     									@Pattern(regexp="[AC]")  @RequestParam(required = false) String status,
     									@ApiParam(value = "Location of the project")
     									@Pattern(regexp="[YN]") @RequestParam(required = false) String remote,
-    @ApiParam(value = "Results page you want to retrieve (0..N)", required=false)
-    @RequestParam(required=false) Integer page,
-    @ApiParam(value = "Number of records per page",required=false)
-    @RequestParam(required=false) Integer size)
+    									@ApiParam(value = "Results page you want to retrieve (0..N)", required=false)
+    									@RequestParam(required=false) Integer page,
+    									@ApiParam(value = "Number of records per page",required=false)
+    									@RequestParam(required=false) Integer size)
     {
-        return projectService.findByKeyword(keyWord,skills,status,remote,page,size);
+        return projectService.search(keyWord, jobTitleId, skills, status, remote, page, size);
     }
 
     @CrossOrigin
@@ -93,7 +96,7 @@ public class ProjectController {
     				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
     		response =ProjectDTO.class , 
     		responseContainer = "List")
-    @ApiResponses(value = { 
+    	@ApiResponses(value = { 
     		@ApiResponse(code = 404, message = "Missing required input")})  
     public List<ProjectDTO> getUserProjects(@ApiParam(value = "User ID", required = true)
     										@RequestParam Integer userId,
@@ -196,5 +199,12 @@ public class ProjectController {
 
     	projectService.saveImage(id, url);
 	}
+    
+    @CrossOrigin
+    @RequestMapping(value="/jobTitles", method = RequestMethod.GET)
+    @ApiOperation(value = "Get a list of job titles")
+    public List<JobTitleDTO> getJobTitles() {
+        return projectService.findJobTitles();
+    }
 }
 

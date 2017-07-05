@@ -12,7 +12,9 @@ import org.c4sg.dao.ProjectSkillDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
+import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.JobTitle;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
@@ -23,8 +25,6 @@ import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.ProjectService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -82,7 +82,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(projectDAO.findByName(name));
     }
 
-    public Page<ProjectDTO> findByKeyword(String keyWord, List<Integer> skills, String status, String remote,Integer page, Integer size) {
+    public Page<ProjectDTO> search(String keyWord, Integer jobTitleId, List<Integer> skills, String status, String remote,Integer page, Integer size) {
     	Page<Project> projectPages=null;
 		List<Project> projects=null;
     	if (page==null){
@@ -90,17 +90,17 @@ public class ProjectServiceImpl implements ProjectService {
     	}		
 		if (size==null){
 	    	if(skills != null) {
-	    		projects = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote);
+	    		projects = projectDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, remote);
 	    	} else {
-	    		projects = projectDAO.findByKeyword(keyWord, status, remote);
+	    		projects = projectDAO.findByKeyword(keyWord, jobTitleId, status, remote);
 	    	}
 			projectPages=new PageImpl<Project>(projects);	    	
 		}else{
 			Pageable pageable=new PageRequest(page,size);
 	    	if(skills != null) {
-	    		projectPages = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote,pageable);
+	    		projectPages = projectDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, remote,pageable);
 	    	} else {
-	    		projectPages = projectDAO.findByKeyword(keyWord, status, remote,pageable);
+	    		projectPages = projectDAO.findByKeyword(keyWord, jobTitleId, status, remote,pageable);
 	    	}			
 		}		
         return projectPages.map(p -> projectMapper.getProjectDtoFromEntity(p));
@@ -195,6 +195,11 @@ public class ProjectServiceImpl implements ProjectService {
             System.out.println("Project does not exist.");
         }
     }
+    
+	public List<JobTitleDTO> findJobTitles() {
+		List<JobTitle> jobTitles = projectDAO.findJobTitles();
+		return projectMapper.getJobTitleDtosFromEntities(jobTitles);
+	}
     
     private void apply(User user, Project project) {
 

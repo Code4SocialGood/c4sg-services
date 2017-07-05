@@ -29,6 +29,7 @@ public class UserDTO {
     private String status;
     private String createdTime;
     private String updatedTime;
+	private Integer jobTitleId;
 
 	public Integer getId() {
 		return id;
@@ -187,4 +188,12 @@ public class UserDTO {
 	public void setTitle(String title) {
 		this.title = title;
 	}  
+	
+	public Integer getJobTitleId() {
+		return jobTitleId;
+	}
+
+	public void setJobTitleId(Integer jobTitleId) {
+		this.jobTitleId = jobTitleId;
+	}
 }
