@@ -28,7 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-//@Ignore
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {C4SgApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OrganizationControllerTest extends C4SGTest {
@@ -130,7 +130,7 @@ public class OrganizationControllerTest extends C4SGTest {
     			.param("countries", "")
     			.param("open", "true")
     			.param("status", "A")
-    			.param("category", "N", "P")
+    			.param("category", "N", "S")
     			.param("page", "0")
     			.param("size", "100")
     			

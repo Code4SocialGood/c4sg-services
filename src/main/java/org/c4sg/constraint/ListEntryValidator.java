@@ -6,18 +6,18 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 /**
- * 
+ * Handles validation for Lists annotated with {@link ListEntry}
  * @author Ogwara O. Rowland
  * @since  06/03/2017
  *
  */
-public class C4sgCategoryPattern implements ConstraintValidator<C4sgCategory, List<String>>{
+public class ListEntryValidator implements ConstraintValidator<ListEntry, List<String>>{
 
 	private String message;
 	private String[] categories;
 
 	@Override
-	public void initialize(C4sgCategory ca) {
+	public void initialize(ListEntry ca) {
 		this.message = ca.message();
 		categories = ca.value();
 		

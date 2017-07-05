@@ -3,6 +3,7 @@ package org.c4sg.constraint;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -20,9 +21,9 @@ import javax.validation.Payload;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ FIELD, ANNOTATION_TYPE, PARAMETER })
-@Constraint(validatedBy = C4sgCategoryPattern.class)
-public @interface C4sgCategory {
+@Target({ FIELD, ANNOTATION_TYPE, TYPE, PARAMETER })
+@Constraint(validatedBy = ListEntryValidator.class)
+public @interface ListEntry {
 	
 	String message() default "Entries must be  one of [NOUMTS]";
 	
