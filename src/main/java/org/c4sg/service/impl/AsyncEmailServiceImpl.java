@@ -5,6 +5,9 @@ import org.apache.commons.mail.HtmlEmail;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.EmailTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +21,10 @@ public class AsyncEmailServiceImpl implements AsyncEmailService {
 	
 	@Autowired
 	private EmailTemplateService service;
-
+	
+	@Autowired
+	private JavaMailSender mailer;
+	
     /**
      * Sends an email message asynchronously.
      *
@@ -59,8 +65,19 @@ public class AsyncEmailServiceImpl implements AsyncEmailService {
     }
 
 	@Override
-	public void sendWithContext(String from, String recipient, String template, Map<String, Object> mailContext) {
+	public void sendWithContext(String from, String recipient, String subject, String template, Map<String, Object> mailContext) {
 		String text = service.generateFromContext(mailContext, template);
+		
+		MimeMessagePreparator msgPrep = m -> {
+			MimeMessageHelper helper = new MimeMessageHelper(m);
+			helper.setFrom(from);
+			helper.setTo(recipient);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+		};
+		
+		mailer.send(msgPrep);
+//		System.out.println(text);
 	}
 }
 

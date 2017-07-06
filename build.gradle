@@ -23,6 +23,7 @@ repositories {
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools'
@@ -39,6 +40,7 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.3.3'
     compile group: 'net.minidev', name: 'json-smart', version: '2.2.1'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    testCompile group: 'com.icegreen', name: 'greenmail', version: '1.5.5'
 }
 
 task wrapper(type: Wrapper) {

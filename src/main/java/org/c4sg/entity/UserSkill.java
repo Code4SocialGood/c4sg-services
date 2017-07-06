@@ -8,7 +8,12 @@ import java.util.Date;
 @Table(name = "user_skill")
 public class UserSkill implements Serializable{
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7158866906372366233L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false, updatable = false)
     private Integer id;

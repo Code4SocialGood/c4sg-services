@@ -16,5 +16,5 @@ public interface AsyncEmailService {
 	 * @param template
 	 * @param mailContext
 	 */
-	void sendWithContext(String from, String recipient, String template, Map<String, Object> mailContext);
+	void sendWithContext(String from, String recipient, String subject, String template, Map<String, Object> mailContext);
 }
