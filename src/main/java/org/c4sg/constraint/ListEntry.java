@@ -25,12 +25,12 @@ import javax.validation.Payload;
 @Constraint(validatedBy = ListEntryValidator.class)
 public @interface ListEntry {
 	
-	String message() default "Entries must be  one of [NOUMTS]";
+	String message() default "Entries must be  one of [NOSU]";
 	
 	Class<?>[] groups() default {};
 	
 	Class<? extends Payload>[] payload() default {};
 	
-	String[] value() default {"N", "O", "U", "S", "T", "M"};
+	String[] value() default {"N", "O", "S", "U"};
 
 }

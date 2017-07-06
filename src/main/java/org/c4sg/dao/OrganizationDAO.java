@@ -23,7 +23,7 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
             " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
                 " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
                 + " AND (:status is null OR o.status = :status)"
-                + " AND (o.category in (:categories))"
+                + " AND (:categories is null OR o.category in (:categories))"
                 + " AND (o.country in (:countries))"
                 + " AND (:open is null )"
                 + ")  ORDER BY o.name ASC";
@@ -32,7 +32,7 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
             " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
                 " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
                 + " AND (:status is null OR o.status = :status)"
-                + " AND (o.category in (:categories))"
+                + " AND (:categories is null OR o.category in (:categories))"
                 + " AND (o.country in (:countries))"
                 + " AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false))"
                 + ")  ORDER BY o.name ASC";
@@ -41,7 +41,7 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
             " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
                 " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
                 + " AND (:status is null OR o.status = :status)"
-                + " AND (o.category in (:categories))"                
+                + " AND (:categories is null OR o.category in (:categories))"                
                 + " AND (:open is null )"
                 + ")  ORDER BY o.name ASC";
     
@@ -49,7 +49,7 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
             " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
                 " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
                 + " AND (:status is null OR o.status = :status)"
-                + " AND (o.category in (:categories))"                
+                + " AND (:categories is null OR o.category in (:categories))"                
                 + " AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false))"
                 + ")  ORDER BY o.name ASC";
 
