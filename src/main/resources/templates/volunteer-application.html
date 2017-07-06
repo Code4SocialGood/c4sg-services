@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+	<span th:text="${message}"></span>
+	<br>
+	<ul>
+		<li>
+			Project Name: <span th:text="${project.name}"></span>
+		</li>
+		<li>
+			Full Name: <span th:text="${user.firstName + ' ' + user.lastName}"></span>
+		</li>
+		<li>
+			Applicant Email: <span th:text="user.email"></span>
+		</li>
+		<li>
+			Slack Username: <span th:text="${project.name}"></span>
+		</li>
+		<li>
+			Applicant Title: <span th:text="${user.firstName + ' ' + user.lastName}"></span>
+		</li>
+	</ul>
+</body>
+</html>

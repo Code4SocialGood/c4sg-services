@@ -4,7 +4,9 @@ import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
@@ -207,7 +209,12 @@ public class ProjectServiceImpl implements ProjectService {
         List<User> users = userDAO.findByOrgId(orgId);
         if (users != null) {
         	String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
-        	asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
+        	Map<String, Object> mailContext = new HashMap<String, Object>();
+        	mailContext.put("user", user);
+        	mailContext.put("project", project);
+        	mailContext.put("message", BODY_ORGANIZATION);
+        	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, "volunteer-application.html", mailContext);
+//        	asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
         	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
         }
     }

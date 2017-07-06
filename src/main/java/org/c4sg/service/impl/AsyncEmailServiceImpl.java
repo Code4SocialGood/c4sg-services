@@ -3,15 +3,21 @@ package org.c4sg.service.impl;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.c4sg.service.AsyncEmailService;
+import org.c4sg.service.EmailTemplateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
 @Service
 public class AsyncEmailServiceImpl implements AsyncEmailService {
+	
+	@Autowired
+	private EmailTemplateService service;
 
     /**
      * Sends an email message asynchronously.
@@ -51,5 +57,10 @@ public class AsyncEmailServiceImpl implements AsyncEmailService {
             e.printStackTrace();
         }
     }
+
+	@Override
+	public void sendWithContext(String from, String recipient, String template, Map<String, Object> mailContext) {
+		String text = service.generateFromContext(mailContext, template);
+	}
 }
 
