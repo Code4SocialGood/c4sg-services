@@ -2,33 +2,26 @@ package org.c4sg.controller;
 
 import io.swagger.annotations.*;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateProjectDTO;
+import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
-import org.c4sg.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
-import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -76,15 +69,22 @@ public class ProjectController {
     @CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find ACTIVE project by keyWord or skills", notes = "Returns a collection of active projects")
-    public List<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
+    public Page<ProjectDTO> getProjects(@ApiParam(value = "Keyword of the project")
                                         @RequestParam(required=false) String keyWord,
-                                        @ApiParam(value = "Skills for projects to return")
+                                        @ApiParam(value = "Job Title ID of the project")
+    									@RequestParam(required = false)  Integer jobTitleId,
+                                        @ApiParam(value = "Skills of the project")
                                         @RequestParam(required = false) List<Integer> skills,
                                         @ApiParam(value = "Status of the project")
     									@Pattern(regexp="[AC]")  @RequestParam(required = false) String status,
     									@ApiParam(value = "Location of the project")
-    									@Pattern(regexp="[YN]") @RequestParam(required = false) String remote) {
-        return projectService.findByKeyword(keyWord,skills,status,remote);
+    									@Pattern(regexp="[YN]") @RequestParam(required = false) String remote,
+    									@ApiParam(value = "Results page you want to retrieve (0..N)", required=false)
+    									@RequestParam(required=false) Integer page,
+    									@ApiParam(value = "Number of records per page",required=false)
+    									@RequestParam(required=false) Integer size)
+    {
+        return projectService.search(keyWord, jobTitleId, skills, status, remote, page, size);
     }
 
     @CrossOrigin
@@ -96,11 +96,11 @@ public class ProjectController {
     				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
     		response =ProjectDTO.class , 
     		responseContainer = "List")
-    @ApiResponses(value = { 
+    	@ApiResponses(value = { 
     		@ApiResponse(code = 404, message = "Missing required input")})  
     public List<ProjectDTO> getUserProjects(@ApiParam(value = "User ID", required = true)
     										@RequestParam Integer userId,
-                                        	@ApiParam(value = "User project status, A-Applied, B-Bookmarked", allowableValues = "A, B")
+                                        	@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
     										@RequestParam (required = false) String userProjectStatus)	
                                         			throws ProjectServiceException {
     	System.out.println("************** Find Projects for User **************");
@@ -175,7 +175,7 @@ public class ProjectController {
                                                @PathVariable("userId") Integer userId,
                                                @ApiParam(value = "ID of project", required = true)
                                                @PathVariable("id") Integer projectId,
-                                               @ApiParam(value = "User project status, A-Applied, B-Bookmarked", allowableValues = "A, B", required = true)
+                                               @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
                                                @RequestParam("userProjectStatus") String userProjectStatus){
         try {
             projectService.saveUserProject(userId, projectId, userProjectStatus);
@@ -190,61 +190,21 @@ public class ProjectController {
         	throw e;
         }
     }
-
-    @RequestMapping(value = "/{id}/image", method = RequestMethod.POST)
-   	@ApiOperation(value = "Add new image file for project")
-   	public String uploadImage(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
-   			@ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
-
-   		String contentType = file.getContentType();
-   		if (!FileUploadUtil.isValidImageFile(contentType)) {
-   			return "Invalid image File! Content Type :-" + contentType;
-   		}
-   		File directory = new File(PROJECT_UPLOAD.getValue());
-   		if (!directory.exists()) {
-   			directory.mkdir();
-   		}
-   		File f = new File(projectService.getImageUploadPath(id));
-   		try (FileOutputStream fos = new FileOutputStream(f)) {
-   			byte[] imageByte = file.getBytes();
-   			fos.write(imageByte);
-   			return "Success";
-   		} catch (Exception e) {
-   			return "Error saving image for Project " + id + " : " + e;
-   		}
-   	}
-
+        
     @CrossOrigin
-    @RequestMapping(value = "/{id}/image", method = RequestMethod.GET)
-    @ApiOperation(value = "Retrieves project image")
-    public String retrieveImage(@ApiParam(value = "Project id to get image for", required = true)
-                                         @PathVariable("id") int id) {
-        File image = new File(projectService.getImageUploadPath(id));
-        try {
-			FileInputStream fileInputStreamReader = new FileInputStream(image);
-            byte[] bytes = new byte[(int) image.length()];
-            fileInputStreamReader.read(bytes);
-            fileInputStreamReader.close();
-            return new String(Base64.encodeBase64(bytes));
-        } catch (IOException e) {
-            e.printStackTrace();
-        return null;
-        }
-    }
-   
+    @RequestMapping(value = "/{id}/image", params = "imgUrl", method = RequestMethod.PUT)
+	@ApiOperation(value = "Upload a project image")
+	public void saveImage(@ApiParam(value = "project Id", required = true) @PathVariable("id") Integer id,
+			@ApiParam(value = "Image Url", required = true) @RequestParam("imgUrl") String url) {
+
+    	projectService.saveImage(id, url);
+	}
     
     @CrossOrigin
-    @RequestMapping(value = "/{id}/image", method = RequestMethod.PUT)
-    @ApiOperation(value = "Delete image for project")
-    public ResponseEntity<File> deleteImage(@ApiParam(value = "ID of project", required = true)
-    										@PathVariable("id") int id) {
-    	File image = new File(projectService.getImageUploadPath(id));
-    	if (image.exists()) {
-    		image.delete();
-    		return ResponseEntity.noContent().build();
-    	} else {
-    		throw new NotFoundException("project image not found");
-    	}
+    @RequestMapping(value="/jobTitles", method = RequestMethod.GET)
+    @ApiOperation(value = "Get a list of job titles")
+    public List<JobTitleDTO> getJobTitles() {
+        return projectService.findJobTitles();
     }
 }
 

@@ -60,6 +60,9 @@ public class Project {
 	@ManyToOne
 	@JoinColumn(name = "organization_id", insertable = true, updatable = false)
 	private Organization organization;
+	
+    @Column(name = "job_title_id")
+    private Integer jobTitleId;
 
 	public Integer getId() {
 		return id;
@@ -180,5 +183,12 @@ public class Project {
 	public void setOrganization(Organization organization) {
 		this.organization = organization;
 	}
+	
+	public Integer getJobTitleId() {
+		return jobTitleId;
+	}
 
+	public void setJobTitleId(Integer jobTitleId) {
+		this.jobTitleId = jobTitleId;
+	}
 }

@@ -14,6 +14,7 @@ public class ProjectDTO {
 	private String createdTime;	
     private String updatedTime;
 	private String organizationName;
+	private Integer jobTitleId;
 	
 	public int getId() {
 		return id;
@@ -109,5 +110,13 @@ public class ProjectDTO {
 
 	public void setOrganizationName(String organizationName) {
 		this.organizationName = organizationName;
+	}
+	
+	public Integer getJobTitleId() {
+		return jobTitleId;
+	}
+
+	public void setJobTitleId(Integer jobTitleId) {
+		this.jobTitleId = jobTitleId;
 	}
 }
