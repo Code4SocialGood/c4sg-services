@@ -31,6 +31,6 @@ public @interface ListEntry {
 	
 	Class<? extends Payload>[] payload() default {};
 	
-	String[] value() default {"N", "O", "U", "S", "T", "M"};
+	String[] value() default {"N", "O", "S", "U"};
 
 }
