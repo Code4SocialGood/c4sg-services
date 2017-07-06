@@ -31,13 +31,13 @@ public class ListEntryValidatorTest {
     	CategoryListTest cat = new CategoryListTest("N", "I", "Z");
         Set<ConstraintViolation<CategoryListTest>> constraintViolations = validator.validate(cat);
         assertEquals(1, constraintViolations.size());
-        assertEquals("Entries must be  one of [NOUMTS]", constraintViolations.iterator().next().getMessage());
+        assertEquals("Entries must be  one of [NOSU]", constraintViolations.iterator().next().getMessage());
     }
     
     @Test
     public void testValidCategory() {
 
-    	CategoryListTest cat = new CategoryListTest("N", "O", "U", "S", "T");
+    	CategoryListTest cat = new CategoryListTest("N", "O", "S", "U");
         Set<ConstraintViolation<CategoryListTest>> constraintViolations = validator.validate(cat);
         assertEquals(0, constraintViolations.size());
     }

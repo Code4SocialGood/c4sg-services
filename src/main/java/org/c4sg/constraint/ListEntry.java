@@ -25,7 +25,7 @@ import javax.validation.Payload;
 @Constraint(validatedBy = ListEntryValidator.class)
 public @interface ListEntry {
 	
-	String message() default "Entries must be  one of [NOUMTS]";
+	String message() default "Entries must be  one of [NOSU]";
 	
 	Class<?>[] groups() default {};
 	
