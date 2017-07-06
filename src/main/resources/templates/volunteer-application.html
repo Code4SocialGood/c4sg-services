@@ -22,7 +22,7 @@
 			Applicant Slack Username: <span th:text="${user.chatUsername}"></span>
 		</li>
 		<li>
-			Applicant Skills: <span th:each="skill: ${skills}"><i th:text="${skill}"></i></span>
+			Applicant Skills: <span th:each="skill: ${skills}"><i th:text="${skill + ','}"></i></span>
 		</li>
 		<li>
 			Applicant Overview: <span th:text="${user.introduction}"></span>
