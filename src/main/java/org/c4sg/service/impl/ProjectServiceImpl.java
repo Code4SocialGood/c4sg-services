@@ -65,8 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
     
     private static final String FROM_EMAIL = "info@code4socialgood.org";
     private static final String SUBJECT_ORGANIZATION = "You received an application from Code for Social Good";
-    private static final String BODY_ORGANIZATION= "You received an application from Code for Social Good. " 
-    				+ "Please login to the dashboard to review the application.";
+    private static final String BODY_ORGANIZATION= "You received an application from Code for Social Good. Please login to the dashboard to review the application.";
     private static final String SUBJECT_NOTIFICATION = "Code for Social Good: New Project Notification";
     private static final String BODY_NOTIIFCATION= "You have registered to recieve notification on new projects.\n" 
     				+ "The following new project has been created:\n" + "http://dev.code4socialgood.org/project/view/";
@@ -224,8 +223,6 @@ public class ProjectServiceImpl implements ProjectService {
         	mailContext.put("project", project);
         	mailContext.put("message", BODY_ORGANIZATION);
         	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
-        	
-//        	asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
         	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
         }
     }

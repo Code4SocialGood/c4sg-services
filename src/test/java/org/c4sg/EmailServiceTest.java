@@ -55,7 +55,7 @@ public class EmailServiceTest {
 		
 		List<String> skills = Arrays.asList("Tester", "Coder", "Cop");
 		User user = new User();
-		user.setEmail("rogwara@gmail.com");
+		user.setEmail("rogwara@nimworks.com");
 		user.setFirstName("Rowland");
 		user.setLastName("Ogwara");
 		user.setTitle("Coolio Developer");
