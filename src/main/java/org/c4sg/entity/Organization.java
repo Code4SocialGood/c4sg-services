@@ -63,7 +63,7 @@ public class Organization {
     private String category="N";
     
     @Column(name = "status", columnDefinition="char(1)", nullable = false)
-    private String status="A";
+    private String status="P";
     
 	@Column(name = "created_time", nullable = false)
 	private Timestamp createdTime;

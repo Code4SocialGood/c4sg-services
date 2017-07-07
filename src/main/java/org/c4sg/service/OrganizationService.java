@@ -20,4 +20,5 @@ public interface OrganizationService {
     Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, List<String> categories,Integer page,Integer size);
     List<OrganizationDTO> findByUser(Integer userId);
     void saveLogo(Integer id, String imgUrl);
+    void approveOrDecline(Integer id, String status);
 }

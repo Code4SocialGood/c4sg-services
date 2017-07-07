@@ -191,4 +191,9 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public void saveLogo(Integer id, String imgUrl) {
 		organizationDAO.updateLogo(imgUrl, id);
 	}
+	
+	@Override
+	public void approveOrDecline(Integer id, String status) {
+		organizationDAO.approveOrDecline(id, status);
+	}
 }
