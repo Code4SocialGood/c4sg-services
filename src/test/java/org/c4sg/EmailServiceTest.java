@@ -54,6 +54,7 @@ public class EmailServiceTest {
 	public void testSendVolunteerApplicationEmail() throws MessagingException {
 		
 		List<String> skills = Arrays.asList("Tester", "Coder", "Cop");
+		
 		User user = new User();
 		user.setEmail("rogwara@nimworks.com");
 		user.setFirstName("Rowland");
