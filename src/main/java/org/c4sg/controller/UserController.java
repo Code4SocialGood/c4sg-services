@@ -30,13 +30,15 @@ public class UserController {
     
     @Autowired
     private UserService userService;
-       
+    
+	@CrossOrigin
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Find all users", notes = "Returns a collection of users")
     public List<UserDTO> getUsers() {
         return userService.findAll();
     }
     
+	@CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find user by ID", notes = "Returns a user")
     public UserDTO getUser(@ApiParam(value = "ID of user to return", required = true)
@@ -44,6 +46,7 @@ public class UserController {
         return userService.findById(id);
     }
 
+	@CrossOrigin
     @RequestMapping(value = "/organization/{orgId}", method = RequestMethod.GET)
     @ApiOperation(value = "Find users by Organization ID", notes = "Returns a list of users from this organization")
     public List<UserDTO> getUsersInOrganization(@ApiParam(value = "ID of organization to return users", required = true)
@@ -59,6 +62,7 @@ public class UserController {
         return userService.findByEmail(email);
     }
     
+	@CrossOrigin
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new user")
     public UserDTO createUser(@ApiParam(value = "User object to return", required = true)
@@ -71,6 +75,7 @@ public class UserController {
         }
     }
     
+	@CrossOrigin
     @RequestMapping(method = RequestMethod.PUT)
     @ApiOperation(value = "Update an existing user")
     public UserDTO updateUser(@ApiParam(value = "Updated user object", required = true)
@@ -90,6 +95,7 @@ public class UserController {
         return userService.getApplicants(projectId);
     }
     
+	@CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete a user")
     public void deleteUser(@ApiParam(value = "User id to delete", required = true)
@@ -102,6 +108,7 @@ public class UserController {
         }
     }
     
+	@CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
     public Page<UserDTO> getUsers(@ApiParam(value = "Keyword like name , title, introduction, state, country")
