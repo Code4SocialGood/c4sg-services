@@ -67,7 +67,7 @@ public class OrganizationController {
 			@ApiParam(value = "Keyword in Name or description or country of organization to return", required = false) @RequestParam(required = false) String keyWord,
 			@ApiParam(value = "Countries of organization to return", required = false) @RequestParam(required = false) List<String> countries,
 			@ApiParam(value = "Opportunities open in the organization", required = false) @RequestParam(required = false) Boolean open,
-			@ApiParam(value = "Status of the organization to return", required = false) @Pattern(regexp="[AD]") @RequestParam(required = false) String status,
+			@ApiParam(value = "Status of the organization to return", required = false) @Pattern(regexp="[ADP]") @RequestParam(required = false) String status,
 			@ApiParam(value = "Category of the organization to return", required = false) @ListEntry @RequestParam(required = false) List<String> category,
 		    @ApiParam(value = "Results page you want to retrieve (0..N)",required=false)
 		    @RequestParam(required=false) Integer page,
@@ -180,11 +180,11 @@ public class OrganizationController {
 	}
     
     @CrossOrigin
-    @RequestMapping(value = "/{id}/approve", params = "imgUrl", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}/approve", params = "status", method = RequestMethod.PUT)
 	@ApiOperation(value = "Approve an organization")
 	public void approve(
 			@ApiParam(value = "organization Id", required = true) @PathVariable("id") Integer id,
-			@ApiParam(value = "status", required = true) @PathVariable("id") String status) {
+			@ApiParam(value = "status", required = true) @RequestParam("status") String status) {
 
     	organizationService.approveOrDecline(id, status);
 	}
