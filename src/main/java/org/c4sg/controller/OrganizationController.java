@@ -178,4 +178,14 @@ public class OrganizationController {
 
     	organizationService.saveLogo(id, url);
 	}
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/approve", params = "imgUrl", method = RequestMethod.PUT)
+	@ApiOperation(value = "Approve an organization")
+	public void approve(
+			@ApiParam(value = "organization Id", required = true) @PathVariable("id") Integer id,
+			@ApiParam(value = "status", required = true) @PathVariable("id") String status) {
+
+    	organizationService.approveOrDecline(id, status);
+	}
 }
