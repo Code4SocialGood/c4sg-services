@@ -57,6 +57,8 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     
     String SAVE_LOGO = "UPDATE Organization o set o.logoUrl = :imgUrl where o.id = :organizationId";
     
+    String APPROVE_DECLINE = "UPDATE Organization o set o.status = :status where o.id = :organizationId";
+    
     Organization findByName(String name);
 
     List<Organization> findAllByOrderByIdDesc();
@@ -113,4 +115,6 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     @Query(SAVE_LOGO)
     void updateLogo(@Param("imgUrl") String imgUrl, @Param("organizationId") Integer organizationId);
    
+    @Query(APPROVE_DECLINE)
+    void approveOrDecline(@Param("organizationId") Integer organizationId, @Param("status") String status);
 }
