@@ -217,12 +217,22 @@ public class ProjectServiceImpl implements ProjectService {
         	List<String> userSkills = skillService.findSkillsForUser(user.getId());
         	String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
         	
-        	Map<String, Object> mailContext = new HashMap<String, Object>();
-        	mailContext.put("user", user);
-        	mailContext.put("skills", userSkills);
-        	mailContext.put("project", project);
-        	mailContext.put("message", BODY_ORGANIZATION);
-        	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
+        	// send organization email
+        	Map<String, Object> orgCtx = new HashMap<String, Object>();
+        	orgCtx.put("user", user);
+        	orgCtx.put("skills", userSkills);
+        	orgCtx.put("project", project);
+        	orgCtx.put("message", BODY_ORGANIZATION);
+        	
+        	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", orgCtx);
+        	
+        	// send applicant email
+        	Map<String, Object> appCtx = new HashMap<String, Object>();
+        	appCtx.put("user", user);
+        	appCtx.put("skills", userSkills);
+        	appCtx.put("project", project);
+        	appCtx.put("message", BODY_ORGANIZATION);
+        	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "applicant-application", orgCtx);
         	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
         }
     }
