@@ -4,7 +4,9 @@ import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
@@ -25,11 +27,13 @@ import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.ProjectService;
+import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,7 +44,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UserDAO userDAO;
-
+    
     @Autowired
     private UserProjectDAO userProjectDAO;
     
@@ -49,6 +53,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private ProjectMapper projectMapper;
+    
+    @Autowired
+    private SkillService skillService;
 
     @Autowired
     private AsyncEmailService asyncEmailService;
@@ -58,8 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
     
     private static final String FROM_EMAIL = "info@code4socialgood.org";
     private static final String SUBJECT_ORGANIZATION = "You received an application from Code for Social Good";
-    private static final String BODY_ORGANIZATION= "You received an application from Code for Social Good. " 
-    				+ "Please login to the dashboard to review the application.";
+    private static final String BODY_ORGANIZATION= "You received an application from Code for Social Good. Please login to the dashboard to review the application.";
     private static final String SUBJECT_NOTIFICATION = "Code for Social Good: New Project Notification";
     private static final String BODY_NOTIIFCATION= "You have registered to recieve notification on new projects.\n" 
     				+ "The following new project has been created:\n" + "http://dev.code4socialgood.org/project/view/";
@@ -201,13 +207,22 @@ public class ProjectServiceImpl implements ProjectService {
 		return projectMapper.getJobTitleDtosFromEntities(jobTitles);
 	}
     
+	@Async
     private void apply(User user, Project project) {
 
         Integer orgId = project.getOrganization().getId();
         List<User> users = userDAO.findByOrgId(orgId);
         if (users != null) {
+        	
+        	List<String> userSkills = skillService.findSkillsForUser(user.getId());
         	String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
-        	asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
+        	
+        	Map<String, Object> mailContext = new HashMap<String, Object>();
+        	mailContext.put("user", user);
+        	mailContext.put("skills", userSkills);
+        	mailContext.put("project", project);
+        	mailContext.put("message", BODY_ORGANIZATION);
+        	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
         	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
         }
     }
