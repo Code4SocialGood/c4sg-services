@@ -122,6 +122,19 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus) {
         List<Project> projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
+        
+        // There should always be a new project for an organization. If new project doesn't exist, create one
+        if (projectStatus.equals("N")) {
+        	if ((projects == null) || projects.size() == 0) {        		
+            	Project project = new Project();
+            	project.setOrganization(organizationDAO.findOne(orgId));
+            	project.setRemoteFlag("Y");
+            	project.setStatus("N");        	
+            	projectDAO.save(project);
+            	projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
+        	}
+        }
+        
         return projectMapper.getDtosFromEntities(projects);
     }
 
@@ -243,6 +256,7 @@ public class ProjectServiceImpl implements ProjectService {
     
 	@Override
 	public void saveImage(Integer id, String imgUrl) {
+				
 		projectDAO.updateImage(imgUrl, id);
 	}
 }

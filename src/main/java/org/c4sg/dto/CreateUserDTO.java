@@ -179,7 +179,7 @@ public class CreateUserDTO {
         return chatUsername;
     }
     
-    public void setChatUsernameg(String chatUsername) {
+    public void setChatUsername(String chatUsername) {
         this.chatUsername = chatUsername;
     }    
 }
