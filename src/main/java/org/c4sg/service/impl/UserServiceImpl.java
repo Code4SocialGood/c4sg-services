@@ -5,15 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.c4sg.constant.Constants;
+import org.c4sg.dao.OrganizationDAO;
+import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.OrganizationDTO;
-import org.c4sg.dto.SkillDTO;
 import org.c4sg.dto.UserDTO;
+import org.c4sg.entity.Organization;
+import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.exception.NotFoundException;
-import org.c4sg.mapper.SkillMapper;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.GeocodeService;
 import org.c4sg.service.OrganizationService;
@@ -24,12 +26,19 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDAO userDAO;
+	
+	@Autowired
+	private ProjectDAO projectDAO;
+	
+	@Autowired
+	private OrganizationDAO organizationDAO;
 
 	@Autowired
     private OrganizationService organizationService;
@@ -92,12 +101,11 @@ public class UserServiceImpl implements UserService {
         User user = userDAO.findById(id);
         user.setStatus(Constants.USER_STATUS_DELETED);
         user.setEmail(user.getEmail() + "-deleted");
-        // TODO delete avatar from S3 by frontend
         userDAO.save(user);
         userDAO.deleteUserProjects(id);
         userDAO.deleteUserSkills(id);  
         List<OrganizationDTO> organizations = organizationService.findByUser(id);
-        for (OrganizationDTO org:organizations){
+        for (OrganizationDTO org:organizations) {
         	organizationService.deleteOrganization(org.getId());
         }
     }
@@ -141,16 +149,32 @@ public class UserServiceImpl implements UserService {
 	public UserDTO createUser(CreateUserDTO createUserDTO) {
 		
 		User user = userMapper.getUserEntityFromCreateUserDto(createUserDTO);
-		try {
-			Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(user.getState(), user.getCountry());
-	        user.setLatitude(geoCode.get("lat"));
-	        user.setLongitude(geoCode.get("lng"));
-        }  catch (Exception e) {
-        	throw new NotFoundException("Error getting geocode");
+		
+		if ((user!= null) && !StringUtils.isEmpty(user.getCountry())) {
+			try {
+				Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(user.getState(), user.getCountry());
+				user.setLatitude(geoCode.get("lat"));
+				user.setLongitude(geoCode.get("lng"));
+			}  catch (Exception e) {
+				// Don't throw exception, geocoding error won't present user from being created.
+				System.out.println("Error getting geocode: " + e.toString());
+			}
 		}
         
-        User localUser = userDAO.save(user);
-        return userMapper.getUserDtoFromEntity(localUser);
+        User userEntity = userDAO.save(user);
+        
+        // If the user is organization user:
+        // 1. Creates an empty organization.
+        // 2. Create a relationship between user and organization. The relationship is one to one.
+        String role = createUserDTO.getRole();
+        if ((role != null) && role.equals("O")) {
+        	Organization organization = new Organization();
+        	organization.setStatus("N");
+        	Organization organizationEntity = organizationDAO.save(organization);        	
+        	organizationService.saveUserOrganization(userEntity.getId(), organizationEntity.getId());  	        	
+        }
+        	        
+        return userMapper.getUserDtoFromEntity(userEntity);
 	}
 	
 	@Override
