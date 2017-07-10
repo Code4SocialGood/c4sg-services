@@ -35,6 +35,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -124,7 +125,7 @@ public class ProjectServiceImpl implements ProjectService {
         List<Project> projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
         
         // There should always be a new project for an organization. If new project doesn't exist, create one
-        if (projectStatus.equals("N")) {
+        if (projectStatus != null && projectStatus.equals("N")) {
         	if ((projects == null) || projects.size() == 0) {        		
             	Project project = new Project();
             	project.setOrganization(organizationDAO.findOne(orgId));
@@ -228,15 +229,20 @@ public class ProjectServiceImpl implements ProjectService {
         if (users != null) {
         	
         	List<String> userSkills = skillService.findSkillsForUser(user.getId());
-        	String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
+        	List<User> userList = userDAO.findByOrgId(orgId);
+        	if (users != null && !userList.isEmpty()) {
+        		String orgEmail = userList.get(0).getEmail();
         	
-        	Map<String, Object> mailContext = new HashMap<String, Object>();
-        	mailContext.put("user", user);
-        	mailContext.put("skills", userSkills);
-        	mailContext.put("project", project);
-        	mailContext.put("message", BODY_ORGANIZATION);
-        	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
-        	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
+        		if (!StringUtils.isEmpty(orgEmail)) {
+        			Map<String, Object> mailContext = new HashMap<String, Object>();
+        			mailContext.put("user", user);
+        			mailContext.put("skills", userSkills);
+        			mailContext.put("project", project);
+        			mailContext.put("message", BODY_ORGANIZATION);
+        			asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
+        			System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
+        		}	
+        	}
         }
     }
         
