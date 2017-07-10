@@ -95,7 +95,10 @@ public class EmailServiceTest {
 		org.setContactPhone("9898989899");
 		
 		User user = new User();
-		user.setEmail("rogwara@nimworks.com");
+		user.setEmail("test@c4sg.org");
+		user.setFirstName("John");
+		user.setLastName("Sloan");
+		user.setChatUsername("jsloan");
 		
 		Project project = new Project();
 		project.setId(110);
@@ -103,6 +106,7 @@ public class EmailServiceTest {
 		
 		Map<String, Object> mailContext = new HashMap<String, Object>();
     	mailContext.put("org", org);
+    	mailContext.put("user", user);
     	mailContext.put("projectLink", "http://codeforsocialgood.org");
     	mailContext.put("project", project);
     	
