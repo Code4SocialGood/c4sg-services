@@ -59,7 +59,7 @@ public class ProjectController {
     @ApiOperation(value = "Find projects by Organization ID and projet status", notes = "Returns a list of projects")
     public List<ProjectDTO> getProjectsByOrganization(@ApiParam(value = "ID of an organization", required = true)
     											@RequestParam("organizationId") int organizationId,
-                                               	@ApiParam(value = "project status, A-ACTIVE, C-Closed", allowableValues = "A, C")
+                                               	@ApiParam(value = "project status, A-ACTIVE, C-Closed, N-New", allowableValues = "A, C, N")
            										@RequestParam (required = false) String projectStatus)	
                                                	throws ProjectServiceException {
         System.out.println("**************OrganizationID**************" + organizationId);

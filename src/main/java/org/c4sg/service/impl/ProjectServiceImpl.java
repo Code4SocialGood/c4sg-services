@@ -36,6 +36,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -126,6 +127,19 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus) {
         List<Project> projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
+        
+        // There should always be a new project for an organization. If new project doesn't exist, create one
+        if (projectStatus != null && projectStatus.equals("N")) {
+        	if ((projects == null) || projects.size() == 0) {        		
+            	Project project = new Project();
+            	project.setOrganization(organizationDAO.findOne(orgId));
+            	project.setRemoteFlag("Y");
+            	project.setStatus("N");        	
+            	projectDAO.save(project);
+            	projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
+        	}
+        }
+        
         return projectMapper.getDtosFromEntities(projects);
     }
 
@@ -222,23 +236,27 @@ public class ProjectServiceImpl implements ProjectService {
         	User orgUser = users.get(0);
         	
         	// send organization email
-        	Map<String, Object> orgCtx = new HashMap<String, Object>();
-        	orgCtx.put("user", user);
-        	orgCtx.put("skills", userSkills);
-        	orgCtx.put("project", project);
-        	orgCtx.put("message", BODY_ORGANIZATION);
-        	
-        	asyncEmailService.sendWithContext(FROM_EMAIL, orgUser.getEmail(), SUBJECT_ORGANIZATION, "volunteer-application", orgCtx);
+			if (!StringUtils.isEmpty(user.getEmail())) {
+				Map<String, Object> mailContext = new HashMap<String, Object>();
+				mailContext.put("user", user);
+				mailContext.put("skills", userSkills);
+				mailContext.put("project", project);
+				mailContext.put("message", BODY_ORGANIZATION);
+				asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
+			}
         	
         	// send applicant email
         	Organization org = organizationDAO.findOne(project.getOrganization().getId());
-        	String subject = "Your C4SG Application was created";
-        	Map<String, Object> appCtx = new HashMap<String, Object>();
-        	appCtx.put("org", org);
-        	appCtx.put("user", orgUser);
-        	appCtx.put("projectLink", urlService.getProjectUrl(project.getId()));
-        	appCtx.put("project", project);
-        	asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), subject, "applicant-application", appCtx);
+        	if(org != null) {
+        		String subject = "Your C4SG Application was created";
+            	Map<String, Object> appCtx = new HashMap<String, Object>();
+            	appCtx.put("org", org);
+            	appCtx.put("user", orgUser);
+            	appCtx.put("projectLink", urlService.getProjectUrl(project.getId()));
+            	appCtx.put("project", project);
+            	asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), subject, "applicant-application", appCtx);
+        	}
+        	
         	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgUser.getEmail());
         }
     }
@@ -259,6 +277,7 @@ public class ProjectServiceImpl implements ProjectService {
     
 	@Override
 	public void saveImage(Integer id, String imgUrl) {
+				
 		projectDAO.updateImage(imgUrl, id);
 	}
 }
