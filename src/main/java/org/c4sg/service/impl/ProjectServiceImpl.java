@@ -26,6 +26,7 @@ import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
+import org.c4sg.service.C4sgUrlService;
 import org.c4sg.service.ProjectService;
 import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,9 @@ public class ProjectServiceImpl implements ProjectService {
        
     @Autowired
     private OrganizationDAO organizationDAO;
+    
+    @Autowired
+    private C4sgUrlService urlService;
     
     private static final String FROM_EMAIL = "info@code4socialgood.org";
     private static final String SUBJECT_ORGANIZATION = "You received an application from Code for Social Good";
@@ -226,23 +230,34 @@ public class ProjectServiceImpl implements ProjectService {
 
         Integer orgId = project.getOrganization().getId();
         List<User> users = userDAO.findByOrgId(orgId);
-        if (users != null) {
+        if (users != null && !users.isEmpty()) {
         	
         	List<String> userSkills = skillService.findSkillsForUser(user.getId());
-        	List<User> userList = userDAO.findByOrgId(orgId);
-        	if (users != null && !userList.isEmpty()) {
-        		String orgEmail = userList.get(0).getEmail();
+        	User orgUser = users.get(0);
         	
-        		if (!StringUtils.isEmpty(orgEmail)) {
-        			Map<String, Object> mailContext = new HashMap<String, Object>();
-        			mailContext.put("user", user);
-        			mailContext.put("skills", userSkills);
-        			mailContext.put("project", project);
-        			mailContext.put("message", BODY_ORGANIZATION);
-        			asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
-        			System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
-        		}	
+        	// send organization email
+			if (!StringUtils.isEmpty(user.getEmail())) {
+				Map<String, Object> mailContext = new HashMap<String, Object>();
+				mailContext.put("user", user);
+				mailContext.put("skills", userSkills);
+				mailContext.put("project", project);
+				mailContext.put("message", BODY_ORGANIZATION);
+				asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
+			}
+        	
+        	// send applicant email
+        	Organization org = organizationDAO.findOne(project.getOrganization().getId());
+        	if(org != null) {
+        		String subject = "Your C4SG Application was created";
+            	Map<String, Object> appCtx = new HashMap<String, Object>();
+            	appCtx.put("org", org);
+            	appCtx.put("user", orgUser);
+            	appCtx.put("projectLink", urlService.getProjectUrl(project.getId()));
+            	appCtx.put("project", project);
+            	asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), subject, "applicant-application", appCtx);
         	}
+        	
+        	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgUser.getEmail());
         }
     }
         

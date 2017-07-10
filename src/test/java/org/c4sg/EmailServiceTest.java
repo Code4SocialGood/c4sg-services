@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.service.AsyncEmailService;
@@ -73,6 +74,43 @@ public class EmailServiceTest {
     	mailContext.put("message", message);
     	
     	mailService.sendWithContext(from, user.getEmail(), "Test Email", "volunteer-application", mailContext);
+    	
+    	// received message
+    	MimeMessage[] receivedMessages = mailer.getReceivedMessages();
+        assertEquals(1, receivedMessages.length);
+        
+        MimeMessage msg = receivedMessages[0];
+        
+        assertThat(from, is(msg.getFrom()[0].toString()));
+        assertThat("Test Email", is(msg.getSubject()));
+	}
+	
+	@Test
+	public void testSendVolunteerApplicantEmail() throws MessagingException {
+		
+		Organization org = new Organization();
+		org.setName("Test Organization");
+		org.setContactEmail("test@c4sg.org");
+		org.setContactName("John Sloan");
+		org.setContactPhone("9898989899");
+		
+		User user = new User();
+		user.setEmail("test@c4sg.org");
+		user.setFirstName("John");
+		user.setLastName("Sloan");
+		user.setChatUsername("jsloan");
+		
+		Project project = new Project();
+		project.setId(110);
+		project.setName("Test Project");
+		
+		Map<String, Object> mailContext = new HashMap<String, Object>();
+    	mailContext.put("org", org);
+    	mailContext.put("user", user);
+    	mailContext.put("projectLink", "http://codeforsocialgood.org");
+    	mailContext.put("project", project);
+    	
+    	mailService.sendWithContext(from, user.getEmail(), "Test Email", "applicant-application", mailContext);
     	
     	// received message
     	MimeMessage[] receivedMessages = mailer.getReceivedMessages();
