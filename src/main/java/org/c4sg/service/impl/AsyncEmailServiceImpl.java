@@ -76,9 +76,8 @@ public class AsyncEmailServiceImpl implements AsyncEmailService {
 			helper.setText(text, true);
 		};
 		
-		System.out.println("********" + mailer.toString());
 		mailer.send(msgPrep);
-		System.out.println(text);
+//		System.out.println(text);
 	}
 }
 

@@ -234,15 +234,12 @@ public class ProjectServiceImpl implements ProjectService {
         		String orgEmail = userList.get(0).getEmail();
         	
         		if (!StringUtils.isEmpty(orgEmail)) {
-        			asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
-        			/* javax.mail.AuthenticationFailedException on Heroku server
         			Map<String, Object> mailContext = new HashMap<String, Object>();
         			mailContext.put("user", user);
         			mailContext.put("skills", userSkills);
         			mailContext.put("project", project);
         			mailContext.put("message", BODY_ORGANIZATION);
         			asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
-        			*/ 
         			System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
         		}	
         	}
