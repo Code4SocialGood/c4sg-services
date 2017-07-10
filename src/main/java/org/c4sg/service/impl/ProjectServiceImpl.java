@@ -216,10 +216,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         Integer orgId = project.getOrganization().getId();
         List<User> users = userDAO.findByOrgId(orgId);
-        if (users != null) {
+        if (users != null && !users.isEmpty()) {
         	
         	List<String> userSkills = skillService.findSkillsForUser(user.getId());
-        	String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
+        	User orgUser = users.get(0);
         	
         	// send organization email
         	Map<String, Object> orgCtx = new HashMap<String, Object>();
@@ -228,17 +228,18 @@ public class ProjectServiceImpl implements ProjectService {
         	orgCtx.put("project", project);
         	orgCtx.put("message", BODY_ORGANIZATION);
         	
-        	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", orgCtx);
+        	asyncEmailService.sendWithContext(FROM_EMAIL, orgUser.getEmail(), SUBJECT_ORGANIZATION, "volunteer-application", orgCtx);
         	
         	// send applicant email
         	Organization org = organizationDAO.findOne(project.getOrganization().getId());
         	String subject = "Your C4SG Application was created";
         	Map<String, Object> appCtx = new HashMap<String, Object>();
         	appCtx.put("org", org);
+        	appCtx.put("user", orgUser);
         	appCtx.put("projectLink", urlService.getProjectUrl(project.getId()));
         	appCtx.put("project", project);
         	asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), subject, "applicant-application", appCtx);
-        	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
+        	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgUser.getEmail());
         }
     }
         
