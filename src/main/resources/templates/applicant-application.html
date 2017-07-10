@@ -9,13 +9,22 @@
 			Project Name: <span th:text="${project.name}"></span>
 		</li>
 		<li>
-			Project Link: http://dev.code4socialgood.org/project/view/<span th:text="${user.firstName + ' ' + user.lastName}"></span>
+			Project Link: <span th:text="${projectLink}"></span>
 		</li>
 	</ul>
 	If you would like to follow up with the application status, please contact:
 	<ul>
 		<li>
-			
+			Organization Name: <span th:text="${org.name}"></span>
+		</li>
+		<li>
+			Organization Owner Name: <span th:text="${org.contactName}"></span>
+		</li>
+		<li>
+			Organization Owner Email: <span th:text="${org.contactEmail}"></span>
+		</li>
+		<li>
+			Organization Owner Phone: <span th:text="${org.contactPhone}"></span>
 		</li>
 	</ul>
 </body>

@@ -26,6 +26,7 @@ import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
+import org.c4sg.service.C4sgUrlService;
 import org.c4sg.service.ProjectService;
 import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,9 @@ public class ProjectServiceImpl implements ProjectService {
        
     @Autowired
     private OrganizationDAO organizationDAO;
+    
+    @Autowired
+    private C4sgUrlService urlService;
     
     private static final String FROM_EMAIL = "info@code4socialgood.org";
     private static final String SUBJECT_ORGANIZATION = "You received an application from Code for Social Good";
@@ -227,12 +231,13 @@ public class ProjectServiceImpl implements ProjectService {
         	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "volunteer-application", orgCtx);
         	
         	// send applicant email
+        	Organization org = organizationDAO.findOne(project.getOrganization().getId());
+        	String subject = "Your C4SG Application was created";
         	Map<String, Object> appCtx = new HashMap<String, Object>();
-        	appCtx.put("user", user);
-        	appCtx.put("skills", userSkills);
+        	appCtx.put("org", org);
+        	appCtx.put("projectLink", urlService.getProjectUrl(project.getId()));
         	appCtx.put("project", project);
-        	appCtx.put("message", BODY_ORGANIZATION);
-        	asyncEmailService.sendWithContext(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, "applicant-application", orgCtx);
+        	asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), subject, "applicant-application", appCtx);
         	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
         }
     }
