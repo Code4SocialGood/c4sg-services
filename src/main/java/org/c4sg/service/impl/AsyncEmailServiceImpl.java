@@ -44,9 +44,9 @@ public class AsyncEmailServiceImpl implements AsyncEmailService {
 			request.setEndpoint("mail/send");
 			request.setBody(mail.build());
 			Response response = sg.api(request);
-			// System.out.println("Status Code = " + response.getStatusCode());
-			// System.out.println("BODY = " + response.getBody());
-			// System.out.println("HEADERS = " + response.getHeaders());
+			System.out.println("Status Code = " + response.getStatusCode());
+			System.out.println("BODY = " + response.getBody());
+			System.out.println("HEADERS = " + response.getHeaders());
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
