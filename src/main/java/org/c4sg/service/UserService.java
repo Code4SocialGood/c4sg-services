@@ -22,7 +22,7 @@ public interface UserService {
 
     UserDTO saveUser(UserDTO userDTO);
 
-    void deleteUser(Integer id);
+    void deleteUser(Integer id, String email);
 
     Page<UserDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String role, String publishFlag,Integer page, Integer size);
 

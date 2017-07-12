@@ -138,12 +138,13 @@ public class UserController {
                 + " **************");
     	
         try {
-            userService.deleteUser(id);
+        	String email = "mytestacct70@gmail.com";        	
+            userService.deleteUser(id, email);
         } catch (Exception e) {
             LOGGER.error("Exception on delete user:", e);
         }
     }
-    
+	    
 	@CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")

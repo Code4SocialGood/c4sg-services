@@ -15,6 +15,7 @@ import org.c4sg.entity.Organization;
 import org.c4sg.entity.User;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.mapper.UserMapper;
+import org.c4sg.service.Auth0Service;
 import org.c4sg.service.GeocodeService;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
@@ -43,6 +44,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private GeocodeService geocodeService;
+	
+	@Autowired
+	private Auth0Service auth0Service;
 	
 	@Override
 	public List<UserDTO> findAll() {
@@ -93,7 +97,7 @@ public class UserServiceImpl implements UserService {
 		return userMapper.getUserDtoFromEntity(userDAO.save(user));
 	}
 
-    public void deleteUser(Integer id) {
+    public void deleteUser(Integer id, String email) {
         User user = userDAO.findById(id);
         user.setStatus(Constants.USER_STATUS_DELETED);
         user.setEmail(user.getEmail() + "-deleted");
@@ -104,7 +108,14 @@ public class UserServiceImpl implements UserService {
         for (OrganizationDTO org:organizations) {
         	organizationService.deleteOrganization(org.getId());
         }
-    }
+        
+        try{
+    		auth0Service.deleteAuth0User(email);
+    	}
+    	catch (Exception e) {
+			throw new NotFoundException(e.getMessage());
+		}
+    }    
 		
 	@Override
 	public List<ApplicantDTO> getApplicants(Integer projectId) {
