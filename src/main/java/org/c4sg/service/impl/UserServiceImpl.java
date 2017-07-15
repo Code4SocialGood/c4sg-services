@@ -6,14 +6,12 @@ import java.util.Map;
 
 import org.c4sg.constant.Constants;
 import org.c4sg.dao.OrganizationDAO;
-import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.OrganizationDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Organization;
-import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.mapper.UserMapper;
@@ -33,9 +31,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDAO userDAO;
-	
-	@Autowired
-	private ProjectDAO projectDAO;
 	
 	@Autowired
 	private OrganizationDAO organizationDAO;
@@ -121,26 +116,38 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<UserDTO> search(String keyWord, Integer jobTitleId, List<Integer> skills, String status, String role, String publishFlag, Integer page, Integer size) {
+	public Page<UserDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String role, String publishFlag, Integer page, Integer size) {
 
 		Page<User> userPages = null;
-		List<User> users=null;
-		if (page==null) page=0;
-		if (size==null) {
-			if(skills != null) {
-				users = userDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, role, publishFlag);
-	    	} else{
-	    		users = userDAO.findByKeyword(keyWord, jobTitleId, status, role, publishFlag);
+		List<User> users = null;
+		
+		if (page == null) 
+			page=0;
+		
+		if (size == null) {
+			if(skills != null && jobTitles != null) {
+				users = userDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, role, publishFlag);
+			} else if(skills != null) {
+				users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag);
+			} else if(jobTitles != null) {
+				users = userDAO.findByKeywordAndJob(keyWord, jobTitles, status, role, publishFlag);
+	    	} else {
+	    		users = userDAO.findByKeyword(keyWord, status, role, publishFlag);
 	    	}
 			userPages=new PageImpl<User>(users);
 		} else {
-			Pageable pageable=new PageRequest(page,size);
-			if(skills != null) {
-				userPages = userDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, role, publishFlag,pageable);
-	    	} else{
-	    		userPages = userDAO.findByKeyword(keyWord, jobTitleId, status, role, publishFlag,pageable);
+			Pageable pageable = new PageRequest(page,size);
+			if(skills != null && jobTitles != null) {
+				userPages = userDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, role, publishFlag, pageable);
+			} else if(skills != null) {
+				userPages = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag, pageable);
+			} else if(jobTitles != null) {
+				userPages = userDAO.findByKeywordAndJob(keyWord, jobTitles, status, role, publishFlag, pageable);
+	    	} else {
+	    		userPages = userDAO.findByKeyword(keyWord, status, role, publishFlag, pageable);
 	    	}			
 		}
+		
 		Page<UserDTO> userDTOS = userPages.map(p -> userMapper.getUserDtoFromEntity(p));
 		return userDTOS;// mapUsersToUserDtos(users);
 	}

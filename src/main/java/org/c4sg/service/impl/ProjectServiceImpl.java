@@ -93,27 +93,39 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(projectDAO.findByName(name));
     }
 
-    public Page<ProjectDTO> search(String keyWord, Integer jobTitleId, List<Integer> skills, String status, String remote,Integer page, Integer size) {
-    	Page<Project> projectPages=null;
-		List<Project> projects=null;
+    public Page<ProjectDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String remote,Integer page, Integer size) {
+    	Page<Project> projectPages = null;
+		List<Project> projects = null;
+		
     	if (page==null){
     		page=0;
     	}		
-		if (size==null){
-	    	if(skills != null) {
-	    		projects = projectDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, remote);
+    	
+		if (size == null){	    	
+			if(skills != null && jobTitles != null) {
+				projects = projectDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, remote);
+			} else if(skills != null) {
+				projects = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote);
+			} else if(jobTitles != null) {
+				projects = projectDAO.findByKeywordAndJob(keyWord, jobTitles, status, remote);
 	    	} else {
-	    		projects = projectDAO.findByKeyword(keyWord, jobTitleId, status, remote);
-	    	}
+	    		projects = projectDAO.findByKeyword(keyWord,  status, remote);
+	    	}    	
+	    		    	
 			projectPages=new PageImpl<Project>(projects);	    	
-		}else{
-			Pageable pageable=new PageRequest(page,size);
-	    	if(skills != null) {
-	    		projectPages = projectDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, remote,pageable);
+		} else{
+			Pageable pageable = new PageRequest(page,size);
+			if(skills != null && jobTitles != null) {
+				projectPages = projectDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, remote, pageable);
+			} else if(skills != null) {
+				projectPages = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote, pageable);
+			} else if(jobTitles != null) {
+				projectPages = projectDAO.findByKeywordAndJob(keyWord, jobTitles, status, remote, pageable);
 	    	} else {
-	    		projectPages = projectDAO.findByKeyword(keyWord, jobTitleId, status, remote,pageable);
-	    	}			
+	    		projectPages = projectDAO.findByKeyword(keyWord,  status, remote, pageable);
+	    	}  		
 		}		
+		
         return projectPages.map(p -> projectMapper.getProjectDtoFromEntity(p));
     }
     
