@@ -113,8 +113,8 @@ public class UserController {
     @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
     public Page<UserDTO> getUsers(@ApiParam(value = "Keyword like name , title, introduction, state, country")
                                         @RequestParam(required=false) String keyWord,
-                                        @ApiParam(value = "Job Title ID of the user")
-    									@RequestParam(required = false)  Integer jobTitleId,
+                                        @ApiParam(value = "Job Titles of the user")
+    									@RequestParam(required = false)  List<Integer> jobTitles,
                                         @ApiParam(value = "Skills of the User")
                                         @RequestParam(required = false) List<Integer> skills,
                                         @ApiParam(value = "Status of the User")
@@ -128,7 +128,7 @@ public class UserController {
     									@ApiParam(value = "Number of records per page", required=false)
     									@RequestParam(required=false) Integer size)
     {
-        return userService.search(keyWord, jobTitleId, skills, status, role, publishFlag, page, size);
+        return userService.search(keyWord, jobTitles, skills, status, role, publishFlag, page, size);
     }
         
     @CrossOrigin

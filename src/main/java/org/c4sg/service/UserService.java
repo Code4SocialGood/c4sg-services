@@ -24,7 +24,7 @@ public interface UserService {
 
     void deleteUser(Integer id);
 
-    Page<UserDTO> search(String keyWord, Integer jobTitleId, List<Integer> skills, String status, String role, String publishFlag,Integer page, Integer size);
+    Page<UserDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String role, String publishFlag,Integer page, Integer size);
 
     List<ApplicantDTO> getApplicants(Integer projectId);
            

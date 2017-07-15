@@ -71,8 +71,8 @@ public class ProjectController {
     @ApiOperation(value = "Find ACTIVE project by keyWord or skills", notes = "Returns a collection of active projects")
     public Page<ProjectDTO> getProjects(@ApiParam(value = "Keyword of the project")
                                         @RequestParam(required=false) String keyWord,
-                                        @ApiParam(value = "Job Title ID of the project")
-    									@RequestParam(required = false)  Integer jobTitleId,
+                                        @ApiParam(value = "Job Titles of the project")
+    									@RequestParam(required = false)  List<Integer> jobTitles,
                                         @ApiParam(value = "Skills of the project")
                                         @RequestParam(required = false) List<Integer> skills,
                                         @ApiParam(value = "Status of the project")
@@ -84,7 +84,7 @@ public class ProjectController {
     									@ApiParam(value = "Number of records per page",required=false)
     									@RequestParam(required=false) Integer size)
     {
-        return projectService.search(keyWord, jobTitleId, skills, status, remote, page, size);
+        return projectService.search(keyWord, jobTitles, skills, status, remote, page, size);
     }
 
     @CrossOrigin

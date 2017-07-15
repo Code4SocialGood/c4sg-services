@@ -33,32 +33,14 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             "WHERE p.name LIKE CONCAT('%', :name, '%') " +
             "OR p.description LIKE CONCAT('%', :description, '%') " +
             "ORDER BY p.createdTime DESC";
-
-    String FIND_BY_KEYWORD_SKILL_CRITERIA = 
-    		"SELECT DISTINCT p "
-    		+ "FROM ProjectSkill ps "
-    		+ "RIGHT OUTER JOIN ps.project p "
-    		+ "LEFT OUTER JOIN ps.skill s "
-    		+ "LEFT OUTER JOIN p.organization o "
-            + "WHERE ("
-            + 	"(:keyWord is null OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyWord, '%'))" 
-            +   " OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
-            +	" OR LOWER(p.state) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
-            +   " OR LOWER(p.country) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
-            +   " OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
-            +   " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
-            +	" OR LOWER(o.state) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
-            +   " OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
-            +   " OR LOWER(s.skillName) LIKE LOWER(CONCAT('%',:keyWord,'%')))"
-            +   " AND (ps.skill.id in (:skills))"
-            //+   " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)" 
-            +   " AND (:status is null OR p.status = :status)"
-            +   " AND (:jobTitleId is null OR p.jobTitleId = :jobTitleId)"
-            +   " AND (:remote is null OR p.remoteFlag = :remote)"
-            +   ")  "
-            + "ORDER BY p.createdTime DESC";
     
-    String FIND_BY_KEYWORD_CRITERIA = 
+    String DELETE_PROJECT = "UPDATE Project p set p.status = 'C' where p.id = :projId";
+
+  	String SAVE_IMAGE = "UPDATE Project p set p.imageUrl = :imgUrl where p.id = :projectId";
+  	
+    String FIND_JOB_TITLES = "SELECT j FROM JobTitle j order by j.displayOrder";
+  
+    String SEARCH_FIRST = 
     		"SELECT DISTINCT p "
     		+ "FROM ProjectSkill ps "
     		+ "RIGHT OUTER JOIN ps.project p "
@@ -74,19 +56,22 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
             +	" OR LOWER(o.state) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
             +   " OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyWord, '%'))"
             +   " OR LOWER(s.skillName) LIKE LOWER(CONCAT('%',:keyWord,'%')))"            
-            //+   " AND (:skillCount = (select count(distinct ps2.skill.id) from ProjectSkill ps2 where ps2.project.id=ps.project.id and ps2.skill.id in (:skills)) OR :skillCount=0)" 
             +   " AND (:status is null OR p.status = :status)"
-            +   " AND (:jobTitleId is null OR p.jobTitleId = :jobTitleId)"
-            +   " AND (:remote is null OR p.remoteFlag = :remote)"
-            +   ")  "
-            + "ORDER BY p.createdTime DESC";
-    
-    String DELETE_PROJECT = "UPDATE Project p set p.status = 'C' where p.id = :projId";
+            +   " AND (:remote is null OR p.remoteFlag = :remote)";
 
-  	String SAVE_IMAGE = "UPDATE Project p set p.imageUrl = :imgUrl where p.id = :projectId";
-  	
-    String FIND_JOB_TITLES = "SELECT j FROM JobTitle j order by j.displayOrder";
-  
+    String SEARCH_LAST = 
+		 ")  "
+         + "ORDER BY p.createdTime DESC";
+ 
+    String SEARCH_SKILL = " AND (ps.skill.id in (:skills))";
+    String SEARCH_JOB =  " AND ( p.jobTitleId in (:jobTitles))";
+ 
+    String FIND_BY_KEYWORD = SEARCH_FIRST + SEARCH_LAST;		 
+    String FIND_BY_KEYWORD_SKILL = SEARCH_FIRST + SEARCH_SKILL + SEARCH_LAST;
+    String FIND_BY_KEYWORD_JOB = SEARCH_FIRST + SEARCH_JOB + SEARCH_LAST;
+    String FIND_BY_KEYWORD_JOB_SKILL = SEARCH_FIRST + SEARCH_JOB + SEARCH_SKILL + SEARCH_LAST;
+    
+    
 	Project findById(int id);
 	Project findByName(String name);
 
@@ -96,18 +81,6 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     @Query(FIND_BY_NAME_OR_DESCRIPTION)
     List<Project> findByNameOrDescription(@Param("name") String name, @Param("description") String description);
 
-    @Query(FIND_BY_KEYWORD_SKILL_CRITERIA)
-    Page<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("jobTitleId") Integer jobTitleId, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
-    
-    @Query(FIND_BY_KEYWORD_CRITERIA)
-    Page<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("jobTitleId") Integer jobTitleId, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
-
-    @Query(FIND_BY_KEYWORD_SKILL_CRITERIA)
-    List<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("jobTitleId") Integer jobTitleId, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote);
-    
-    @Query(FIND_BY_KEYWORD_CRITERIA)
-    List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("jobTitleId") Integer jobTitleId, @Param("status") String status, @Param("remote") String remote);
-    
 	@Query(FIND_BY_ORGANIZATION_ID_AND_STATUS)
 	List<Project> getProjectsByOrganization(@Param("orgId") Integer orgId, @Param("projectStatus") String projectStatus);
 	
@@ -126,4 +99,29 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
    
     @Query(FIND_JOB_TITLES)
     List<JobTitle> findJobTitles();
+
+  @Query(FIND_BY_KEYWORD)
+  List<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("remote") String remote);
+
+  @Query(FIND_BY_KEYWORD_JOB)
+  List<Project> findByKeywordAndJob(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("status") String status, @Param("remote") String remote);
+ 
+  @Query(FIND_BY_KEYWORD_SKILL)
+  List<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote);
+
+  @Query(FIND_BY_KEYWORD_JOB_SKILL)
+  List<Project> findByKeywordAndJobAndSkill(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote);
+ 
+  @Query(FIND_BY_KEYWORD)
+  Page<Project> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
+
+  @Query(FIND_BY_KEYWORD_JOB)
+  Page<Project> findByKeywordAndJob(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
+ 
+  @Query(FIND_BY_KEYWORD_SKILL)
+  Page<Project> findByKeywordAndSkill(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
+
+  @Query(FIND_BY_KEYWORD_JOB_SKILL)
+  Page<Project> findByKeywordAndJobAndSkill(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
+      
 }
