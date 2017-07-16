@@ -1,6 +1,7 @@
 package org.c4sg.entity;
 
 import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 
@@ -173,6 +175,7 @@ public class Project {
 		this.updatedTime = updatedTime;
 	}
 
+	@XmlTransient
 	public Organization getOrganization() {
 		return organization;
 	}
