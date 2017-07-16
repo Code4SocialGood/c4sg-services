@@ -1,13 +1,16 @@
 package org.c4sg.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 public class Organization {
@@ -71,6 +74,17 @@ public class Organization {
 	@Column(name = "updated_time", nullable = false)
 	private Timestamp updatedTime;
 	
+	@OneToMany(mappedBy="organization")
+	List<Project> projects;
+	
+	public List<Project> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
+	}
+
 	@Column(name = "project_updated_time")
 	private Timestamp projectUpdatedTime;	
 	
