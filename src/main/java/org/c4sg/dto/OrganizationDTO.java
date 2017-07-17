@@ -1,36 +1,54 @@
 package org.c4sg.dto;
 
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.c4sg.dto.afg.FeedLocationDTO;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
+@XmlAccessorType(XmlAccessType.FIELD)
 public class OrganizationDTO {
+	
+	@XmlElement(name="organizationId")
 	private Integer id;
 
 	@NotNull
 	private String name;
 
+	@XmlElement(name="organizationURL")
 	private String websiteUrl;
 	
-    private String logoUrl;
+	@XmlElement(name="logoURL")
+	private String logoUrl;
 
 	@Length(max = 500)
 	private String description;
-
+	
+	@XmlTransient
 	private String address1;
-
+	
+	@XmlTransient
 	private String address2;
-
+	
+	@XmlTransient
 	private String city;
 	
+	@XmlTransient
 	private String state;
 
+	@XmlTransient
 	private String country;
 	
+	@XmlTransient
 	private String zip;
 
 	private String contactName;
@@ -40,14 +58,40 @@ public class OrganizationDTO {
 	private String contactPhone;
 	
 	private String contactEmail;
-		
+	
+	@XmlTransient
 	private String category;
 	
+	@XmlTransient
 	private String status;
 
+	@XmlTransient
 	private String createdTime;
 	
+	@XmlTransient
 	private String projectUpdatedTime;
+	
+	@XmlElement(name="location")
+	private FeedLocationDTO location;
+	
+	@XmlTransient
+	private List<ProjectDTO> projects;
+
+	public FeedLocationDTO getLocation() {
+		return location;
+	}
+
+	public void setLocation(FeedLocationDTO location) {
+		this.location = location;
+	}
+
+	public List<ProjectDTO> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<ProjectDTO> projects) {
+		this.projects = projects;
+	}
 
 	@ApiModelProperty(value = "Organization ID")
 	public Integer getId() {
