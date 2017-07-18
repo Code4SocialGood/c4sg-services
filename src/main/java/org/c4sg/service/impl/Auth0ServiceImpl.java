@@ -12,15 +12,12 @@ import org.c4sg.exception.NotFoundException;
 import org.c4sg.service.Auth0Service;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-
-
-
-//import net.minidev.json.JSONObject;
 
 @Service
 public class Auth0ServiceImpl implements Auth0Service {
@@ -29,13 +26,23 @@ public class Auth0ServiceImpl implements Auth0Service {
 	Date tokenCreated = null;
 	double expires_in = 0;
 	String scope = "";
+	
+	@Value("${auth0_api_url}")
+	private String auth0ApiUrl;
+	
+	@Value("${auth0_client_id}")
+	private String auth0ClientId;
+	
+	@Value("${auth0_client_secret}")
+	private String auth0ClientSecret;
+	
 	@Override
 	public String getAuth0ApiToken() throws Exception {
 		
 		tokenCreated = new Date();
 		HttpResponse<JsonNode> response = Unirest.post("https://c4sg-dev.auth0.com/oauth/token")
 				  .header("content-type", "application/json")
-				  .body("{\"grant_type\":\"client_credentials\",\"client_id\": \"\",\"client_secret\": \"\",\"audience\": \"https://c4sg-dev.auth0.com/api/v2/\"}")
+				  .body("{\"grant_type\":\"client_credentials\",\"client_id\": "+ auth0ClientId +",\"client_secret\": "+ auth0ClientSecret +",\"audience\": \"https://c4sg-dev.auth0.com/api/v2/\"}")
 				  .asJson();
 		if(response != null && response.getStatus() == 200){
 			JsonNode responseBody = response.getBody();			
@@ -55,7 +62,7 @@ public class Auth0ServiceImpl implements Auth0Service {
 		
 		String userid = "0";
 		String api = "users?q=";
-		String query = "email:\"mytestacct70@gmail.com\"";
+		String query = "email:"+ email +"";
 		URL url = getRequestUrl(api, query);
 		HttpResponse<JsonNode> response = Unirest.get(url.toString())
 				  .header("content-type", "application/json")
@@ -92,7 +99,7 @@ public class Auth0ServiceImpl implements Auth0Service {
 			
 	private URL getRequestUrl(String api, String query) throws MalformedURLException, UnsupportedEncodingException {
 		StringBuilder urlBuilder = new StringBuilder();		
-		urlBuilder.append("https://c4sg-dev.auth0.com/api/v2/");
+		urlBuilder.append(auth0ApiUrl);
 		urlBuilder.append(api);
 		urlBuilder.append(URLEncoder.encode(query, "UTF-8"));		
 		return new URL(urlBuilder.toString());
