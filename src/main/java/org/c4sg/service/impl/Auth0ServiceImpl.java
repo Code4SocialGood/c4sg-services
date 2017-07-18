@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Base64;
+import java.util.Date;
 
 import org.c4sg.service.Auth0Service;
 import org.json.JSONArray;
@@ -20,11 +22,13 @@ import com.mashape.unirest.http.Unirest;
 public class Auth0ServiceImpl implements Auth0Service {
 
 	String access_token = "";
+	Date tokenCreated = null;
 	double expires_in = 0;
 	String scope = "";
 	@Override
 	public String getAuth0ApiToken() throws Exception {
 		
+		tokenCreated = new Date();
 		HttpResponse<JsonNode> response = Unirest.post("https://c4sg-dev.auth0.com/oauth/token")
 				  .header("content-type", "application/json")
 				  .body("{\"grant_type\":\"client_credentials\",\"client_id\": \"\",\"client_secret\": \"\",\"audience\": \"https://c4sg-dev.auth0.com/api/v2/\"}")
@@ -59,9 +63,11 @@ public class Auth0ServiceImpl implements Auth0Service {
 	}
 	
 	@Override
-	public void deleteAuth0User(String email) throws Exception {
+	public void deleteAuth0User(String email) throws Exception {		
 		
-		getAuth0ApiToken();
+		if(access_token.isEmpty() || ifTokenExpired()){
+			getAuth0ApiToken();					
+		}		
 		String api = "users/";
 		String query = getAuth0UserId(email);
 		URL url = getRequestUrl(api, query);
@@ -72,12 +78,26 @@ public class Auth0ServiceImpl implements Auth0Service {
 				  .asJson();
 		JsonNode responseBody = response.getBody();		
 	}
-	
+			
 	private URL getRequestUrl(String api, String query) throws MalformedURLException, UnsupportedEncodingException {
 		StringBuilder urlBuilder = new StringBuilder();		
 		urlBuilder.append("https://c4sg-dev.auth0.com/api/v2/");
 		urlBuilder.append(api);
 		urlBuilder.append(URLEncoder.encode(query, "UTF-8"));		
 		return new URL(urlBuilder.toString());
+	}
+	
+	private boolean ifTokenExpired(){
+		
+		double timeDifference = 0;
+		if(tokenCreated != null){
+			timeDifference = (new Date().getTime() - tokenCreated.getTime())/1000;
+		}
+		else{
+			timeDifference = new Date().getTime()/1000;
+		}
+		
+		return expires_in < timeDifference;
+		
 	}
 }
