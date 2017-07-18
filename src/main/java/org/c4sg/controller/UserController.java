@@ -135,11 +135,9 @@ public class UserController {
 
     	System.out.println("************** UserController.deleteUser()" 
                 + ": id=" + id  
-                + " **************");
-    	
+                + " **************");    	
         try {
-        	String email = "mytestacct70@gmail.com";        	
-            userService.deleteUser(id, email);
+        	userService.deleteUser(id);
         } catch (Exception e) {
             LOGGER.error("Exception on delete user:", e);
         }
