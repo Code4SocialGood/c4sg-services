@@ -1,34 +1,39 @@
 package org.c4sg;
 
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.util.Arrays;
 import java.util.List;
 
 import org.c4sg.controller.UserController;
 import org.c4sg.dto.UserDTO;
-import org.c4sg.service.UserService;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.runners.MethodSorters;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @Ignore
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {C4SgApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllerTest extends C4SGTest {	
-
+	// TODO Test should connect to a mock database, or at least be able to remove all inserted elements after testing is done
+	
 	private MockMvc mockMvc;
 	
-	@Mock
-	private UserService userServiceMock;
-	//private UserDAO userDao;
-	
-	@InjectMocks
+	@Autowired
 	private UserController userController;
 	
 	@Before
@@ -103,28 +108,57 @@ public class UserControllerTest extends C4SGTest {
 		 */
 	 }
 	 
-	/*
+	
 	 //Testing POST
 	 @Test	 
 	 public void testCreateUser() throws Exception {
 	 
+		 // test service
 		 UserDTO user = new UserDTO();
-		 user.setEmail("test1Email@gmail.com");
+		 user.setEmail("test1userEmail@gmail.com");
+		 user.setState("Michigan");
+		 user.setCountry("USA");
+		 user.setNotifyFlag("N");
+		 user.setPublishFlag("N");
+		 user.setStatus("A");
+		 user.setRole("V");
 		 
-		 when(userServiceMock.saveUser(user)).thenReturn(user);
 		 
-		 this.mockMvc.perform(post("/api/users")
+		 mockMvc.perform(request(HttpMethod.POST, "/api/users")
 				 .contentType(MediaType.APPLICATION_JSON)
 				 .content(asJsonString(user)))
-		 .andExpect(status().isCreated())
-		 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-		 .andExpect(jsonPath("$.email",is("test1Email@gmail.com")))
-		 ;
+		 .andExpect(status().isOk())
+		 .andExpect(jsonPath("$.email",is("test1userEmail@gmail.com")))
+		 .andExpect(jsonPath("$.latitude",is(notNullValue())));
 		 
-		 verify(userServiceMock, times(1)).saveUser(user);
-	     verifyNoMoreInteractions(userServiceMock);	 
 	 }
 	 
+	 @Test	 
+	 public void testUpdateUser() throws Exception {
+	 
+		 // test service
+		 UserDTO user = new UserDTO();
+		 user.setEmail("test1userEmail@gmail.com");
+		 user.setFirstName("Stephen");
+		 user.setLastName("Hansen");
+		 user.setState("Michigan");
+		 user.setCountry("USA");
+		 user.setNotifyFlag("N");
+		 user.setPublishFlag("N");
+		 user.setStatus("A");
+		 user.setRole("V");
+		 user.setId(45); // ID of user generated from previous test
+		 
+		 mockMvc.perform(request(HttpMethod.PUT, "/api/users")
+				 .contentType(MediaType.APPLICATION_JSON)
+				 .content(asJsonString(user)))
+		 .andExpect(status().isOk())
+		 .andExpect(jsonPath("$.email",is("test1userEmail@gmail.com")))
+		 .andExpect(jsonPath("$.latitude",is(notNullValue())))
+		 .andExpect(jsonPath("$.firstName",is("Stephen")));
+		 	 
+	 }
+	 /*
 	 @Test	 
 	 public void testGetActiveUsers() throws Exception {
 	 

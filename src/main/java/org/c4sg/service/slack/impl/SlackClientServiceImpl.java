@@ -19,8 +19,6 @@ import org.c4sg.service.slack.method.CreatePrivateChannel;
 import org.c4sg.service.slack.method.SlackMethod;
 import org.c4sg.service.slack.method.UserListMethod;
 import org.c4sg.util.slack.SlackUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,10 +50,6 @@ public class SlackClientServiceImpl implements SlackClientService {
     @Autowired
     private UserDAO userDAO;
 
-
-    private static Logger LOGGER = LoggerFactory.getLogger(SlackClientServiceImpl.class);
-
-
     @Override
     public void shutdown() {
         if (httpClient != null)
@@ -82,16 +76,16 @@ public class SlackClientServiceImpl implements SlackClientService {
             if (user == null) {
                 return false;
             }
-            if (user.getChatFlag().equalsIgnoreCase("N")) {
+            if (user.getChatUsername() == null) {
                 List<User> slackUsers = getUserList();
                 for (User slackUser : slackUsers) {
                     Profile slackUserProfile = slackUser.getProfile();
                     if (slackUserProfile != null && slackUserProfile.getEmail() != null && slackUserProfile.getEmail().equalsIgnoreCase(email)) {
-                        userDAO.updateIsSlackRegisteredFlag("Y", user.getId());
+                        // userDAO.updateIsSlackRegisteredFlag("Y", user.getId());
                         return true;
                     }
                 }
-                userDAO.updateIsSlackRegisteredFlag("N", user.getId());
+                // userDAO.updateIsSlackRegisteredFlag("N", user.getId());
                 return false;
             } else {
                 return true;

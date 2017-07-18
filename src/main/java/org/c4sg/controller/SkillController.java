@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import org.c4sg.dto.SkillDTO;
-import org.c4sg.dto.SkillUserCountDTO;
-import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;

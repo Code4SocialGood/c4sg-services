@@ -13,20 +13,24 @@ import org.c4sg.entity.User;
 import org.c4sg.entity.UserOrganization;
 import org.c4sg.exception.UserOrganizationException;
 import org.c4sg.mapper.OrganizationMapper;
+import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static org.c4sg.constant.Directory.LOGO_UPLOAD;
-import static org.c4sg.constant.Format.IMAGE;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
@@ -45,6 +49,9 @@ public class OrganizationServiceImpl implements OrganizationService {
 	
 	@Autowired
 	private ProjectService projectService;
+	
+    @Autowired
+    private AsyncEmailService asyncEmailService;
 
     public void save(OrganizationDTO organizationDTO) {
         Organization organization = organizationMapper.getOrganizationEntityFromDto(organizationDTO);
@@ -70,42 +77,95 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .collect(Collectors.toList());
     }
     
-    public List<OrganizationDTO> findByCriteria(String keyWord, String country, boolean open) {
-        List<Organization> organizations = organizationDAO.findByCriteria(keyWord, country, open);
-
-        return organizations.stream()
-                            .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
-                            .collect(Collectors.toList());
+    public Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, List<String> categories, Integer page, Integer size) {
+    	Page<Organization> organizationPages=null;
+    	List<Organization> organizations=null;
+    	if (page==null) page=0;
+    	if (size==null){
+	    	if(countries != null && !countries.isEmpty()){
+	    		if(open != null){
+	    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories);
+	    		}
+	    		else{    			
+	    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories);
+	    		}	
+	    		
+	        }
+	    	else{
+	    		if(open != null){
+	    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories);
+	    		}
+	    		else{    			
+	    			organizations = organizationDAO.findByCriteria(keyWord, open, status, categories);
+	    		}    		
+	    	}
+	    	organizationPages=new PageImpl<Organization>(organizations);
+    	} else {
+			Pageable pageable=new PageRequest(page,size);    	    	
+	    	if(countries != null && !countries.isEmpty()){
+	    		if(open != null){
+	    			organizationPages = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories,pageable);
+	    		}
+	    		else{    			
+	    			organizationPages = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories,pageable);
+	    		}	
+	    		
+	        }
+	    	else{
+	    		if(open != null){
+	    			organizationPages = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories,pageable);
+	    		}
+	    		else{    			
+	    			organizationPages = organizationDAO.findByCriteria(keyWord, open, status, categories,pageable);
+	    		}    		
+	    	}    		
+    	}
+    	return organizationPages.map(o -> organizationMapper.getOrganizationDtoFromEntity(o));    	
     }
-    
-//    public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
-//        Organization organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
-//        return organizationMapper.getOrganizationDtoFromEntity(organization);
-//    }
-    
+      
     public OrganizationDTO createOrganization(CreateOrganizationDTO createOrganizationDTO) {
         Organization organization = organizationDAO.save(organizationMapper.getOrganEntityFromCreateOrganDto(createOrganizationDTO));
         return organizationMapper.getOrganizationDtoFromEntity(organization);
     }
 
     public OrganizationDTO updateOrganization(int id, OrganizationDTO organizationDTO) {
+    	
         Organization organization = organizationDAO.findOne(id);
-        if (organization == null) {
-        	System.out.println("Project does not exist.");
-        } else {
-            organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
-        }
 
+        if (organization == null) {
+        	System.out.println("Organization does not exist.");
+        } else {
+            String oldStatus = organization.getStatus();
+            organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
+            String newStatus = organization.getStatus();
+            
+            // Notify admin users of new organization
+            if (oldStatus.equals(Constants.ORGANIZATION_STATUS_NEW) && newStatus.equals(Constants.ORGANIZATION_STATUS_PENDIONG_REVIEW)) {
+            	
+            	String toAddress = null;
+            	List<User> users = userDAO.findByKeyword(null, "A", "A", null);
+            	if (users != null && !users.isEmpty()) {
+            		User adminUser = users.get(0);
+            		toAddress = adminUser.getEmail();
+            	}	
+            			
+            	Map<String, Object> context = new HashMap<String, Object>();
+            	context.put("organization", organization);         	
+            	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_NEW_ORGANIZATION_REVIEW, Constants.TEMPLATE_NEW_ORGANIZATION_REVIEW, context);
+            	System.out.println("New organization email sent: Organization=" + organization.getId() + " ; Email=" + toAddress);
+            }
+        }
+        
         return organizationMapper.getOrganizationDtoFromEntity(organization);
     }
 
     public void deleteOrganization(int id){
     	Organization organization = organizationDAO.findOne(id);
     	if(organization != null){
-    		organization.setStatus(Constants.ORGANIZATION_STATUS_CLOSED);
-    		organization.setLogoUrl(null);
+    		organization.setStatus(Constants.ORGANIZATION_STATUS_DELETED);
+    		// TODO Delete logo from S3 by frontend
     		organizationDAO.save(organization);
-    		List<ProjectDTO> projects=projectService.findByOrganization(id);
+    		List<ProjectDTO> projects=projectService.findByOrganization(id, null);
     		for (ProjectDTO project:projects){
     			projectService.deleteProject(project.getId());
     		}
@@ -116,11 +176,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     		//organization.setDeleteBy(user.getUsername());
     	}
     }
-
-    public String getLogoUploadPath(Integer organizationId) {
-        return LOGO_UPLOAD.getValue() + File.separator + organizationId + IMAGE.getValue();
-    }
-
 
     @Override
     public List<OrganizationDTO> findByUser(Integer userId) {
@@ -152,4 +207,14 @@ public class OrganizationServiceImpl implements OrganizationService {
         
         return organizationMapper.getOrganizationDtoFromEntity(organization);
     }
+    
+	@Override
+	public void saveLogo(Integer id, String imgUrl) {
+		organizationDAO.updateLogo(imgUrl, id);
+	}
+	
+	@Override
+	public void approveOrDecline(Integer id, String status) {
+		organizationDAO.approveOrDecline(id, status);
+	}
 }

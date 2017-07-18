@@ -81,11 +81,8 @@ public class User implements Serializable {
     @Column(name = "notify_flag", columnDefinition="char(1) default 'N'", nullable = false)
     private String notifyFlag  = "N";
     
-    @Column(name = "chat_flag", columnDefinition="char(1) default 'N'", nullable = false)
-    private String chatFlag  = "N";
-            
-    @Column(name = "forum_flag", columnDefinition="char(1) default 'N'", nullable = false)
-    private String forumFlag  = "N";
+    @Column(name = "chat_username")
+    private String chatUsername;
 
     @Column(name = "role", columnDefinition="char(1)", nullable = false)
     private String role;
@@ -98,6 +95,9 @@ public class User implements Serializable {
 		
 	@Column(name = "updated_time")
 	private Timestamp updatedTime;
+	
+    @Column(name = "job_title_id")
+    private Integer jobTitleId;
 	
 	public Integer getId() {
 		return id;
@@ -275,20 +275,12 @@ public class User implements Serializable {
 		this.notifyFlag = notifyFlag;
 	}
 	
-	public String getChatFlag() {
-		return chatFlag;
+	public String getChatUsername() {
+		return chatUsername;
 	}
 
-	public void setChatFlag(String chatFlag) {
-		this.chatFlag = chatFlag;
-	}
-
-	public String getForumFlag() {
-		return forumFlag;
-	}
-
-	public void setForumFlag(String forumFlag) {
-		this.forumFlag = forumFlag;
+	public void setChatUsername(String chatUsername) {
+		this.chatUsername = chatUsername;
 	}
 
 	public String getStatus() {
@@ -315,4 +307,11 @@ public class User implements Serializable {
 		this.updatedTime = updatedTime;
 	}
 	
+	public Integer getJobTitleId() {
+		return jobTitleId;
+	}
+
+	public void setJobTitleId(Integer jobTitleId) {
+		this.jobTitleId = jobTitleId;
+	}
 }

@@ -18,10 +18,9 @@ public class CreateUserDTO {
     private String resumeUrl;
     private String facebookUrl;
     private String twitterUrl;
-    private String publishFlag;
-    private String notifyFlag;
-    private String chatFlag;
-    private String forumFlag;
+    private String publishFlag="N";
+    private String notifyFlag="N";
+    private String chatUsername;
     private String role;
     
     public String getUserName() {
@@ -176,19 +175,11 @@ public class CreateUserDTO {
         this.notifyFlag = notifyFlag;
     }
     
-    public String getChatFlag() {
-        return chatFlag;
+    public String getChatUsername() {
+        return chatUsername;
     }
     
-    public void setChatFlag(String chatFlag) {
-        this.chatFlag = chatFlag;
-    }
-    
-    public String getForumFlag() {
-        return forumFlag;
-    }
-    
-    public void setForumFlag(String forumFlag) {
-        this.forumFlag = forumFlag;
-    }
+    public void setChatUsername(String chatUsername) {
+        this.chatUsername = chatUsername;
+    }    
 }
