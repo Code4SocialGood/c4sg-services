@@ -26,8 +26,11 @@ public class ProjectMapper extends ModelMapper{
 	public ProjectDTO getProjectDtoFromEntity(Project project){
 		getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		ProjectDTO projectDTO = map(project, ProjectDTO.class);
-		projectDTO.setOrganizationId(project.getOrganization().getId().toString());
-		projectDTO.setOrganizationName(project.getOrganization().getName());
+		if (project.getOrganization() != null) {
+			projectDTO.setOrganizationId(project.getOrganization().getId().toString());
+			projectDTO.setOrganizationName(project.getOrganization().getName());
+		} 
+		
 		return projectDTO;
 	}
 	

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.c4sg.constant.Constants;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.ProjectSkillDAO;
@@ -68,13 +69,6 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private C4sgUrlService urlService;
     
-    private static final String FROM_EMAIL = "info@code4socialgood.org";
-    private static final String SUBJECT_ORGANIZATION = "You received an application from Code for Social Good";
-    private static final String BODY_ORGANIZATION= "You received an application from Code for Social Good. Please login to the dashboard to review the application.";
-    private static final String SUBJECT_NOTIFICATION = "Code for Social Good: New Project Notification";
-    private static final String BODY_NOTIIFCATION= "You have registered to recieve notification on new projects.\n" 
-    				+ "The following new project has been created:\n" + "http://dev.code4socialgood.org/project/view/";
-
     public void save(ProjectDTO projectDTO) {
     	Project project = projectMapper.getProjectEntityFromDto(projectDTO);
         projectDAO.save(project);
@@ -168,31 +162,40 @@ public class ProjectServiceImpl implements ProjectService {
             // Updates projectUpdateTime for the organization
             Organization localOrgan = project.getOrganization(); 
             localOrgan.setProjectUpdatedTime(new Timestamp(Calendar.getInstance().getTime().getTime())); 
-            organizationDAO.save(localOrgan);
-
-            // Notify volunteer users of new project
-            List<User> notifyUsers = userDAO.findByNotify();
-            for (int i=0; i<notifyUsers.size(); i++) {
-            	String to = notifyUsers.get(i).getEmail();
-              	String subject = SUBJECT_NOTIFICATION;
-            	String body = BODY_NOTIIFCATION + project.getId();
-            	asyncEmailService.send(FROM_EMAIL, to, subject, body);
-            }
+            organizationDAO.save(localOrgan);                  	        	
         }
 
         return projectMapper.getProjectDtoFromEntity(project);
     }
 
-    public ProjectDTO updateProject(ProjectDTO project) {
-        Project localProject = projectDAO.findById(project.getId());
+    public ProjectDTO updateProject(ProjectDTO projectDTO) {
+    	
+        Project project = projectDAO.findById(projectDTO.getId());
         
-        if (localProject != null) {
-            localProject = projectDAO.save(projectMapper.getProjectEntityFromDto(project));
+        if (project == null) {
+        	System.out.println("Project does not exist.");
         } else {
-            System.out.println("Project does not exist.");
-        }
+        	String oldStatus = project.getStatus();
+        	project = projectDAO.save(projectMapper.getProjectEntityFromDto(projectDTO));
+        	String newStatus = project.getStatus();
+        	
+            // Notify volunteer users of new project
+        	if (oldStatus.equals(Constants.ORGANIZATION_STATUS_NEW) && newStatus.equals(Constants.ORGANIZATION_STATUS_ACTIVE)) {
+        		List<User> notifyUsers = userDAO.findByNotify();
+        		if (notifyUsers != null && !notifyUsers.isEmpty()) {
+        			for (int i=0; i<notifyUsers.size(); i++) {
+        				String toAddress = notifyUsers.get(i).getEmail();
+        				Map<String, Object> context = new HashMap<String, Object>();
+        				context.put("project", projectDTO);         	
+        				context.put("projectLink", urlService.getProjectUrl(projectDTO.getId()));
+        				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_NEW_PROJECT_NOTIFICATION, Constants.TEMPLATE_NEW_PROJECT_NOTIFICATION, context);
+        			}
+        			System.out.println("New project email sent: Project=" + projectDTO.getId());
+        		} 
+        	}
+        } 
 
-        return projectMapper.getProjectDtoFromEntity(localProject);
+        return projectMapper.getProjectDtoFromEntity(project);
     }
 
     @Override
@@ -247,29 +250,26 @@ public class ProjectServiceImpl implements ProjectService {
         	List<String> userSkills = skillService.findSkillsForUser(user.getId());
         	User orgUser = users.get(0);
         	
-        	// send organization email
-			if (!StringUtils.isEmpty(user.getEmail())) {
-				Map<String, Object> mailContext = new HashMap<String, Object>();
-				mailContext.put("user", user);
-				mailContext.put("skills", userSkills);
-				mailContext.put("project", project);
-				mailContext.put("message", BODY_ORGANIZATION);
-				asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), SUBJECT_ORGANIZATION, "volunteer-application", mailContext);
-			}
+        	// send email to organization
+			Map<String, Object> contextOrg = new HashMap<String, Object>();
+			contextOrg.put("user", user);
+			contextOrg.put("skills", userSkills);
+			contextOrg.put("project", project);
+			contextOrg.put("projectLink", urlService.getProjectUrl(project.getId()));
+			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ORGANIZATION, Constants.TEMPLATE_APPLICAITON_ORGANIZATION, contextOrg);
         	
-        	// send applicant email
+        	// send email to volunteer
         	Organization org = organizationDAO.findOne(project.getOrganization().getId());
         	if(org != null) {
-        		String subject = "Your C4SG Application was created";
-            	Map<String, Object> appCtx = new HashMap<String, Object>();
-            	appCtx.put("org", org);
-            	appCtx.put("user", orgUser);
-            	appCtx.put("projectLink", urlService.getProjectUrl(project.getId()));
-            	appCtx.put("project", project);
-            	asyncEmailService.sendWithContext(FROM_EMAIL, user.getEmail(), subject, "applicant-application", appCtx);
+            	Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+            	contextVolunteer.put("org", org);
+            	contextVolunteer.put("orgUser", orgUser);
+            	contextVolunteer.put("project", project);
+            	contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+            	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_VOLUNTEER, Constants.TEMPLATE_APPLICAITON_VOLUNTEER, contextVolunteer);
         	}
         	
-        	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgUser.getEmail());
+        	System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail() + " ; OrgEmail=" + orgUser.getEmail());
         }
     }
         
