@@ -14,6 +14,7 @@ import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.User;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.UserServiceException;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.Auth0Service;
 import org.c4sg.service.GeocodeService;
@@ -107,13 +108,12 @@ public class UserServiceImpl implements UserService {
         List<OrganizationDTO> organizations = organizationService.findByUser(id);
         for (OrganizationDTO org:organizations) {
         	organizationService.deleteOrganization(org.getId());
-        }
-        
+        }        
         try{
     		auth0Service.deleteAuth0User(email);
     	}
     	catch (Exception e) {
-			throw new NotFoundException(e.getMessage());
+			throw new UserServiceException(e.getMessage());
 		}
     }    
 		
