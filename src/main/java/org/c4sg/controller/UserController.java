@@ -35,39 +35,61 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Find all users", notes = "Returns a collection of users")
     public List<UserDTO> getUsers() {
+		
+    	System.out.println("************** UserController.getUsers() **************");
+    	
         return userService.findAll();
     }
     
 	@CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find user by ID", notes = "Returns a user")
-    public UserDTO getUser(@ApiParam(value = "ID of user to return", required = true)
-                           @PathVariable("id") int id) {
+    public UserDTO getUser(
+    		@ApiParam(value = "ID of user to return", required = true) @PathVariable("id") int id) {
+		
+    	System.out.println("************** UserController.getUser()" 
+                + ": id=" + id  
+                + " **************");
+    	
         return userService.findById(id);
     }
 
 	@CrossOrigin
     @RequestMapping(value = "/organization/{orgId}", method = RequestMethod.GET)
     @ApiOperation(value = "Find users by Organization ID", notes = "Returns a list of users from this organization")
-    public List<UserDTO> getUsersInOrganization(@ApiParam(value = "ID of organization to return users", required = true)
-                           @PathVariable("orgId") int orgId) {
+    public List<UserDTO> getUsersInOrganization(
+    		@ApiParam(value = "ID of organization to return users", required = true) @PathVariable("orgId") int orgId) {
+		
+    	System.out.println("************** UserController.getUsersInOrganization()" 
+                + ": orgId=" + orgId  
+                + " **************");
+    	
         return userService.findByOrgId(orgId);
     }
     
     @CrossOrigin
     @RequestMapping(value = "/email/{email}/", method = RequestMethod.GET)
     @ApiOperation(value = "Find user by email", notes = "Returns a user")
-    public UserDTO getUserByEmail(@ApiParam(value = "email address", required = true)
-                                  @PathVariable("email") String email) {
+    public UserDTO getUserByEmail(
+    		@ApiParam(value = "email address", required = true) @PathVariable("email") String email) {
+    	
+    	System.out.println("************** UserController.getUserByEmail()" 
+                + ": email=" + email  
+                + " **************");
+    	
         return userService.findByEmail(email);
     }
     
 	@CrossOrigin
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new user")
-    public UserDTO createUser(@ApiParam(value = "User object to return", required = true)
-                              @RequestBody CreateUserDTO createUserDTO) {
+    public UserDTO createUser(
+    		@ApiParam(value = "User object to return", required = true) @RequestBody CreateUserDTO createUserDTO) {
 
+    	System.out.println("************** UserController.createUser()" 
+                + ": createUserDTO=" + createUserDTO  
+                + " **************");
+    	
         try {
             return userService.createUser(createUserDTO);
         } catch (Exception e) {
@@ -78,8 +100,13 @@ public class UserController {
 	@CrossOrigin
     @RequestMapping(method = RequestMethod.PUT)
     @ApiOperation(value = "Update an existing user")
-    public UserDTO updateUser(@ApiParam(value = "Updated user object", required = true)
-                              @RequestBody UserDTO userDTO) {
+    public UserDTO updateUser(
+    		@ApiParam(value = "Updated user object", required = true) @RequestBody UserDTO userDTO) {
+		
+    	System.out.println("************** UserController.updateUser()" 
+                + ": userDTO=" + userDTO  
+                + " **************");
+    	
         try {
         	return userService.saveUser(userDTO);
         } catch (Exception e) {
@@ -90,17 +117,26 @@ public class UserController {
     @CrossOrigin
     @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
-    public List<ApplicantDTO> getApplicants(@ApiParam(value = "ID of project", required = true)
-                                                       @PathVariable("id") Integer projectId) {
+    public List<ApplicantDTO> getApplicants(
+    		@ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
+    	
+    	System.out.println("************** UserController.getApplicants()" 
+                + ": projectId=" + projectId  
+                + " **************");
+    	
         return userService.getApplicants(projectId);
     }
     
 	@CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete a user")
-    public void deleteUser(@ApiParam(value = "User id to delete", required = true)
-                           @PathVariable("id") int id) {
-        LOGGER.debug("************** Delete : id=" + id + "**************");
+    public void deleteUser(
+    		@ApiParam(value = "User id to delete", required = true) @PathVariable("id") int id) {
+
+    	System.out.println("************** UserController.deleteUser()" 
+                + ": id=" + id  
+                + " **************");
+    	
         try {
             userService.deleteUser(id);
         } catch (Exception e) {
@@ -111,32 +147,42 @@ public class UserController {
 	@CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
-    public Page<UserDTO> getUsers(@ApiParam(value = "Keyword like name , title, introduction, state, country")
-                                        @RequestParam(required=false) String keyWord,
-                                        @ApiParam(value = "Job Titles of the user")
-    									@RequestParam(required = false)  List<Integer> jobTitles,
-                                        @ApiParam(value = "Skills of the User")
-                                        @RequestParam(required = false) List<Integer> skills,
-                                        @ApiParam(value = "Status of the User")
-    									@Pattern(regexp="[AD]")  @RequestParam(required = false) String status,
-    									@ApiParam(value = "User Role")
-    									@Pattern(regexp="[VOA]") @RequestParam(required = false) String role,
-									    @ApiParam(value = "User Public Flag")
-										@Pattern(regexp="[YN]") @RequestParam(required = false) String publishFlag,
-										@ApiParam(value = "Results page you want to retrieve (0..N)", required=false)
-    									@RequestParam(required=false) Integer page,
-    									@ApiParam(value = "Number of records per page", required=false)
-    									@RequestParam(required=false) Integer size)
-    {
+    public Page<UserDTO> getUsers(
+    		@ApiParam(value = "Keyword like name , title, introduction, state, country") @RequestParam(required=false) String keyWord,
+            @ApiParam(value = "Job Titles of the user")	@RequestParam(required = false)  List<Integer> jobTitles,
+            @ApiParam(value = "Skills of the User") @RequestParam(required = false) List<Integer> skills,
+            @ApiParam(value = "Status of the User") @Pattern(regexp="[AD]")  @RequestParam(required = false) String status,
+    		@ApiParam(value = "User Role") @Pattern(regexp="[VOA]") @RequestParam(required = false) String role,
+			@ApiParam(value = "User Public Flag") @Pattern(regexp="[YN]") @RequestParam(required = false) String publishFlag,
+			@ApiParam(value = "Results page you want to retrieve (0..N)", required=false) @RequestParam(required=false) Integer page,
+    		@ApiParam(value = "Number of records per page", required=false) @RequestParam(required=false) Integer size) {
+		
+    	System.out.println("************** UserController.getUsers()" 
+                + ": keyWord=" + keyWord  
+                + "; jobTitles=" + jobTitles  
+                + "; skills=" + skills  
+                + "; status=" + status  
+                + "; role=" + role  
+                + "; publishFlag=" + publishFlag  
+                + "; page=" + page  
+                + "; size=" + size                  
+                + " **************");
+    	
         return userService.search(keyWord, jobTitles, skills, status, role, publishFlag, page, size);
     }
         
     @CrossOrigin
     @RequestMapping(value = "/{id}/avatar", params = "imgUrl", method = RequestMethod.PUT)
 	@ApiOperation(value = "Upload a user avatar image")
-	public void saveAvatar(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
+	public void saveAvatar(
+			@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
 			@ApiParam(value = "Image Url", required = true) @RequestParam("imgUrl") String url) {
 
+    	System.out.println("************** UserController.saveAvatar()" 
+                + ": id=" + id  
+                + "; url=" + url                  
+                + " **************");
+    	
     	userService.saveAvatar(id, url);
 	}
     
@@ -144,25 +190,10 @@ public class UserController {
     @RequestMapping(value="/jobTitles", method = RequestMethod.GET)
     @ApiOperation(value = "Get a list of job titles")
     public List<JobTitleDTO> getJobTitles() {
+    	
+    	System.out.println("************** UserController.getJobTitles() **************");
+    	
         return projectService.findJobTitles();
     }
-    
-    /* Obsolete, replaced with search endpoint  
-    @CrossOrigin
-    @RequestMapping(value = "/active", method = RequestMethod.GET)
-    @ApiOperation(value = "Find active volunteer users", notes = "Returns a collection of active volunteer users")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)"),
-            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
-                    value = "Number of records per page."),
-            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
-                    value = "Sorting criteria in the format: property(,asc|desc). " +
-                            "Default sort order is ascending. " +
-                            "Multiple sort criteria are supported.")})
-    public Page<UserDTO> getActiveUsers(@ApiIgnore Pageable pageable) {
-        LOGGER.debug("**************active**************");
-        return userService.findActiveVolunteers(pageable);
-    }
-    */
+
 }

@@ -89,6 +89,7 @@ public class UserServiceImpl implements UserService {
         }  catch (Exception e) {
         	throw new NotFoundException("Error getting geocode");
 		}
+		
 		return userMapper.getUserDtoFromEntity(userDAO.save(user));
 	}
 
@@ -168,6 +169,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
         
+		user.setStatus("N"); // Set user status to "N" for new user
         User userEntity = userDAO.save(user);
         
         // If the user is organization user:
