@@ -135,15 +135,15 @@ public class UserController {
 
     	System.out.println("************** UserController.deleteUser()" 
                 + ": id=" + id  
-                + " **************");
-    	
+                + " **************");    	
         try {
-            userService.deleteUser(id);
+        	userService.deleteUser(id);
         } catch (Exception e) {
-            LOGGER.error("Exception on delete user:", e);
+        	throw new UserServiceException("Exception on delete user:" + e.getMessage());
+        	//LOGGER.error("Exception on delete user:", e);
         }
     }
-    
+	    
 	@CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
