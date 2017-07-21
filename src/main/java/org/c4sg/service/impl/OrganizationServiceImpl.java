@@ -135,12 +135,11 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (organization == null) {
         	System.out.println("Organization does not exist.");
         } else {
-            String oldStatus = organization.getStatus();
             organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
             String newStatus = organization.getStatus();
             
-            // Notify admin users of new organization
-            if (oldStatus.equals(Constants.ORGANIZATION_STATUS_NEW) && newStatus.equals(Constants.ORGANIZATION_STATUS_PENDIONG_REVIEW)) {
+            // Notify admin users of new organization, or update for a declined organization
+            if (newStatus.equals(Constants.ORGANIZATION_STATUS_PENDIONG_REVIEW) || newStatus.equals(Constants.ORGANIZATION_STATUS_DECLINED)) {
             	
             	String toAddress = null;
             	List<User> users = userDAO.findByKeyword(null, "A", "A", null);
@@ -216,5 +215,20 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@Override
 	public void approveOrDecline(Integer id, String status) {
 		organizationDAO.approveOrDecline(id, status);
+		
+        // Notify organization user of approval or deny
+       	String toAddress = null;
+    	List<User> users = userDAO.findByOrgId(id);
+    	if (users != null && !users.isEmpty()) {
+    		User orgUser = users.get(0);
+    		toAddress = orgUser.getEmail();
+    	}	
+        			
+       	Map<String, Object> context = new HashMap<String, Object>();     	
+       	if (status.equals(Constants.ORGANIZATION_STATUS_ACTIVE))
+       		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_NEW_ORGANIZATION_APPROVE, Constants.TEMPLATE_NEW_ORGANIZATION_APPROVE, context);
+       	else if (status.equals(Constants.ORGANIZATION_STATUS_DECLINED))
+       		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_NEW_ORGANIZATION_DECLINE, Constants.TEMPLATE_NEW_ORGANIZATION_DECLINE, context);
+       	System.out.println("Organization approval/decline email sent: Organization=" + id + " ; Email=" + toAddress);
 	}
 }
