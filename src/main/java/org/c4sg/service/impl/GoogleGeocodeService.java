@@ -22,7 +22,7 @@ import net.minidev.json.JSONValue;
 @Service
 public class GoogleGeocodeService implements GeocodeService {
 	
-	@Value("${googleapis.maps.key}")
+	@Value("${google_map_api_key}")
 	private String googleApiKey;
 
 	@Override
