@@ -19,3 +19,4 @@ deploy:
   app:
     master: c4sg-dev
     staging: c4sg-staging
+    prod: c4sg-prod
