@@ -4,8 +4,11 @@ import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.c4sg.constant.Constants;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.ProjectSkillDAO;
@@ -24,13 +27,17 @@ import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.AsyncEmailService;
+import org.c4sg.service.C4sgUrlService;
 import org.c4sg.service.ProjectService;
+import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -40,7 +47,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UserDAO userDAO;
-
+    
     @Autowired
     private UserProjectDAO userProjectDAO;
     
@@ -49,6 +56,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private ProjectMapper projectMapper;
+    
+    @Autowired
+    private SkillService skillService;
 
     @Autowired
     private AsyncEmailService asyncEmailService;
@@ -56,14 +66,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private OrganizationDAO organizationDAO;
     
-    private static final String FROM_EMAIL = "info@code4socialgood.org";
-    private static final String SUBJECT_ORGANIZATION = "You received an application from Code for Social Good";
-    private static final String BODY_ORGANIZATION= "You received an application from Code for Social Good. " 
-    				+ "Please login to the dashboard to review the application.";
-    private static final String SUBJECT_NOTIFICATION = "Code for Social Good: New Project Notification";
-    private static final String BODY_NOTIIFCATION= "You have registered to recieve notification on new projects.\n" 
-    				+ "The following new project has been created:\n" + "http://dev.code4socialgood.org/project/view/";
-
+    @Autowired
+    private C4sgUrlService urlService;
+    
     public void save(ProjectDTO projectDTO) {
     	Project project = projectMapper.getProjectEntityFromDto(projectDTO);
         projectDAO.save(project);
@@ -82,27 +87,39 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(projectDAO.findByName(name));
     }
 
-    public Page<ProjectDTO> search(String keyWord, Integer jobTitleId, List<Integer> skills, String status, String remote,Integer page, Integer size) {
-    	Page<Project> projectPages=null;
-		List<Project> projects=null;
+    public Page<ProjectDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String remote,Integer page, Integer size) {
+    	Page<Project> projectPages = null;
+		List<Project> projects = null;
+		
     	if (page==null){
     		page=0;
     	}		
-		if (size==null){
-	    	if(skills != null) {
-	    		projects = projectDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, remote);
+    	
+		if (size == null){	    	
+			if(skills != null && jobTitles != null) {
+				projects = projectDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, remote);
+			} else if(skills != null) {
+				projects = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote);
+			} else if(jobTitles != null) {
+				projects = projectDAO.findByKeywordAndJob(keyWord, jobTitles, status, remote);
 	    	} else {
-	    		projects = projectDAO.findByKeyword(keyWord, jobTitleId, status, remote);
-	    	}
+	    		projects = projectDAO.findByKeyword(keyWord,  status, remote);
+	    	}    	
+	    		    	
 			projectPages=new PageImpl<Project>(projects);	    	
-		}else{
-			Pageable pageable=new PageRequest(page,size);
-	    	if(skills != null) {
-	    		projectPages = projectDAO.findByKeywordAndSkill(keyWord, jobTitleId, skills, status, remote,pageable);
+		} else{
+			Pageable pageable = new PageRequest(page,size);
+			if(skills != null && jobTitles != null) {
+				projectPages = projectDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, remote, pageable);
+			} else if(skills != null) {
+				projectPages = projectDAO.findByKeywordAndSkill(keyWord, skills, status, remote, pageable);
+			} else if(jobTitles != null) {
+				projectPages = projectDAO.findByKeywordAndJob(keyWord, jobTitles, status, remote, pageable);
 	    	} else {
-	    		projectPages = projectDAO.findByKeyword(keyWord, jobTitleId, status, remote,pageable);
-	    	}			
+	    		projectPages = projectDAO.findByKeyword(keyWord,  status, remote, pageable);
+	    	}  		
 		}		
+		
         return projectPages.map(p -> projectMapper.getProjectDtoFromEntity(p));
     }
     
@@ -116,6 +133,19 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus) {
         List<Project> projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
+        
+        // There should always be a new project for an organization. If new project doesn't exist, create one
+        if (projectStatus != null && projectStatus.equals("N")) {
+        	if ((projects == null) || projects.size() == 0) {        		
+            	Project project = new Project();
+            	project.setOrganization(organizationDAO.findOne(orgId));
+            	project.setRemoteFlag("Y");
+            	project.setStatus("N");        	
+            	projectDAO.save(project);
+            	projects = projectDAO.getProjectsByOrganization(orgId, projectStatus);
+        	}
+        }
+        
         return projectMapper.getDtosFromEntities(projects);
     }
 
@@ -132,31 +162,40 @@ public class ProjectServiceImpl implements ProjectService {
             // Updates projectUpdateTime for the organization
             Organization localOrgan = project.getOrganization(); 
             localOrgan.setProjectUpdatedTime(new Timestamp(Calendar.getInstance().getTime().getTime())); 
-            organizationDAO.save(localOrgan);
-
-            // Notify volunteer users of new project
-            List<User> notifyUsers = userDAO.findByNotify();
-            for (int i=0; i<notifyUsers.size(); i++) {
-            	String to = notifyUsers.get(i).getEmail();
-              	String subject = SUBJECT_NOTIFICATION;
-            	String body = BODY_NOTIIFCATION + project.getId();
-            	asyncEmailService.send(FROM_EMAIL, to, subject, body);
-            }
+            organizationDAO.save(localOrgan);                  	        	
         }
 
         return projectMapper.getProjectDtoFromEntity(project);
     }
 
-    public ProjectDTO updateProject(ProjectDTO project) {
-        Project localProject = projectDAO.findById(project.getId());
+    public ProjectDTO updateProject(ProjectDTO projectDTO) {
+    	
+        Project project = projectDAO.findById(projectDTO.getId());
         
-        if (localProject != null) {
-            localProject = projectDAO.save(projectMapper.getProjectEntityFromDto(project));
+        if (project == null) {
+        	System.out.println("Project does not exist.");
         } else {
-            System.out.println("Project does not exist.");
-        }
+        	String oldStatus = project.getStatus();
+        	project = projectDAO.save(projectMapper.getProjectEntityFromDto(projectDTO));
+        	String newStatus = project.getStatus();
+        	
+            // Notify volunteer users of new project
+        	if (oldStatus.equals(Constants.ORGANIZATION_STATUS_NEW) && newStatus.equals(Constants.ORGANIZATION_STATUS_ACTIVE)) {
+        		List<User> notifyUsers = userDAO.findByNotify();
+        		if (notifyUsers != null && !notifyUsers.isEmpty()) {
+        			for (int i=0; i<notifyUsers.size(); i++) {
+        				String toAddress = notifyUsers.get(i).getEmail();
+        				Map<String, Object> context = new HashMap<String, Object>();
+        				context.put("project", projectDTO);         	
+        				context.put("projectLink", urlService.getProjectUrl(projectDTO.getId()));
+        				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_NEW_PROJECT_NOTIFICATION, Constants.TEMPLATE_NEW_PROJECT_NOTIFICATION, context);
+        			}
+        			System.out.println("New project email sent: Project=" + projectDTO.getId());
+        		} 
+        	}
+        } 
 
-        return projectMapper.getProjectDtoFromEntity(localProject);
+        return projectMapper.getProjectDtoFromEntity(project);
     }
 
     @Override
@@ -201,14 +240,36 @@ public class ProjectServiceImpl implements ProjectService {
 		return projectMapper.getJobTitleDtosFromEntities(jobTitles);
 	}
     
+	@Async
     private void apply(User user, Project project) {
 
         Integer orgId = project.getOrganization().getId();
         List<User> users = userDAO.findByOrgId(orgId);
-        if (users != null) {
-        	String orgEmail = userDAO.findByOrgId(orgId).get(0).getEmail();
-        	asyncEmailService.send(FROM_EMAIL, orgEmail, SUBJECT_ORGANIZATION, BODY_ORGANIZATION);
-        	System.out.println("Application email sent: Project=" + project.getId() + " ; Applicant=" + user.getId() + " ; OrgEmail=" + orgEmail);
+        if (users != null && !users.isEmpty()) {
+        	
+        	List<String> userSkills = skillService.findSkillsForUser(user.getId());
+        	User orgUser = users.get(0);
+        	
+        	// send email to organization
+			Map<String, Object> contextOrg = new HashMap<String, Object>();
+			contextOrg.put("user", user);
+			contextOrg.put("skills", userSkills);
+			contextOrg.put("project", project);
+			contextOrg.put("projectLink", urlService.getProjectUrl(project.getId()));
+			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ORGANIZATION, Constants.TEMPLATE_APPLICAITON_ORGANIZATION, contextOrg);
+        	
+        	// send email to volunteer
+        	Organization org = organizationDAO.findOne(project.getOrganization().getId());
+        	if(org != null) {
+            	Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+            	contextVolunteer.put("org", org);
+            	contextVolunteer.put("orgUser", orgUser);
+            	contextVolunteer.put("project", project);
+            	contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+            	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_VOLUNTEER, Constants.TEMPLATE_APPLICAITON_VOLUNTEER, contextVolunteer);
+        	}
+        	
+        	System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail() + " ; OrgEmail=" + orgUser.getEmail());
         }
     }
         
@@ -228,6 +289,7 @@ public class ProjectServiceImpl implements ProjectService {
     
 	@Override
 	public void saveImage(Integer id, String imgUrl) {
+				
 		projectDAO.updateImage(imgUrl, id);
 	}
 }

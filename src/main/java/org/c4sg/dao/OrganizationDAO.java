@@ -115,6 +115,8 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     @Query(SAVE_LOGO)
     void updateLogo(@Param("imgUrl") String imgUrl, @Param("organizationId") Integer organizationId);
    
+    @Transactional
+    @Modifying
     @Query(APPROVE_DECLINE)
     void approveOrDecline(@Param("organizationId") Integer organizationId, @Param("status") String status);
 }

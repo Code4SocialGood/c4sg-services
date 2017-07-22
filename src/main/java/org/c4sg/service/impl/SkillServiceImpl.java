@@ -49,7 +49,7 @@ public class SkillServiceImpl implements SkillService {
 	
    	@Override
     public List<SkillDTO> findSkillsbyCount() {
-   		List<Object[]> skills = userSkillDAO.findSkillsbyCount();
+   		List<Object[]> skills = skillDAO.findSkillsbyCount();
    		List<SkillDTO> skillDTOS = new SkillMapper().getSkillDTOs(skills);
        	return skillDTOS;        
     }

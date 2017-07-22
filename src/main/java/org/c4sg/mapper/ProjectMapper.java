@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -24,8 +26,11 @@ public class ProjectMapper extends ModelMapper{
 	public ProjectDTO getProjectDtoFromEntity(Project project){
 		getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		ProjectDTO projectDTO = map(project, ProjectDTO.class);
-		projectDTO.setOrganizationId(project.getOrganization().getId().toString());
-		projectDTO.setOrganizationName(project.getOrganization().getName());
+		if (project.getOrganization() != null) {
+			projectDTO.setOrganizationId(project.getOrganization().getId().toString());
+			projectDTO.setOrganizationName(project.getOrganization().getName());
+		} 
+		
 		return projectDTO;
 	}
 	
@@ -36,8 +41,13 @@ public class ProjectMapper extends ModelMapper{
 	}
 
 	public List<ProjectDTO> getDtosFromEntities(List<Project> projects){
-        Type listTypeDTO = new TypeToken<List<ProjectDTO>>() {}.getType();
-		return map(projects, listTypeDTO);
+		List<ProjectDTO> projectList = new ArrayList<ProjectDTO>();
+		Iterator<Project> projectIter = projects.iterator();
+		while (projectIter.hasNext()) {
+			Project project = projectIter.next();
+			projectList.add(getProjectDtoFromEntity(project));
+		}
+		return projectList;
 	}
 
 	public Project getProjectEntityFromDto(ProjectDTO projectDTO){

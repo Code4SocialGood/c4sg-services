@@ -16,7 +16,7 @@ public interface ProjectService {
 
 	List<ProjectDTO> findProjects();
 
-	Page<ProjectDTO> search(String keyWord, Integer jobTitleId, List<Integer> skills, String status, String remote, Integer page, Integer size);
+	Page<ProjectDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String remote, Integer page, Integer size);
 
 	List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException;
 
