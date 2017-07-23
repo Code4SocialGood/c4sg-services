@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+	<span>A new organization is created. Please review.</span>
+	<br></br>
+	<br></br>
+	<ul>
+		<li>Organization ID: <span th:text="${organization.id}"></span></li>
+		<li>Organization Name: <span th:text="${organization.name}"></span></li>
+		<li>Organization Description: <span th:text="${organization.description}"></span></li>
+	</ul>
+</body>
+</html>

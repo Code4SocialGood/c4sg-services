@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+	<span>You have successfully applied for the project.</span>
+	<br></br>
+	<br></br>
+	Project:
+	<ul>
+		<li>Project Name: <span th:text="${project.name}"></span></li>
+		<li>Project Link: <span th:text="${projectLink}"></span></li>
+	</ul>
+	Organization Contact:
+	<ul>
+		<li>Organization Name: <span th:text="${org.name}"></span></li>
+		<li>Organization Owner Name: <span th:text="${orgUser.firstName + ' ' + orgUser.lastName}"></span></li>
+		<li>Organization Owner Email: <span th:text="${orgUser.email}"></span></li>
+		<li>Organization Owner Phone: <span th:text="${orgUser.phone}"></span></li>
+		<li>Organization Owner Slack: <span th:text="${orgUser.chatUsername}"></span></li>
+	</ul>
+</body>
+</html>
