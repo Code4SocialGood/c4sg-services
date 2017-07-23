@@ -1,0 +1,19 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+    <springProfile name="dev">
+        <logger name="org.cs4g" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE" />
+        </logger>
+    </springProfile>
+    <springProfile name="heroku">
+    	<logger name="org.cs4g" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE" />
+        </logger>>
+	</springProfile>
+    <springProfile name="prod">
+        <logger name="org.cs4g" level="WARN" additivity="false">
+            <appender-ref ref="FILE" />
+        </logger>
+    </springProfile>
+ </configuration>
