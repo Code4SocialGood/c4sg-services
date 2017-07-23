@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
-    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
-    <springProfile name="dev">
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <springProfile name="dev, unit-test">
         <logger name="org.cs4g" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE" />
         </logger>
     </springProfile>
     <springProfile name="heroku">
