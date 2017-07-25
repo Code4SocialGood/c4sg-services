@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 public class CreateProjectDTO {
 	
 	@NotNull(message = "Project name is required")
-	@Size(max = 100, message = "Project name cannot exceed 199 characters")
+	@Size(max = 100, message = "Project name cannot exceed 100 characters")
 	private String name;//required
 	
 	@NotNull
