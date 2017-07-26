@@ -76,7 +76,7 @@ public class OrganizationController {
 			@ApiParam(value = "Keyword in Name or description or country of organization to return", required = false) @RequestParam(required = false) String keyWord,
 			@ApiParam(value = "Countries of organization to return", required = false) @RequestParam(required = false) List<String> countries,
 			@ApiParam(value = "Opportunities open in the organization", required = false) @RequestParam(required = false) Boolean open,
-			@ApiParam(value = "Status of the organization to return", required = false) @Pattern(regexp="[ADP]") @RequestParam(required = false) String status,
+			@ApiParam(value = "Status of the organization to return", required = false) @Pattern(regexp="[ADPNC]") @RequestParam(required = false) String status,
 			@ApiParam(value = "Category of the organization to return", required = false) @ListEntry @RequestParam(required = false) List<String> category,
 		    @ApiParam(value = "Results page you want to retrieve (0..N)",required=false) @RequestParam(required=false) Integer page,
 		    @ApiParam(value = "Number of records per page", required=false) @RequestParam(required=false) Integer size)	{
