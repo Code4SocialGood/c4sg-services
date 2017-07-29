@@ -16,6 +16,7 @@ import org.c4sg.dto.CreateProjectDTO;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@Ignore
 public class ConstraintValidatorTest {
 	
 	private static Validator validator;
