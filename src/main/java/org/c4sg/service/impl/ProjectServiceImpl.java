@@ -275,7 +275,7 @@ public class ProjectServiceImpl implements ProjectService {
        			contextVolunteer.put("orgUser", orgUser);
        			contextVolunteer.put("project", project);
        			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
-       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_VOLUNTEER, Constants.TEMPLATE_APPLICAITON_VOLUNTEER, contextVolunteer);
+       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_ACCEPT, Constants.TEMPLATE_APPLICAITON_ACCEPT, contextVolunteer);
         		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
    
         	} else if (status.equals("D")) {
@@ -285,7 +285,7 @@ public class ProjectServiceImpl implements ProjectService {
        			contextVolunteer.put("orgUser", orgUser);
        			contextVolunteer.put("project", project);
        			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
-       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_VOLUNTEER, Constants.TEMPLATE_APPLICAITON_VOLUNTEER, contextVolunteer);        	
+       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_DECLINE, Constants.TEMPLATE_APPLICAITON_DECLINE, contextVolunteer);        	
         		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
 
         	} else if (status.equals("B")) {
