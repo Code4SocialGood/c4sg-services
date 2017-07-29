@@ -15,6 +15,7 @@ import org.c4sg.constraint.ListEntry;
 import org.c4sg.dto.CreateProjectDTO;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Ignore;
 
 @Ignore
 public class ConstraintValidatorTest {
