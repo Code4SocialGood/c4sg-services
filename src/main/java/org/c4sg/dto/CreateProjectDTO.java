@@ -1,15 +1,21 @@
 package org.c4sg.dto;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class CreateProjectDTO {
-	@NotNull
+	
+	@NotNull(message = "Project name is required")
+	@Size(max = 100, message = "Project name cannot exceed 100 characters")
 	private String name;//required
+	
 	@NotNull
 	private Integer organizationId;//required
 	
 	private String description;
 	
+	@Pattern(regexp="[YN]")
 	private String remoteFlag="N";// possible values Y or N 
 	
 	private String address1;
