@@ -10,6 +10,8 @@ import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,8 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+    
+    private final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -132,7 +136,7 @@ public class ProjectController {
     public Map<String, Object> createProject(
     		@ApiParam(value = "Project object to return", required = true)  @RequestBody @Valid CreateProjectDTO createProjectDTO) {
 
-    	System.out.println("************** ProjectController.createProject()" 
+    	logger.debug("************** ProjectController.createProject()" 
                 + ": createProjectDTO=" + createProjectDTO 
                 + " **************");
 
@@ -142,7 +146,7 @@ public class ProjectController {
             responseData = Collections.synchronizedMap(new HashMap<>());
             responseData.put("project", createProject);
         } catch (Exception e) {
-            System.out.println(e);
+            logger.error("Exception -", e);
         }
 
         return responseData;
