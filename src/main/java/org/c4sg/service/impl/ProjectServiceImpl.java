@@ -37,7 +37,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -216,9 +215,8 @@ public class ProjectServiceImpl implements ProjectService {
 	        userProjectDAO.save(userProject);
 	    }
         
-        if (status.equals("A"))
-        	apply(user, project);
-        		
+        sendEmail(user, project, status);
+        
         return projectMapper.getProjectDtoFromEntity(project);
     }
 
@@ -241,7 +239,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
     
 	@Async
-    private void apply(User user, Project project) {
+    private void sendEmail(User user, Project project, String status) {
 
         Integer orgId = project.getOrganization().getId();
         List<User> users = userDAO.findByOrgId(orgId);
@@ -249,30 +247,53 @@ public class ProjectServiceImpl implements ProjectService {
         	
         	List<String> userSkills = skillService.findSkillsForUser(user.getId());
         	User orgUser = users.get(0);
-        	
-        	// send email to organization
-			Map<String, Object> contextOrg = new HashMap<String, Object>();
-			contextOrg.put("user", user);
-			contextOrg.put("skills", userSkills);
-			contextOrg.put("project", project);
-			contextOrg.put("projectLink", urlService.getProjectUrl(project.getId()));
-			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ORGANIZATION, Constants.TEMPLATE_APPLICAITON_ORGANIZATION, contextOrg);
-        	
-        	// send email to volunteer
         	Organization org = organizationDAO.findOne(project.getOrganization().getId());
-        	if(org != null) {
-            	Map<String, Object> contextVolunteer = new HashMap<String, Object>();
-            	contextVolunteer.put("org", org);
-            	contextVolunteer.put("orgUser", orgUser);
-            	contextVolunteer.put("project", project);
-            	contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
-            	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_VOLUNTEER, Constants.TEMPLATE_APPLICAITON_VOLUNTEER, contextVolunteer);
-        	}
         	
-        	System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail() + " ; OrgEmail=" + orgUser.getEmail());
+        	if (status.equals("A")) {
+        		// send email to organization
+        		Map<String, Object> contextOrg = new HashMap<String, Object>();
+        		contextOrg.put("user", user);
+        		contextOrg.put("skills", userSkills);
+        		contextOrg.put("project", project);
+        		contextOrg.put("projectLink", urlService.getProjectUrl(project.getId()));
+        		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ORGANIZATION, Constants.TEMPLATE_APPLICAITON_ORGANIZATION, contextOrg);
+        	
+        		// send email to volunteer        		
+       			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+       			contextVolunteer.put("org", org);
+       			contextVolunteer.put("orgUser", orgUser);
+       			contextVolunteer.put("project", project);
+       			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_VOLUNTEER, Constants.TEMPLATE_APPLICAITON_VOLUNTEER, contextVolunteer);
+        	
+        		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail() + " ; OrgEmail=" + orgUser.getEmail());
+        	
+        	} else if (status.equals("C")) {
+        		// send email to volunteer
+       			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+       			contextVolunteer.put("org", org);
+       			contextVolunteer.put("orgUser", orgUser);
+       			contextVolunteer.put("project", project);
+       			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_ACCEPT, Constants.TEMPLATE_APPLICAITON_ACCEPT, contextVolunteer);
+        		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
+   
+        	} else if (status.equals("D")) {
+        		// send email to volunteer
+       			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+       			contextVolunteer.put("org", org);
+       			contextVolunteer.put("orgUser", orgUser);
+       			contextVolunteer.put("project", project);
+       			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), Constants.SUBJECT_APPLICAITON_DECLINE, Constants.TEMPLATE_APPLICAITON_DECLINE, contextVolunteer);        	
+        		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
+
+        	} else if (status.equals("B")) {
+        		// do nothing
+        	}
         }
     }
-        
+	        
     private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
 
     	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
