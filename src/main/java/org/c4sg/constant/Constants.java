@@ -36,6 +36,8 @@ public final class Constants {
     
 	public static final String SUBJECT_APPLICAITON_ORGANIZATION = "Code for Social Good: You received an application";
 	public static final String SUBJECT_APPLICAITON_VOLUNTEER = "Code for Social Good: Your application is submitted";
+	public static final String SUBJECT_APPLICAITON_ACCEPT = "Code for Social Good: Your applicatn is accepted";
+	public static final String SUBJECT_APPLICAITON_DECLINE = "Code for Social Good: Your application is declined";
 	public static final String SUBJECT_NEW_PROJECT_NOTIFICATION = "Code for Social Good: New Project Notification";
 	public static final String SUBJECT_NEW_ORGANIZATION_REVIEW = "Code for Social Good: A New Organization is ready for review";
 	public static final String SUBJECT_NEW_ORGANIZATION_APPROVE = "Code for Social Good: Your Organization is approved";
@@ -44,6 +46,8 @@ public final class Constants {
     
 	public static final String TEMPLATE_APPLICAITON_ORGANIZATION = "project-application-organization";
 	public static final String TEMPLATE_APPLICAITON_VOLUNTEER = "project-application-volunteer";
+	public static final String TEMPLATE_APPLICAITON_ACCEPT = "project-application-accept";
+	public static final String TEMPLATE_APPLICAITON_DECLINE = "project-application-decline";
 	public static final String TEMPLATE_NEW_PROJECT_NOTIFICATION = "new-project-notification";
 	public static final String TEMPLATE_NEW_ORGANIZATION_REVIEW = "new-organization-review";
 	public static final String TEMPLATE_NEW_ORGANIZATION_APPROVE = "new-organization-approve";

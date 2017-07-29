@@ -12,10 +12,13 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import org.c4sg.constraint.ListEntry;
+import org.c4sg.dto.CreateProjectDTO;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Ignore;
 
-public class ListEntryValidatorTest {
+@Ignore
+public class ConstraintValidatorTest {
 	
 	private static Validator validator;
 	
@@ -55,6 +58,16 @@ public class ListEntryValidatorTest {
 
     	CategoryCustomListTest cat = new CategoryCustomListTest("I", "T");
         Set<ConstraintViolation<CategoryCustomListTest>> constraintViolations = validator.validate(cat);
+        assertEquals(0, constraintViolations.size());
+    }
+    
+    @Test
+    public void testValidateCreateProjectDTO() {
+    	
+    	CreateProjectDTO cpdto = new CreateProjectDTO();
+    	cpdto.setName("AAAAmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+    	cpdto.setRemoteFlag("Y");
+        Set<ConstraintViolation<CreateProjectDTO>> constraintViolations = validator.validate(cpdto);
         assertEquals(0, constraintViolations.size());
     }
 
