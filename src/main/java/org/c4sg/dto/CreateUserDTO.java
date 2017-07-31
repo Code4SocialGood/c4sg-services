@@ -48,8 +48,8 @@ public class CreateUserDTO {
 	
     private String role;
     
-    private String publishFlag="N";
-    private String notifyFlag="N";
+    private String publishFlag = "Y";
+    private String notifyFlag = "Y";
     
     // Following fields are not used
     private String resumeUrl;
