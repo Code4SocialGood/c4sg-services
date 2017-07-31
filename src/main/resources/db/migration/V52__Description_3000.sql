@@ -1,0 +1,4 @@
+--Change from 1000 to 3000
+ALTER TABLE user MODIFY COLUMN introduction VARCHAR(3000);
+ALTER TABLE organization MODIFY COLUMN description VARCHAR(3000);
+ALTER TABLE project MODIFY COLUMN description VARCHAR(3000);
