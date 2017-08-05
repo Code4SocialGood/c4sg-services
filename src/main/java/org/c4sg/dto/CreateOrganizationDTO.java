@@ -1,5 +1,7 @@
 package org.c4sg.dto;
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import io.swagger.annotations.ApiModel;
@@ -9,34 +11,44 @@ import io.swagger.annotations.ApiModelProperty;
 public class CreateOrganizationDTO {
 	
 	@NotBlank
-	private String name;//required
+	@Size(max = 100, message = "Organization name cannot exceed 100 characters")
+	private String name;
 	
+	@Size(max = 100, message = "Website URL name cannot exceed 100 characters")
 	private String websiteUrl;
 	
+	@Size(max = 1000, message = "Organization description cannot exceed 1000 characters")
 	private String description;
 	
+	@Size(max = 100, message = "Address 1 cannot exceed 100 characters")
 	private String address1;
 	
+	@Size(max = 100, message = "Address 2 cannot exceed 100 characters")
 	private String address2;
 	
+	@Size(max = 100, message = "City cannot exceed 100 characters")
 	private String city;
 	
+	@Size(max = 100, message = "State cannot exceed 100 characters")
 	private String state;
 	
+	@Size(max = 100, message = "Country cannot exceed 100 characters")
 	private String country;
 	
+	@Size(max = 16, message = "Zip Code cannot exceed 16 characters")
 	private String zip;
 
-	private String contactName;
-	
-	private String contactTitle;
-	
-	private String contactPhone;
-	
-	private String contactEmail;
-	
 	private String category;
+	
+	@Size(max = 10, message = "EINe cannot exceed 10 characters")
+	private String ein;
 
+	// The following fields are not used	
+	private String contactName;	
+	private String contactTitle;
+	private String contactPhone;
+	private String contactEmail;
+		
 	@ApiModelProperty(required = true)
 	public String getName() {
 		return name;
@@ -149,6 +161,14 @@ public class CreateOrganizationDTO {
 
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	
+	public String getEin() {
+		return ein;
+	}
+
+	public void setEin(String ein) {
+		this.ein = ein;
 	}
 
 }

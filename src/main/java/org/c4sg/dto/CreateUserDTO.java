@@ -1,27 +1,60 @@
 package org.c4sg.dto;
 
+import javax.validation.constraints.Size;
+
 public class CreateUserDTO {
     
+	@Size(max = 100, message = "User Name cannot exceed 100 characters")
     private String userName;
+	
+	@Size(max = 100, message = "First Name cannot exceed 100 characters")
     private String firstName;
+	
+	@Size(max = 100, message = "Last Name cannot exceed 100 characters")
     private String lastName;
-    private String email;
+	
+	@Size(max = 100, message = "Email cannot exceed 100 characters")
+	private String email;
+    
+	@Size(max = 100, message = "State cannot exceed 100 characters")
     private String state;
+	
+	@Size(max = 100, message = "Country cannot exceed 100 characters")
     private String country;
+	
+	@Size(max = 30, message = "Phone cannot exceed 100 characters")
     private String phone;
+	
+	@Size(max = 100, message = "Title cannot exceed 100 characters")
     private String title;
+    
+	@Size(max = 1000, message = "User introduction cannot exceed 1000 characters")
     private String introduction;
+	
+	@Size(max = 150, message = "Avatar URL cannot exceed 150 characters")
     private String avatarUrl;
+	
+	@Size(max = 150, message = "LinkedIn URL cannot exceed 150 characters")
     private String linkedInUrl;
+	
+	@Size(max = 150, message = "Personal URL cannot exceed 150 characters")
     private String personalUrl;
+	
+	@Size(max = 100, message = "Github URL cannot exceed 150 characters")
     private String githubUrl;
+	    
+	@Size(max = 25, message = "Chat Username cannot exceed 25 characters")
+    private String chatUsername;
+	
+    private String role;
+    
+    private String publishFlag = "Y";
+    private String notifyFlag = "Y";
+    
+    // Following fields are not used
     private String resumeUrl;
     private String facebookUrl;
     private String twitterUrl;
-    private String publishFlag="N";
-    private String notifyFlag="N";
-    private String chatUsername;
-    private String role;
     
     public String getUserName() {
         return userName;
