@@ -1,6 +1,7 @@
 package org.c4sg.dto;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -9,45 +10,27 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
 public class OrganizationDTO {
+	
 	private Integer id;
-
-	@NotNull
 	private String name;
-
 	private String websiteUrl;
-	
     private String logoUrl;
-
-	@Length(max = 500)
 	private String description;
-
 	private String address1;
-
 	private String address2;
-
 	private String city;
-	
 	private String state;
-
 	private String country;
-	
 	private String zip;
-
 	private String contactName;
-	
 	private String contactTitle;
-	
 	private String contactPhone;
-	
 	private String contactEmail;
-		
 	private String category;
-	
+	private String ein;	
 	private String status;
-
 	private String createdTime;
-	
-	private String projectUpdatedTime;
+	private String projectUpdatedTime;	
 
 	@ApiModelProperty(value = "Organization ID")
 	public Integer getId() {
@@ -201,5 +184,13 @@ public class OrganizationDTO {
 
 	public void setProjectUpdatedTime(String projectUpdatedTime) {
 		this.projectUpdatedTime = projectUpdatedTime;
+	}
+	
+	public String getEin() {
+		return ein;
+	}
+
+	public void setEin(String ein) {
+		this.ein = ein;
 	}
 }

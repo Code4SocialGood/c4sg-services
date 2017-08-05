@@ -3,6 +3,7 @@ package org.c4sg.dto;
 import java.math.BigDecimal;
 
 public class UserDTO {
+	
     private Integer id;
     private String userName;
     private String firstName;
