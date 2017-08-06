@@ -15,11 +15,13 @@ import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.User;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.UserServiceException;
 import org.c4sg.mapper.UserMapper;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.GeocodeService;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
+import org.c4sg.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -86,7 +88,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO saveUser(UserDTO userDTO) {
 		User user = userMapper.getUserEntityFromDto(userDTO);
-		
+				
 		try {
 			Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(user.getState(), user.getCountry());
 	        user.setLatitude(geoCode.get("lat"));
@@ -98,8 +100,15 @@ public class UserServiceImpl implements UserService {
 		return userMapper.getUserDtoFromEntity(userDAO.save(user));
 	}
 
-    public void deleteUser(Integer id) {
+    public void deleteUser(Integer id)
+    {    	
         User user = userDAO.findById(id);
+        
+        // Verify either admin or email matches from authenticated user
+        if (!JwtUtil.isAdmin() && !JwtUtil.match(user.getEmail())) {
+        	throw new UserServiceException("Delete unauthorized");
+        }
+        
         user.setStatus(Constants.USER_STATUS_DELETED);
         user.setEmail(user.getEmail() + "-deleted");
         userDAO.save(user);
