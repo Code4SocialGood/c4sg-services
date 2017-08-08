@@ -197,7 +197,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
         
-		user.setStatus("N"); // Set user status to "N" for new user
+		// user.setStatus("N"); // Set user status to "N" for new user
         User userEntity = userDAO.save(user);
         
         // If the user is organization user:
