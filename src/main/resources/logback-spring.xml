@@ -19,7 +19,7 @@
 	</springProfile>
 	<!-- Logging profile activated for Production, file path can be configured in the `application.properties` -->
     <springProfile name="prod">
-        <logger name="org.cs4g" level="WARN" additivity="false">
+        <logger name="org.cs4g" level="DEBUG" additivity="false">
         	<!-- Uses a file named `spring.log` found in the folder specified by the config `logging.path` -->
             <appender-ref ref="FILE" />
         </logger>
