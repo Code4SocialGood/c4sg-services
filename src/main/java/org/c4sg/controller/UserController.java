@@ -194,6 +194,7 @@ public class UserController {
     	System.out.println("************** UserController.getJobTitles() **************");
     	
         return projectService.findJobTitles();
+
     }
 
 }
