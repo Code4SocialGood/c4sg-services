@@ -16,8 +16,8 @@ public final class Constants {
 	public static final String ORGANIZATION_STATUS_DECLINED = "C";
 	public static final String ORGANIZATION_STATUS_DELETED = "D";
 	
-	public static final String USER_STATUS_NEW = "N";
-	public static final String USER_STATUS_PENDING = "P"; // What is this status for?
+	// public static final String USER_STATUS_NEW = "N";
+	// public static final String USER_STATUS_PENDING = "P"; // What is this status for?
 	public static final String USER_STATUS_ACTIVE = "A";
 	public static final String USER_STATUS_DELETED = "D";
 
@@ -36,7 +36,7 @@ public final class Constants {
     
 	public static final String SUBJECT_APPLICAITON_ORGANIZATION = "Code for Social Good: You received an application";
 	public static final String SUBJECT_APPLICAITON_VOLUNTEER = "Code for Social Good: Your application is submitted";
-	public static final String SUBJECT_APPLICAITON_ACCEPT = "Code for Social Good: Your applicatn is accepted";
+	public static final String SUBJECT_APPLICAITON_ACCEPT = "Code for Social Good: Your application is accepted";
 	public static final String SUBJECT_APPLICAITON_DECLINE = "Code for Social Good: Your application is declined";
 	public static final String SUBJECT_NEW_PROJECT_NOTIFICATION = "Code for Social Good: New Project Notification";
 	public static final String SUBJECT_NEW_ORGANIZATION_REVIEW = "Code for Social Good: A New Organization is ready for review";

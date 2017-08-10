@@ -13,21 +13,28 @@ public class CreateProjectDTO {
 	@NotNull
 	private Integer organizationId;//required
 	
+	@Size(max = 1000, message = "Project description cannot exceed 1000 characters")
 	private String description;
 	
 	@Pattern(regexp="[YN]")
 	private String remoteFlag="N";// possible values Y or N 
 	
+	@Size(max = 100, message = "Address 1 cannot exceed 100 characters")
 	private String address1;
 	
+	@Size(max = 100, message = "Address 2 cannot exceed 100 characters")
 	private String address2;
 	
+	@Size(max = 100, message = "City cannot exceed 100 characters")
 	private String city;
 	
+	@Size(max = 100, message = "State cannot exceed 100 characters")
 	private String state;
 	
+	@Size(max = 100, message = "Country cannot exceed 100 characters")
 	private String country;
 	
+	@Size(max = 100, message = "User introduction cannot exceed 1000 characters")
 	private String zip;
 		
 	public String getName() {
