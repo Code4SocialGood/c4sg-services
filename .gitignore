@@ -40,7 +40,3 @@ bin/
 .factorypath
 .settings
 .springBeans
-
-spring.log.1
-
-spring.log

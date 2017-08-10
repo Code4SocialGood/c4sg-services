@@ -21,13 +21,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     
-	http.headers().frameOptions().disable();
-	  
     JwtWebSecurityConfigurer
     .forRS256(audience, issuer)
     .configure(http)
     .authorizeRequests()
-    .antMatchers("/", "/silent-mylocal.html","/silent.html", "/silent-local.html", "/silent-dev.html", "/silent-staging.html", "/resources/public/**", "/public/**/", "/resources/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/users/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/organizations/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/skills/**").permitAll()
