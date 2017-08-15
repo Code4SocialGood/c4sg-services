@@ -33,4 +33,6 @@ public interface ProjectService {
     void saveImage(Integer id, String imgUrl);
 
 	List<JobTitleDTO> findJobTitles();
+	
+	void deleteUserProject(Integer userId, Integer projectId, String userProjectStatus);
 }
