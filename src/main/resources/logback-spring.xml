@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <!-- Logging profile activated for development profile -->
+    <springProfile name="dev">
+        <logger name="org.cs4g" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE" />
+            <!-- Comment this to disable logging to file for dev profile -->
+            <appender-ref ref="FILE" />
+        </logger>
+    </springProfile>
+    <!-- Logging profile activated for Heroku profile -->
+    <springProfile name="heroku">
+    	<logger name="org.cs4g" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE" />
+            <!-- Uncomment to enable file logging in heroku profile -->
+            <!-- <appender-ref ref="FILE" />  -->
+        </logger>>
+	</springProfile>
+	<!-- Logging profile activated for Production, file path can be configured in the `application.properties` -->
+    <springProfile name="prod">
+        <logger name="org.cs4g" level="DEBUG" additivity="false">
+        	<!-- Uses a file named `spring.log` found in the folder specified by the config `logging.path` -->
+            <appender-ref ref="FILE" />
+        </logger>
+    </springProfile>
+ </configuration>

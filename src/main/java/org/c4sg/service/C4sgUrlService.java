@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class C4sgUrlService {
 	
-	@Value("${c4sg.web.url}")
+	@Value("${c4sg_web_url}")
 	private String webUrl;
 	
 	public String getProjectUrl(Integer id) {

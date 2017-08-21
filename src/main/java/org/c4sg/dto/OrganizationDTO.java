@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.validation.constraints.Size;
 
 import org.c4sg.dto.afg.FeedLocationDTO;
 import org.hibernate.validator.constraints.Length;
@@ -18,11 +19,10 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrganizationDTO {
 	
-	@XmlElement(name="organizationId")
-	private Integer id;
+@XmlElement(name="organizationId")
+private Integer id;
 
-	@NotNull
-	private String name;
+  private String name;
 
 	@XmlElement(name="organizationURL")
 	private String websiteUrl;
@@ -49,14 +49,19 @@ public class OrganizationDTO {
 	private String country;
 	
 	@XmlTransient
-	private String zip;
+	private String websiteUrl;
 
+  private String logoUrl;
+	private String description;
+	private String address1;
+	private String address2;
+	private String city;
+	private String state;
+	private String country;
+	private String zip;
 	private String contactName;
-	
 	private String contactTitle;
-	
 	private String contactPhone;
-	
 	private String contactEmail;
 	
 	@XmlTransient
@@ -92,6 +97,12 @@ public class OrganizationDTO {
 	public void setProjects(List<ProjectDTO> projects) {
 		this.projects = projects;
 	}
+
+  private String category;
+	private String ein;	
+	private String status;
+	private String createdTime;
+	private String projectUpdatedTime;	
 
 	@ApiModelProperty(value = "Organization ID")
 	public Integer getId() {
@@ -245,5 +256,13 @@ public class OrganizationDTO {
 
 	public void setProjectUpdatedTime(String projectUpdatedTime) {
 		this.projectUpdatedTime = projectUpdatedTime;
+	}
+	
+	public String getEin() {
+		return ein;
+	}
+
+	public void setEin(String ein) {
+		this.ein = ein;
 	}
 }

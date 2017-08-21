@@ -1,6 +1,7 @@
 package org.c4sg.service.impl;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +15,13 @@ import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.User;
 import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.UserServiceException;
 import org.c4sg.mapper.UserMapper;
+import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.GeocodeService;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.UserService;
+import org.c4sg.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -43,7 +47,10 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private GeocodeService geocodeService;
-	
+		
+    @Autowired
+    private AsyncEmailService asyncEmailService;
+    
 	@Override
 	public List<UserDTO> findAll() {
 		List<User> users = userDAO.findAllByOrderByIdDesc();
@@ -81,7 +88,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO saveUser(UserDTO userDTO) {
 		User user = userMapper.getUserEntityFromDto(userDTO);
-		
+				
 		try {
 			Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(user.getState(), user.getCountry());
 	        user.setLatitude(geoCode.get("lat"));
@@ -89,11 +96,19 @@ public class UserServiceImpl implements UserService {
         }  catch (Exception e) {
         	throw new NotFoundException("Error getting geocode");
 		}
+		
 		return userMapper.getUserDtoFromEntity(userDAO.save(user));
 	}
 
-    public void deleteUser(Integer id) {
+    public void deleteUser(Integer id)
+    {    	
         User user = userDAO.findById(id);
+        
+        // Verify either admin or email matches from authenticated user
+        if (!JwtUtil.isAdmin() && !JwtUtil.match(user.getEmail())) {
+        	throw new UserServiceException("Delete unauthorized");
+        }
+        
         user.setStatus(Constants.USER_STATUS_DELETED);
         user.setEmail(user.getEmail() + "-deleted");
         userDAO.save(user);
@@ -103,6 +118,20 @@ public class UserServiceImpl implements UserService {
         for (OrganizationDTO org:organizations) {
         	organizationService.deleteOrganization(org.getId());
         }
+        
+        // Sends notification to admin user. Delete user will be performed by admin user from Auth0 internally to reduce risk.
+    	String toAddress = null;
+    	List<User> users = userDAO.findByKeyword(null, "A", "A", null);
+    	if (users != null && !users.isEmpty()) {
+    		User adminUser = users.get(0);
+    		toAddress = adminUser.getEmail();
+    	}	
+    			
+    	Map<String, Object> context = new HashMap<String, Object>();
+    	context.put("user", user);         	
+    	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_DELETE_USER, Constants.TEMPLATE_DELETE_USER, context);
+    	System.out.println("Delete user email sent: User=" + id + " ; Email=" + toAddress);
+
     }
 		
 	@Override
@@ -168,6 +197,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
         
+		// user.setStatus("N"); // Set user status to "N" for new user
         User userEntity = userDAO.save(user);
         
         // If the user is organization user:

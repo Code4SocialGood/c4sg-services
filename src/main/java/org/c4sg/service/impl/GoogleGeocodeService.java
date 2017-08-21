@@ -22,7 +22,7 @@ import net.minidev.json.JSONValue;
 @Service
 public class GoogleGeocodeService implements GeocodeService {
 	
-	@Value("${googleapis.maps.key}")
+	@Value("${google_map_api_key}")
 	private String googleApiKey;
 
 	@Override
@@ -31,10 +31,12 @@ public class GoogleGeocodeService implements GeocodeService {
 		Map<String,BigDecimal> geocode = new HashMap<String,BigDecimal>();
 		
 		// validate input
-		if((state != null && !state.isEmpty()) && (country != null && !country.isEmpty())) {
+		if(country != null && !country.isEmpty()) {
 			StringBuilder address = new StringBuilder();
-			address.append(state);
-			address.append(",");
+			if (state != null && !state.isEmpty()) {
+				address.append(state);
+				address.append(",");
+			}	
 			address.append(country);
 			
 			try {
