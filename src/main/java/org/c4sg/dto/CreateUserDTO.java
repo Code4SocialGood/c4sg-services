@@ -28,7 +28,7 @@ public class CreateUserDTO {
 	@Size(max = 100, message = "Title cannot exceed 100 characters")
     private String title;
     
-	@Size(max = 1000, message = "User introduction cannot exceed 1000 characters")
+	@Size(max = 10000, message = "User introduction cannot exceed 10000 characters")
     private String introduction;
 	
 	@Size(max = 150, message = "Avatar URL cannot exceed 150 characters")
