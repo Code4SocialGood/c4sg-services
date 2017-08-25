@@ -16,8 +16,8 @@ public final class Constants {
 	public static final String ORGANIZATION_STATUS_DECLINED = "C";
 	public static final String ORGANIZATION_STATUS_DELETED = "D";
 	
-	// public static final String USER_STATUS_NEW = "N";
-	// public static final String USER_STATUS_PENDING = "P"; // What is this status for?
+	public static final String USER_STATUS_NEW = "N";
+	public static final String USER_STATUS_PENDING = "P"; // What is this status for?
 	public static final String USER_STATUS_ACTIVE = "A";
 	public static final String USER_STATUS_DELETED = "D";
 
