@@ -119,18 +119,11 @@ public class UserServiceImpl implements UserService {
         	organizationService.deleteOrganization(org.getId());
         }
         
-        // Sends notification to admin user. Delete user will be performed by admin user from Auth0 internally to reduce risk.
-    	String toAddress = null;
-    	List<User> users = userDAO.findByKeyword(null, "A", "A", null);
-    	if (users != null && !users.isEmpty()) {
-    		User adminUser = users.get(0);
-    		toAddress = adminUser.getEmail();
-    	}	
-    			
+        // Sends notification to admin user. Delete user will be performed by admin user from Auth0 internally to reduce risk.  			
     	Map<String, Object> context = new HashMap<String, Object>();
     	context.put("user", user);         	
-    	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_DELETE_USER, Constants.TEMPLATE_DELETE_USER, context);
-    	System.out.println("Delete user email sent: User=" + id + " ; Email=" + toAddress);
+    	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, Constants.C4SG_ADDRESS, Constants.SUBJECT_DELETE_USER, Constants.TEMPLATE_DELETE_USER, context);
+    	System.out.println("Delete user email sent: User=" + id);
 
     }
 		
