@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.c4sg.constant.Constants;
 import org.c4sg.dao.ApplicationDAO;
+import org.c4sg.dao.BookmarkDAO;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.ProjectSkillDAO;
@@ -19,6 +20,7 @@ import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Application;
+import org.c4sg.entity.Bookmark;
 import org.c4sg.entity.JobTitle;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
@@ -54,6 +56,9 @@ public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     private ApplicationDAO applicationDAO;
+    
+    @Autowired
+    private BookmarkDAO bookmarkDAO;
     
     @Autowired
     private ProjectSkillDAO projectSkillDAO;
@@ -248,7 +253,28 @@ public class ProjectServiceImpl implements ProjectService {
         sendEmail(user, project, status);
         
         return projectMapper.getProjectDtoFromEntity(project);
-    }    
+    } 
+    
+    public ProjectDTO saveBookmark(Integer userId, Integer projectId){
+    	
+    	User user = userDAO.findById(userId);
+        requireNonNull(user, "Invalid User Id");
+        Project project = projectDAO.findById(projectId);
+        requireNonNull(project, "Invalid Project Id");
+       
+        isBookmarked(userId, projectId);
+	    Bookmark bookmark = new Bookmark();
+	    bookmark.setUser(user);
+	    bookmark.setProject(project);	        
+	    bookmarkDAO.save(bookmark);
+	        //userProjectDAO.save(userProject);
+	    
+        
+        //sendEmail(user, project, status);
+        
+        return projectMapper.getProjectDtoFromEntity(project);
+    	
+    }
 
     public void deleteProject(int id) throws UserProjectException  {
         Project localProject = projectDAO.findById(id);
@@ -333,6 +359,20 @@ public class ProjectServiceImpl implements ProjectService {
     	for(Application application : applications)
     	{
     		if(application.getStatus().equals(status))
+        	{
+        		throw new UserProjectException("Record already exist");
+        	}
+    	}    	
+    }
+    
+    private void isBookmarked(Integer userId, Integer projectId) throws UserProjectException {
+
+    	List<Bookmark> bookmarks = bookmarkDAO.findByUser_IdAndProject_Id(userId, projectId);
+    	
+    	requireNonNull(bookmarks, "Invalid operation");
+    	for(Bookmark bookmark : bookmarks)
+    	{
+    		if(bookmark.getUser().getId().equals(userId) && bookmark.getProject().getId().equals(projectId))
         	{
         		throw new UserProjectException("Record already exist");
         	}

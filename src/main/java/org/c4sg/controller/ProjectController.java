@@ -204,12 +204,7 @@ public class ProjectController {
     		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
             @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId,
             @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
-            @RequestParam("userProjectStatus") String userProjectStatus
-            //@ApiParam(value="comment", defaultValue="default comment")
-    		//@RequestParam("comment") String comment,
-            //@ApiParam(value = "Resume flag, Y-Yes, N-No", allowableValues = "Y,N", required = false, defaultValue="N")
-            //@RequestParam("resumeFlag") String resumeFlag
-            ) {
+            @RequestParam("userProjectStatus") String userProjectStatus) {
     	
     	System.out.println("************** ProjectController.createUserProject()" 
                 + ": userId=" + userId 
@@ -221,7 +216,13 @@ public class ProjectController {
         	//comment and resumeFlag will be accepted as inputs to the REST API in the future
         	String comment = "default comment";
         	String resumeFlag = "N";
-        	projectService.saveApplication(userId, projectId, userProjectStatus, comment, resumeFlag);
+        	if(userProjectStatus.equals("B"))
+        	{
+        		projectService.saveBookmark(userId, projectId);
+        	}
+        	else{
+        		projectService.saveApplication(userId, projectId, userProjectStatus, comment, resumeFlag);
+        	}        	
             //projectService.saveUserProject(userId, projectId, userProjectStatus);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                       .path("/{id}/users/{userId}")
