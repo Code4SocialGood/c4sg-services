@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.c4sg.constant.Constants;
+import org.c4sg.dao.ApplicationDAO;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.ProjectSkillDAO;
@@ -17,6 +18,7 @@ import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.Application;
 import org.c4sg.entity.JobTitle;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
@@ -49,6 +51,9 @@ public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     private UserProjectDAO userProjectDAO;
+    
+    @Autowired
+    private ApplicationDAO applicationDAO;
     
     @Autowired
     private ProjectSkillDAO projectSkillDAO;
@@ -219,6 +224,31 @@ public class ProjectServiceImpl implements ProjectService {
         
         return projectMapper.getProjectDtoFromEntity(project);
     }
+    
+    public ProjectDTO saveApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag){
+    	
+    	User user = userDAO.findById(userId);
+        requireNonNull(user, "Invalid User Id");
+        Project project = projectDAO.findById(projectId);
+        requireNonNull(project, "Invalid Project Id");
+        if (status == null || (!status.equals("A") && !status.equals("C") && !status.equals("D"))) {
+        	throw new BadRequestException("Invalid Project Status");
+        } else {
+	        isRecordExist(userId, projectId, status);
+	        Application application = new Application();
+	        application.setUser(user);
+	        application.setProject(project);
+	        application.setStatus(status);
+	        application.setComment(comment);
+	        application.setResumeFlag(resumeFlag);
+	        applicationDAO.save(application);
+	        //userProjectDAO.save(userProject);
+	    }
+        
+        sendEmail(user, project, status);
+        
+        return projectMapper.getProjectDtoFromEntity(project);
+    }    
 
     public void deleteProject(int id) throws UserProjectException  {
         Project localProject = projectDAO.findById(id);
@@ -297,12 +327,12 @@ public class ProjectServiceImpl implements ProjectService {
 	        
     private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
 
-    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
+    	List<Application> applications = applicationDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
     	
-    	requireNonNull(userProjects, "Invalid operation");
-    	for(UserProject userProject : userProjects)
+    	requireNonNull(applications, "Invalid operation");
+    	for(Application application : applications)
     	{
-    		if(userProject.getStatus().equals(status))
+    		if(application.getStatus().equals(status))
         	{
         		throw new UserProjectException("Record already exist");
         	}
