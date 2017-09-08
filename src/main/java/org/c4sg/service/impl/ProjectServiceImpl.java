@@ -239,7 +239,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (status == null || (!status.equals("A") && !status.equals("C") && !status.equals("D"))) {
         	throw new BadRequestException("Invalid Project Status");
         } else {
-	        isRecordExist(userId, projectId, status);
+        	isApplied(userId, projectId, status);
 	        Application application = new Application();
 	        application.setUser(user);
 	        application.setProject(project);
@@ -351,7 +351,21 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 	        
-    private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
+	 private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
+
+	    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
+	    	
+	    	requireNonNull(userProjects, "Invalid operation");
+	    	for(UserProject userProject : userProjects)
+	    	{
+	    		if(userProject.getStatus().equals(status))
+	        	{
+	        		throw new UserProjectException("Record already exist");
+	        	}
+	    	}    	
+	    }
+    
+    private void isApplied(Integer userId, Integer projectId, String status) throws UserProjectException {
 
     	List<Application> applications = applicationDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
     	
