@@ -1,0 +1,1 @@
+ALTER TABLE organization MODIFY COLUMN name varchar(100);

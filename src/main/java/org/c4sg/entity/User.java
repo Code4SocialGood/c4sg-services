@@ -2,31 +2,22 @@ package org.c4sg.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Timestamp;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.c4sg.constant.UserStatus;
-import org.c4sg.constant.UserRole;
-import org.c4sg.converter.StatusConverter;
-import org.c4sg.converter.UserRoleConverter;
-
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 2014_04_17_001L;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-	
     @Column(name = "id", nullable = false, updatable = false)
     private Integer id;
 	
@@ -42,27 +33,24 @@ public class User implements Serializable {
     @Column(name = "email", nullable = false)
     private String email;
     
-    @Column(name = "phone")
-    private String phone;
-    
-    @Column(name = "city")
-    private String city;
-    
     @Column(name = "state")
     private String state;
     
     @Column(name = "country")
     private String country;
     
-    @Column(name = "zip")
-    private String zip;
-    
     @Column(name = "latitude")
     private BigDecimal latitude;
     
     @Column(name = "longitude")
     private BigDecimal longitude;
+
+    @Column(name = "phone")
+    private String phone;
     
+	@Column(name = "title")
+	private String title;	
+	
     @Column(name = "introduction")
     private String introduction;
     
@@ -75,43 +63,41 @@ public class User implements Serializable {
     @Column(name = "personal_url")
     private String personalUrl;   
     
-	@Column(name="github_url")
-	private String gitHubUrl;
+	@Column(name = "github_url")
+	private String githubUrl;
 	
     @Column(name = "resume_url")
     private String resumeUrl;
+    
+    @Column(name = "facebook_url")
+    private String facebookUrl;
+    
+    @Column(name = "twitter_url")
+    private String twitterUrl;
+    
+    @Column(name = "publish_flag", columnDefinition="char(1) default 'Y'", nullable = false)
+    private String publishFlag  = "Y";
 
-    @Convert(converter = UserRoleConverter.class)
+    @Column(name = "notify_flag", columnDefinition="char(1) default 'Y'", nullable = false)
+    private String notifyFlag  = "Y";
+    
+    @Column(name = "chat_username")
+    private String chatUsername;
+
     @Column(name = "role", columnDefinition="char(1)", nullable = false)
-    private UserRole role;
-
-    @Column(name = "public_profile_flag", columnDefinition="char(1)", nullable = false)
-    private String publicProfileFlag;
-
-    @Column(name = "chat_flag", columnDefinition="char(1)", nullable = false)
-    private String chatFlag;
-            
-    @Column(name = "forum_flag", columnDefinition="char(1)", nullable = false)
-    private String forumFlag;
-
-    @Column(name="developer_flag", columnDefinition="char(1)", nullable = false)
-    private String developerFlag;
-  
-    @Convert(converter = StatusConverter.class)
-    @Column(name = "status", columnDefinition="char(1)", nullable = false)
-    private UserStatus status;
+    private String role;
+    
+    @Column(columnDefinition="char(1) default 'A'", nullable = false)
+    private String status = "A";
      
 	@Column(name = "created_time")
-	private Date createdTime;
+	private Timestamp createdTime;
 		
 	@Column(name = "updated_time")
-	private Date updatedTime;
+	private Timestamp updatedTime;
 	
-	@Column(name = "title")
-	private String title;	
-
-	@Column(name="developer_commit", columnDefinition="int", nullable=true)
-	private Integer developerCommit;
+    @Column(name = "job_title_id")
+    private Integer jobTitleId;
 	
 	public Integer getId() {
 		return id;
@@ -153,22 +139,6 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
 	public String getState() {
 		return state;
 	}
@@ -185,14 +155,6 @@ public class User implements Serializable {
 		this.country = country;
 	}
 	
-	public String getZip()
-	{
-		return this.zip;
-	}
-	public void setZip(String zip){
-		this.zip = zip;
-	}
-
 	public BigDecimal getLatitude() {
 		return latitude;
 	}
@@ -209,6 +171,22 @@ public class User implements Serializable {
 		this.longitude = longitude;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone= phone;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title= title;
+	}
+	
 	public String getIntroduction() {
 		return introduction;
 	}
@@ -232,6 +210,14 @@ public class User implements Serializable {
 	public void setLinkedinUrl(String linkedinUrl) {
 		this.linkedinUrl = linkedinUrl;
 	}
+	
+	public String getGithubUrl() {
+		return githubUrl;
+	}
+
+	public void setGithubUrl(String githubUrl) {
+		this.githubUrl = githubUrl;
+	}
 
 	public String getPersonalUrl() {
 		return personalUrl;
@@ -249,91 +235,83 @@ public class User implements Serializable {
 		this.resumeUrl = resumeUrl;
 	}
 	
-	public UserRole getRole() {
+	public String getFacebookUrl() {
+		return facebookUrl;
+	}
+
+	public void setFacebookUrl(String facebookUrl) {
+		this.facebookUrl = facebookUrl;
+	}
+
+	public String getTwitterUrl() {
+		return twitterUrl;
+	}
+
+	public void setTwitterUrl(String twitterUrl) {
+		this.twitterUrl = twitterUrl;
+	}
+	
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(UserRole role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 
-	public String getPublicProfileFlag() {
-		return publicProfileFlag;
+	public String getPublishFlag() {
+		return publishFlag;
 	}
 
-	public void setPublicProfileFlag(String publicProfileFlag) {
-		this.publicProfileFlag = publicProfileFlag;
+	public void setPublishFlag(String publishFlag) {
+		this.publishFlag = publishFlag;
 	}
 
-	public String getChatFlag() {
-		return chatFlag;
+	public String getNotifyFlag() {
+		return notifyFlag;
 	}
 
-	public void setChatFlag(String chatFlag) {
-		this.chatFlag = chatFlag;
+	public void setNotifyFlag(String notifyFlag) {
+		this.notifyFlag = notifyFlag;
+	}
+	
+	public String getChatUsername() {
+		return chatUsername;
 	}
 
-	public String getForumFlag() {
-		return forumFlag;
+	public void setChatUsername(String chatUsername) {
+		this.chatUsername = chatUsername;
 	}
 
-	public void setForumFlag(String forumFlag) {
-		this.forumFlag = forumFlag;
-	}
-
-	public String getDeveloperFlag() {
-		return developerFlag;
-	}
-
-	public void setDeveloperFlag(String developerFlag) {
-		this.developerFlag = developerFlag;
-	}
-
-	public UserStatus getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(UserStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
-	public Date getCreatedTime() {
+	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Date createdTime) {
+	public void setCreatedTime(Timestamp createdTime) {
 		this.createdTime = createdTime;
 	}
 
-	public Date getUpdatedTime() {
+	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Date updatedTime) {
+	public void setUpdatedTime(Timestamp updatedTime) {
 		this.updatedTime = updatedTime;
 	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title= title;
-	}
 	
-	public String getGitHubUrl() {
-		return gitHubUrl;
+	public Integer getJobTitleId() {
+		return jobTitleId;
 	}
 
-	public void setGitHubUrl(String gitHubUrl) {
-		this.gitHubUrl = gitHubUrl;
+	public void setJobTitleId(Integer jobTitleId) {
+		this.jobTitleId = jobTitleId;
 	}
-	
-	public Integer getDeveloperCommit(){
-		return developerCommit;
-	}
-	public void setDeveloperCommit(Integer developerCommit){
-		this.developerCommit = developerCommit;
-	}
-   
 }

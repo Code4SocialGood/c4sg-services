@@ -1,86 +1,74 @@
 package org.c4sg.mapper;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
+import org.c4sg.dto.ApplicantDTO;
+import org.c4sg.dto.CreateUserDTO;
 import org.c4sg.dto.UserDTO;
 import org.c4sg.entity.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTReader;
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 @Component
 public class UserMapper extends ModelMapper {
 	
-	UserMapper() {
-	}
-	
-	/**
-	 * Map user entity into data transfer object
-	 * 
-	 * @param user User Entity
-	 * @return UserDTO
-	 */
+	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+			
 	public UserDTO getUserDtoFromEntity(User user){
-		//convert geometry object to a point
-		Geometry g = null;
-		com.vividsolutions.jts.geom.Point point = null;		
-		WKTReader reader = new WKTReader();
-		//try {
-		//	g = reader.read(user.getLocation().toText());
-		//	point = (com.vividsolutions.jts.geom.Point) g;
-		//}
-		//catch (Exception e) {
-		//	//do nothing
-		//}
-		//start mapping data into the dto
 		if (user == null)
 			return null;
 		
 		UserDTO userDTO = map(user, UserDTO.class);
-		//add mapping for location if point object is not null
-//		if (point != null) {
-//			org.springframework.data.geo.Point gp = new Point(point.getX(), point.getY());
-//			userDTO.setLongitude(Double.toString(point.getX()));
-//			userDTO.setLatitude(Double.toString(point.getY()));
-//		}
-//		userDTO.setPublicProfileFlag((user.getPublicProfileFlag() != null && user.getPublicProfileFlag().booleanValue()) ? "Y" : "N");
-//		userDTO.setChatFlag((user.getChatFlag() != null && user.getChatFlag().booleanValue()) ? "Y" : "N");
-//		userDTO.setForumFlag((user.getForumFlag() != null && user.getForumFlag().booleanValue()) ? "Y" : "N");
-//		userDTO.setDeveloperFlag((user.getDeveloperFlag() != null && user.getDeveloperFlag().booleanValue()) ? "Y" : "N");
-		
 		return userDTO;
 	}
 	
-	/**
-	 * Map user data transfer object into user entity
-	 * 
-	 * @param userDTO User Data Transfer object
-	 * @return User
-	 */	
 	public User getUserEntityFromDto(UserDTO userDTO){
 		User user = map(userDTO, User.class);
-		/*
-		if (userDTO.getLatitude() != null && userDTO.getLongitude() != null){
-			GeometryFactory gf = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING));
-			Coordinate coordinate = new Coordinate(Double.parseDouble(userDTO.getLongitude()),
-					Double.parseDouble(userDTO.getLatitude()));
-			com.vividsolutions.jts.geom.Point point = gf.createPoint(coordinate);	
-			user.setLocation(point);			
-		}*/
-//		user.setPublicProfileFlag(Boolean.valueOf(userDTO.getPublicProfileFlag()));
-//		user.setDeveloperFlag(Boolean.valueOf(userDTO.getDeveloperFlag()));
-//		user.setForumFlag(Boolean.valueOf(userDTO.getForumFlag()));
-//		user.setChatFlag(Boolean.valueOf(userDTO.getChatFlag()));
 		return user;
 	}
 
 	public List<UserDTO> getDtosFromEntities(List<User> projects){
 		Type listTypeDTO = new TypeToken<List<UserDTO>>() {}.getType();
 		return map(projects, listTypeDTO);
+	}
+	
+	public User getUserEntityFromCreateUserDto(CreateUserDTO createUserDTO) {
+		return map(createUserDTO, User.class);
+	}
+	
+	public List<ApplicantDTO> getApplicantDTOs(List<Object[]> applicants) {
+		
+		List<ApplicantDTO> applicantList = new ArrayList<>();
+		Iterator<Object[]> iter = applicants.iterator();
+		while (iter.hasNext()) {
+			Object[] o = iter.next();
+			ApplicantDTO applicant = new ApplicantDTO();
+			applicant.setUserId((Integer)o[0]);
+			applicant.setProjectId((Integer)o[1]);
+			applicant.setFirstName((String)o[2]);
+			applicant.setLastName((String)o[3]);
+			applicant.setTitle((String)o[4]);
+			if (o[5] != null) {
+				applicant.setAppliedTime(new SimpleDateFormat(DATE_FORMAT).format(o[5]));
+				applicant.setApplicationStatus("A");
+			} 	
+			if (o[6] != null) {
+				applicant.setAcceptedTime(new SimpleDateFormat(DATE_FORMAT).format(o[6]));
+				applicant.setApplicationStatus("C");
+			} 	
+			if (o[7] != null) {
+				applicant.setDeclinedTime(new SimpleDateFormat(DATE_FORMAT).format(o[7]));
+				applicant.setApplicationStatus("D");
+			} 	
+			
+			applicantList.add(applicant);
+		}
+		return applicantList;
 	}
 }

@@ -1,49 +1,22 @@
 package org.c4sg.controller;
 
-import static org.c4sg.constant.Directory.AVATAR_UPLOAD;
-import static org.c4sg.constant.Directory.RESUME_UPLOAD;
+import io.swagger.annotations.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.c4sg.dto.ApplicantDTO;
+import org.c4sg.dto.CreateUserDTO;
+import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.UserDTO;
-import org.c4sg.exception.NotFoundException;
+import org.c4sg.exception.UserServiceException;
+import org.c4sg.service.ProjectService;
 import org.c4sg.service.UserService;
-import org.c4sg.util.FileUploadUtil;
-import org.c4sg.util.GeoCodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.util.List;
+import javax.validation.constraints.Pattern;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -51,201 +24,177 @@ import io.swagger.annotations.ApiResponses;
 @Api(description = "Operations about Users", tags = "user")
 public class UserController {
     private static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
+    
+    @Autowired
+    private ProjectService projectService;
+    
     @Autowired
     private UserService userService;
-
-    @CrossOrigin
-    @RequestMapping(value = "/active", method = RequestMethod.GET)
-    @ApiOperation(value = "Find users, with status applied", notes = "Returns a collection of active users")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
-                value = "Results page you want to retrieve (0..N)"),
-        @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
-                value = "Number of records per page."),
-        @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
-                value = "Sorting criteria in the format: property(,asc|desc). " +
-                        "Default sort order is ascending. " +
-                        "Multiple sort criteria are supported.")})
-    public Page<UserDTO> getActiveUsers(Pageable pageable) {
-        LOGGER.debug("**************All**************");
-        return userService.findActiveUsers(pageable);
-    }
-
+    
+	@CrossOrigin
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Find all users", notes = "Returns a collection of users")
     public List<UserDTO> getUsers() {
+		
+    	System.out.println("************** UserController.getUsers() **************");
+    	
         return userService.findAll();
     }
-
+    
+	@CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find user by ID", notes = "Returns a user")
-    public UserDTO getUser(@ApiParam(value = "ID of user to return", required = true)
-                           @PathVariable("id") int id) {
+    public UserDTO getUser(
+    		@ApiParam(value = "ID of user to return", required = true) @PathVariable("id") int id) {
+		
+    	System.out.println("************** UserController.getUser()" 
+                + ": id=" + id  
+                + " **************");
+    	
         return userService.findById(id);
+    }
+
+	@CrossOrigin
+    @RequestMapping(value = "/organization/{orgId}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find users by Organization ID", notes = "Returns a list of users from this organization")
+    public List<UserDTO> getUsersInOrganization(
+    		@ApiParam(value = "ID of organization to return users", required = true) @PathVariable("orgId") int orgId) {
+		
+    	System.out.println("************** UserController.getUsersInOrganization()" 
+                + ": orgId=" + orgId  
+                + " **************");
+    	
+        return userService.findByOrgId(orgId);
     }
     
     @CrossOrigin
     @RequestMapping(value = "/email/{email}/", method = RequestMethod.GET)
     @ApiOperation(value = "Find user by email", notes = "Returns a user")
-    public UserDTO getUserByEmail(@ApiParam(value = "email address", required = true)
-                               @PathVariable("email") String email) {  	
-    	return userService.findByEmail(email);
+    public UserDTO getUserByEmail(
+    		@ApiParam(value = "email address", required = true) @PathVariable("email") String email) {
+    	
+    	System.out.println("************** UserController.getUserByEmail()" 
+                + ": email=" + email  
+                + " **************");
+    	
+        return userService.findByEmail(email);
     }
     
+	@CrossOrigin
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new user")
-    public UserDTO createUser(@ApiParam(value = "User object to return", required = true)
-                              @RequestBody UserDTO userDTO) {
-    	//calculate lat and long
-    	try {
-        	GeoCodeUtil geoCodeUtil = new GeoCodeUtil(userDTO);
-        	Map<String,BigDecimal> geoCode = geoCodeUtil.getGeoCode();
-			userDTO.setLatitude(geoCode.get("lat"));
-		    userDTO.setLongitude(geoCode.get("lon"));
-			
-		} catch (Exception e) {
-			
-			throw new NotFoundException("Error getting geocode");
-		}       
-       
-    	return userService.saveUser(userDTO);
-    }
+    public UserDTO createUser(
+    		@ApiParam(value = "User object to return", required = true) @RequestBody CreateUserDTO createUserDTO) {
 
-    @RequestMapping(method = RequestMethod.PUT)
-    @ApiOperation(value = "Update an existing user")
-    public UserDTO updateUser(@ApiParam(value = "Updated user object", required = true)
-                              @RequestBody UserDTO userDTO) {
-        return userService.saveUser(userDTO);
-    }
-
-    @RequestMapping(value = "/developers", method = RequestMethod.GET)
-    @ApiOperation(value = "Find developers", notes = "Retrieve the users who are c4sg developers and who set their public display to be true. Sort the users by their Github commits in descending order.")
-    public List<UserDTO> getDevelopers() {
-        return userService.findDevelopers();
-    }
-
-    @CrossOrigin
-    @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of projects")
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "Applicants not found")})
-    public ResponseEntity<List<UserDTO>> getApplicants(@ApiParam(value = "ID of project", required = true)
-                                                       @PathVariable("id") Integer projectId) {
-        List<UserDTO> applicants = userService.getApplicants(projectId);
-
-        if (!applicants.isEmpty()) {
-            return ResponseEntity.ok().body(applicants);
-        } else {
-            throw new NotFoundException("Applicants not found");
+    	System.out.println("************** UserController.createUser()" 
+                + ": createUserDTO=" + createUserDTO  
+                + " **************");
+    	
+        try {
+            return userService.createUser(createUserDTO);
+        } catch (Exception e) {
+            throw new UserServiceException("Error creating user entity: " + e.getCause().getMessage());
         }
     }
-
+    
+	@CrossOrigin
+    @RequestMapping(method = RequestMethod.PUT)
+    @ApiOperation(value = "Update an existing user")
+    public UserDTO updateUser(
+    		@ApiParam(value = "Updated user object", required = true) @RequestBody UserDTO userDTO) {
+		
+    	System.out.println("************** UserController.updateUser()" 
+                + ": userDTO=" + userDTO  
+                + " **************");
+    	
+        try {
+        	return userService.saveUser(userDTO);
+        } catch (Exception e) {
+            throw new UserServiceException("Error creating user entity: " + e.getCause().getMessage());
+        }
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
+    public List<ApplicantDTO> getApplicants(
+    		@ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
+    	
+    	System.out.println("************** UserController.getApplicants()" 
+                + ": projectId=" + projectId  
+                + " **************");
+    	
+        return userService.getApplicants(projectId);
+    }
+    
+	@CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete a user")
-    public void deleteUser(@ApiParam(value = "User id to delete", required = true)
-                           @PathVariable("id") int id) {
-       LOGGER.debug("************** Delete : id=" + id + "**************");
+    public void deleteUser(
+    		@ApiParam(value = "User id to delete", required = true) @PathVariable("id") int id) {
+
+    	System.out.println("************** UserController.deleteUser()" 
+                + ": id=" + id  
+                + " **************");
+    	
         try {
             userService.deleteUser(id);
         } catch (Exception e) {
-           LOGGER.error("Exception on delete user:", e);
+            LOGGER.error("Exception on delete user:", e);
         }
     }
-
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    @ApiOperation(value = "Find a user by keyWord", notes = "Returns a collection of users")
-    public List<UserDTO> search(@RequestParam(required = false) String keyWord,
-                                @RequestParam(required = false) List<Integer> skills){
-        return userService.search(keyWord,skills);
-    }
     
-    @RequestMapping(value = "/{id}/avatar", method = RequestMethod.POST)
-	@ApiOperation(value = "Add new upload Avatar")
-	public String uploadAvatar(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
-			@ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
+	@CrossOrigin
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @ApiOperation(value = "Find a user by keyWord, skills, status, role or publicFlag", notes = "Returns a collection of users")
+    public Page<UserDTO> getUsers(
+    		@ApiParam(value = "Keyword like name , title, introduction, state, country") @RequestParam(required=false) String keyWord,
+            @ApiParam(value = "Job Titles of the user")	@RequestParam(required = false)  List<Integer> jobTitles,
+            @ApiParam(value = "Skills of the User") @RequestParam(required = false) List<Integer> skills,
+            @ApiParam(value = "Status of the User") @Pattern(regexp="[AD]")  @RequestParam(required = false) String status,
+    		@ApiParam(value = "User Role") @Pattern(regexp="[VOA]") @RequestParam(required = false) String role,
+			@ApiParam(value = "User Public Flag") @Pattern(regexp="[YN]") @RequestParam(required = false) String publishFlag,
+			@ApiParam(value = "Results page you want to retrieve (0..N)", required=false) @RequestParam(required=false) Integer page,
+    		@ApiParam(value = "Number of records per page", required=false) @RequestParam(required=false) Integer size) {
+		
+    	System.out.println("************** UserController.getUsers()" 
+                + ": keyWord=" + keyWord  
+                + "; jobTitles=" + jobTitles  
+                + "; skills=" + skills  
+                + "; status=" + status  
+                + "; role=" + role  
+                + "; publishFlag=" + publishFlag  
+                + "; page=" + page  
+                + "; size=" + size                  
+                + " **************");
+    	
+        return userService.search(keyWord, jobTitles, skills, status, role, publishFlag, page, size);
+    }
+        
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/avatar", params = "imgUrl", method = RequestMethod.PUT)
+	@ApiOperation(value = "Upload a user avatar image")
+	public void saveAvatar(
+			@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
+			@ApiParam(value = "Image Url", required = true) @RequestParam("imgUrl") String url) {
 
-		String contentType = file.getContentType();
-		if (!FileUploadUtil.isValidImageFile(contentType)) {
-			return "Invalid image File! Content Type :-" + contentType;
-		}
-		File directory = new File(AVATAR_UPLOAD.getValue());
-		if (!directory.exists()) {
-			directory.mkdir();
-		}
-		File f = new File(userService.getAvatarUploadPath(id));
-		try (FileOutputStream fos = new FileOutputStream(f)) {
-			byte[] imageByte = file.getBytes();
-			fos.write(imageByte);
-			return "Success";
-		} catch (Exception e) {
-			return "Error saving avatar for User " + id + " : " + e;
-		}
+    	System.out.println("************** UserController.saveAvatar()" 
+                + ": id=" + id  
+                + "; url=" + url                  
+                + " **************");
+    	
+    	userService.saveAvatar(id, url);
 	}
     
     @CrossOrigin
-    @RequestMapping(value = "/{id}/avatar", method = RequestMethod.GET)
-    @ApiOperation(value = "Retrieves user avatar")
-    public String retrieveAvatar(@ApiParam(value = "User id to get avatar for", required = true)
-                                         @PathVariable("id") int id) {
-        File avatar = new File(userService.getAvatarUploadPath(id));
-        try {
-			FileInputStream fileInputStreamReader = new FileInputStream(avatar);
-            byte[] bytes = new byte[(int) avatar.length()];
-            fileInputStreamReader.read(bytes);
-            fileInputStreamReader.close();
-            return new String(Base64.encodeBase64(bytes));
-        } catch (IOException e) {
-            e.printStackTrace();
-        return null;
-        }
+    @RequestMapping(value="/jobTitles", method = RequestMethod.GET)
+    @ApiOperation(value = "Get a list of job titles")
+    public List<JobTitleDTO> getJobTitles() {
+    	
+    	System.out.println("************** UserController.getJobTitles() **************");
+    	
+        return projectService.findJobTitles();
+
     }
 
-	@RequestMapping(value = "/{id}/resume", method = RequestMethod.POST)
-	@ApiOperation(value = "Add new upload resume")
-	public String uploadResume(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
-			@ApiParam(value = "Resume File(.pdf)", required = true) @RequestPart("file") MultipartFile file) {
-
-		String contentType = file.getContentType();
-		if (!FileUploadUtil.isValidResumeFile(contentType)) {
-			return "Invalid pdf File! Content Type :-" + contentType;
-		}
-		File directory = new File(RESUME_UPLOAD.getValue());
-		if (!directory.exists()) {
-			directory.mkdir();
-		}
-		File f = new File(userService.getResumeUploadPath(id));
-		try (FileOutputStream fos = new FileOutputStream(f)) {
-			byte[] fileByte = file.getBytes();
-			fos.write(fileByte);
-			return "Success";
-		} catch (Exception e) {
-			return "Error saving resume for User " + id + " : " + e;
-		}
-	}
-	
-	
-	
-	@CrossOrigin
-    @RequestMapping(value = "/{id}/resume", method = RequestMethod.GET)
-    @ApiOperation(value = "Retrieves user resume")
-	@ResponseBody
-    public HttpEntity<byte[]> retrieveProjectImage(@ApiParam(value = "User id to get resume for", required = true)
-                                         @PathVariable("id") int id) {
-        File resume = new File(userService.getResumeUploadPath(id));
-        try {
-        	FileInputStream fileInputStreamReader = new FileInputStream(resume);
-            byte[] bytes = new byte[(int) resume.length()];
-            fileInputStreamReader.read(bytes);
-            fileInputStreamReader.close();
-            HttpHeaders header = new HttpHeaders();
-            header.setContentType(MediaType.APPLICATION_PDF);
-            header.setContentLength(bytes.length);
-
-            return new HttpEntity<byte[]>(bytes, header);
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        return null;
-        }
-    }
 }

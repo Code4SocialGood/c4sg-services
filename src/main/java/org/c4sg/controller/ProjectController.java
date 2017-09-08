@@ -2,34 +2,28 @@ package org.c4sg.controller;
 
 import io.swagger.annotations.*;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.c4sg.dto.CreateProjectDTO;
-import org.c4sg.dto.OrganizationDTO;
+import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
-import org.c4sg.entity.Project;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ProjectService;
-import org.c4sg.util.FileUploadUtil;
-import org.hibernate.jpa.criteria.predicate.ExistsPredicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 
-import static org.c4sg.constant.Directory.PROJECT_UPLOAD;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,44 +34,76 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/projects")
 @Api(description = "Operations about Projects", tags = "project")
+@Validated
 public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+    
+    private final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Find all projects", notes = "Returns a collection of projects")
     public List<ProjectDTO> getProjects() {
+    	
+    	System.out.println("************** ProjectController.getProjects() **************");
+    	
         return projectService.findProjects();
     }
 
     @CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find project by ID", notes = "Returns a single project")
-    public Project getProject(@ApiParam(value = "ID of project to return", required = true)
-                              @PathVariable("id") int id) {
-        System.out.println("**************ID**************" + id);
-        return projectService.findById(id);
+    public ProjectDTO getProject(
+    		@ApiParam(value = "ID of project to return", required = true) @PathVariable("id") int id) {
+    	
+    	System.out.println("************** ProjectController.getProject()" 
+                + ": id=" + id 
+                + " **************");
+        
+    	return projectService.findById(id);
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/organizations/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find projects by Organization ID", notes = "Returns a list of projects")
-    public List<Project> getProjectsByOrganization(@ApiParam(value = "ID of an organization", required = true)
-                                                   @PathVariable("id") int orgId) {
-        System.out.println("**************OrganizationID**************" + orgId);
-        return projectService.findByOrganization(orgId);
+    @RequestMapping(value = "/organization", method = RequestMethod.GET)
+    @ApiOperation(value = "Find projects by Organization ID and projet status", notes = "Returns a list of projects")
+    public List<ProjectDTO> getProjectsByOrganization(
+    		@ApiParam(value = "ID of an organization", required = true) @RequestParam("organizationId") int organizationId,
+            @ApiParam(value = "project status, A-ACTIVE, C-Closed, N-New", allowableValues = "A, C, N")	@RequestParam (required = false) String projectStatus)	
+            throws ProjectServiceException {
+    	
+    	System.out.println("************** ProjectController.getProjectsByOrganization()"
+    			+ ": organizationId=" + organizationId 
+    			+ "; projectStatus=" + projectStatus 
+    			+ " **************");
+    	
+        return projectService.findByOrganization(organizationId, projectStatus);
     }
 
     @CrossOrigin
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    @ApiOperation(value = "Find project by keyWord or skills list", notes = "Returns a collection of projects")
-    public List<ProjectDTO> getProjects(@ApiParam(value = "Keyword of project(s) to return")
-                                        @RequestParam(required=false) String keyWord,
-                                        @ApiParam(value = "Skills for projects to return")
-                                        @RequestParam(required = false) List<Integer> skills) {
-        return projectService.findByKeyword(keyWord,skills);
+    @ApiOperation(value = "Find ACTIVE project by keyWord or skills", notes = "Returns a collection of active projects")
+    public Page<ProjectDTO> getProjects(
+    		@ApiParam(value = "Keyword of the project") @RequestParam(required=false) String keyWord,
+            @ApiParam(value = "Job Titles of the project") @RequestParam(required = false)  List<Integer> jobTitles,
+            @ApiParam(value = "Skills of the project") @RequestParam(required = false) List<Integer> skills,
+            @ApiParam(value = "Status of the project") @Pattern(regexp="[AC]")  @RequestParam(required = false) String status,
+    		@ApiParam(value = "Location of the project") @Pattern(regexp="[YN]") @RequestParam(required = false) String remote,
+    		@ApiParam(value = "Results page you want to retrieve (0..N)", required=false) @RequestParam(required=false) Integer page,
+    		@ApiParam(value = "Number of records per page",required=false) @RequestParam(required=false) Integer size) {
+    	
+    	System.out.println("************** ProjectController.getProjects()"
+    			+ ": keyWord=" + keyWord 
+    			+ "; jobTitles=" + jobTitles 
+    			+ "; skills=" + skills 
+    			+ "; status=" + status 
+    			+ "; remote=" + remote 
+    			+ "; page=" + page 
+    			+ "; size=" + size 
+    			+ " **************");
+    	
+        return projectService.search(keyWord, jobTitles, skills, status, remote, page, size);
     }
 
     @CrossOrigin
@@ -89,32 +115,38 @@ public class ProjectController {
     				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
     		response =ProjectDTO.class , 
     		responseContainer = "List")
-    @ApiResponses(value = { 
-    		@ApiResponse(code = 404, message = "Missing required input")})  
-    public List<ProjectDTO> getUserProjects(@ApiParam(value = "User ID", required = true)
-    										@RequestParam Integer userId,
-                                        	@ApiParam(value = "User project status, A-Applied, B-Bookmarked", allowableValues = "A, B")
-    										@RequestParam (required = false) String userProjectStatus)	
-                                        			throws ProjectServiceException {
-    	System.out.println("************** Find Projects for User **************");
+    	@ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
+    public List<ProjectDTO> getUserProjects(
+    		@ApiParam(value = "User ID", required = true) @RequestParam Integer userId,
+    		@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
+    		@RequestParam (required = false) String userProjectStatus)	
+            throws ProjectServiceException {
+    	
+    	System.out.println("************** ProjectController.getUserProjects()" 
+                  + ": UserId=" + userId 
+                  + "; Status=" + userProjectStatus 
+                  + " **************");
+    	
         return projectService.findByUser(userId, userProjectStatus);
     }
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new project")
-    public Map<String, Object> createProject(@ApiParam(value = "Project object to return", required = true)
-                                             @RequestBody @Valid CreateProjectDTO createProjectDTO) {
+    public Map<String, Object> createProject(
+    		@ApiParam(value = "Project object to return", required = true)  @RequestBody @Valid CreateProjectDTO createProjectDTO) {
 
-        System.out.println("************** Add **************");
+    	logger.debug("************** ProjectController.createProject()" 
+                + ": createProjectDTO=" + createProjectDTO 
+                + " **************");
 
         Map<String, Object> responseData = null;
         try {
-            Project createProject = projectService.createProject(createProjectDTO);
+            ProjectDTO createProject = projectService.createProject(createProjectDTO);
             responseData = Collections.synchronizedMap(new HashMap<>());
             responseData.put("project", createProject);
         } catch (Exception e) {
-            System.out.println(e);
+            logger.error("Exception -", e);
         }
 
         return responseData;
@@ -124,10 +156,12 @@ public class ProjectController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Deletes a project")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProject(@ApiParam(value = "Project id to delete", required = true)
-                              @PathVariable("id") int id) {
+    public void deleteProject(
+    			@ApiParam(value = "Project id to delete", required = true) @PathVariable("id") int id) {
 
-        System.out.println("************** Delete : id=" + id + "**************");
+    	System.out.println("************** ProjectController.deleteProject()" 
+                + ": id=" + id 
+                + " **************");
 
         try {
             projectService.deleteProject(id);
@@ -139,15 +173,17 @@ public class ProjectController {
     @CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ApiOperation(value = "Update an existing project")
-    public Map<String, Object> updateProject(@ApiParam(value = "Updated project object", required = true)
-                                             @RequestBody @Valid Project project) {
+    public Map<String, Object> updateProject(
+    		@ApiParam(value = "Updated project object", required = true) @RequestBody @Valid ProjectDTO project) {
 
-        System.out.println("**************Update : id=" + project.getId() + "**************");
+    	System.out.println("************** ProjectController.updateProject()" 
+                + ": project=" + project 
+                + " **************");
 
         Map<String, Object> responseData = null;
 
         try {
-            Project updateProject = projectService.updateProject(project);
+            ProjectDTO updateProject = projectService.updateProject(project);
             responseData = Collections.synchronizedMap(new HashMap<>());
             responseData.put("project", updateProject);
         } catch (Exception e) {
@@ -164,86 +200,55 @@ public class ProjectController {
             @ApiResponse(code = 404, message = "ID of project or user invalid")
     })
     //TODO: Replace explicit user{id} with AuthN user id.
-    public ResponseEntity<?> createUserProject(@ApiParam(value = "ID of user", required = true)
-                                               @PathVariable("userId") Integer userId,
-                                               @ApiParam(value = "ID of project", required = true)
-                                               @PathVariable("id") Integer projectId) {
+    public ResponseEntity<?> createUserProject(
+    		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
+            @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId,
+            @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
+            @RequestParam("userProjectStatus") String userProjectStatus) {
+    	
+    	System.out.println("************** ProjectController.createUserProject()" 
+                + ": userId=" + userId 
+                + "; projectId=" + projectId 
+                + "; userProjectStatus=" + userProjectStatus 
+                + " **************");
+    	
         try {
-            projectService.saveUserProject(userId, projectId);
+            projectService.saveUserProject(userId, projectId, userProjectStatus);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                       .path("/{id}/users/{userId}")
-                                                      .buildAndExpand(projectId, userId).toUri();
-            return ResponseEntity.created(location).build();
-        } catch (NullPointerException | UserProjectException e) {
-            throw new NotFoundException("ID of project or user invalid");
-        }
-    }
-
-    @RequestMapping(value = "/{id}/image", method = RequestMethod.POST)
-   	@ApiOperation(value = "Add new image file for project")
-   	public String uploadImage(@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
-   			@ApiParam(value = "Image File", required = true) @RequestPart("file") MultipartFile file) {
-
-   		String contentType = file.getContentType();
-   		if (!FileUploadUtil.isValidImageFile(contentType)) {
-   			return "Invalid image File! Content Type :-" + contentType;
-   		}
-   		File directory = new File(PROJECT_UPLOAD.getValue());
-   		if (!directory.exists()) {
-   			directory.mkdir();
-   		}
-   		File f = new File(projectService.getImageUploadPath(id));
-   		try (FileOutputStream fos = new FileOutputStream(f)) {
-   			byte[] imageByte = file.getBytes();
-   			fos.write(imageByte);
-   			return "Success";
-   		} catch (Exception e) {
-   			return "Error saving image for Project " + id + " : " + e;
-   		}
-   	}
-
-    @CrossOrigin
-    @RequestMapping(value = "/{id}/image", method = RequestMethod.GET)
-    @ApiOperation(value = "Retrieves project image")
-    public String retrieveImage(@ApiParam(value = "Project id to get image for", required = true)
-                                         @PathVariable("id") int id) {
-        File image = new File(projectService.getImageUploadPath(id));
-        try {
-			FileInputStream fileInputStreamReader = new FileInputStream(image);
-            byte[] bytes = new byte[(int) image.length()];
-            fileInputStreamReader.read(bytes);
-            fileInputStreamReader.close();
-            return new String(Base64.encodeBase64(bytes));
-        } catch (IOException e) {
-            e.printStackTrace();
-        return null;
-        }
-    }
-
-    @CrossOrigin
-    @RequestMapping(value = "/bookmark/projects/{projectId}/users/{userId}", method = RequestMethod.POST)
-    @ApiOperation(value = "Create a bookmark for a project")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Invalid project or user")
-    })
-    //TODO: Replace explicit user{id} with AuthN user id.
-    public ResponseEntity<?> createUserProjectBookmark(@ApiParam(value = "Project ID", required = true)
-                                               @PathVariable("projectId") Integer projectId,
-                                               @ApiParam(value = "User ID", required = true)
-                                               @PathVariable("userId") Integer userId) {
-        try {
-            projectService.saveUserProjectBookmark(userId, projectId);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                                                      .path("/bookmark/projects/{projectId}/users/{userId}")
-                                                      .buildAndExpand(projectId, userId).toUri();
+                                                      .buildAndExpand(projectId, userId, userProjectStatus).toUri();
             return ResponseEntity.created(location).build();
         } catch (NullPointerException e) {
-            throw new NotFoundException(e.getMessage());
+            throw new NotFoundException("ID of project or user invalid");
         }
-        catch(UserProjectException e){
-        	throw new BadRequestException(e.getErrorMessage());
+        catch (UserProjectException | BadRequestException e) {
+        	throw e;
         }
     }
+        
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/image", params = "imgUrl", method = RequestMethod.PUT)
+	@ApiOperation(value = "Upload a project image")
+	public void saveImage(
+			@ApiParam(value = "project Id", required = true) @PathVariable("id") Integer id,
+			@ApiParam(value = "Image Url", required = true)	@RequestParam("imgUrl") String url) {
+
+    	System.out.println("************** ProjectController.saveImage()" 
+                + ": id=" + id 
+                + "; url=" + url 
+                + " **************");
+    	
+    	projectService.saveImage(id, url);
+	}
     
+    @CrossOrigin
+    @RequestMapping(value="/jobTitles", method = RequestMethod.GET)
+    @ApiOperation(value = "Get a list of job titles")
+    public List<JobTitleDTO> getJobTitles() {
+    	
+    	System.out.println("************** ProjectController.getJobTitles() **************");
+    	
+        return projectService.findJobTitles();
+    }
 }
 

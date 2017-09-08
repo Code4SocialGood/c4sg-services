@@ -23,12 +23,15 @@ repositories {
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.40'
     compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
     compile group: 'com.vividsolutions', name: 'jts', version: '1.13'
     compile group: 'com.bedatadriven', name: 'jackson-datatype-jts', version: '2.3'
+    compile group: 'com.sendgrid', name: 'sendgrid-java', version: '4.0.1'
     compile group: 'org.hibernate', name: 'hibernate-spatial', version: '5.0.11.Final'
     compile group: 'org.flywaydb', name: 'flyway-core', version: '3.2.1'
     compile group: 'org.apache.commons', name: 'commons-email', version: '1.4'
@@ -37,7 +40,9 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.4.0'
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.3.3'
     compile group: 'net.minidev', name: 'json-smart', version: '2.2.1'
+    compile 'com.auth0:auth0-spring-security-api:1.0.0-rc.2'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    testCompile group: 'com.icegreen', name: 'greenmail', version: '1.5.5'
 }
 
 task wrapper(type: Wrapper) {

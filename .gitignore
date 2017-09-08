@@ -25,6 +25,7 @@ out/
 .idea/
 *.iws
 *.ipr
+c4sg-services.iml
 
 # NetBeans
 nbproject/private/
@@ -39,3 +40,7 @@ bin/
 .factorypath
 .settings
 .springBeans
+
+spring.log.1
+
+spring.log

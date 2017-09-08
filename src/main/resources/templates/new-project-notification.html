@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+	<span>You have registered to receive notification on new projects. A new project has been created.</span>
+	<br></br>
+	<br></br>
+	Project
+	<ul>
+		<li>Project Name: <span th:text="${project.name}"></span></li>
+		<li>Project Link: <span th:text="${projectLink}"></span></li>
+		<li>Project Description: <span th:text="${project.description}"></span></li>
+	</ul>
+</body>
+</html>

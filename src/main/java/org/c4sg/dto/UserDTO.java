@@ -3,34 +3,34 @@ package org.c4sg.dto;
 import java.math.BigDecimal;
 
 public class UserDTO {
+	
     private Integer id;
     private String userName;
     private String firstName;
     private String lastName;
     private String email;
-    private String phone;
-    private String city;
     private String state;
     private String country;
-    private String zip;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private String phone;    
     private String title;
     private String introduction;
     private String avatarUrl;
     private String linkedinUrl;
     private String personalUrl;
-    private String gitHubUrl;
+    private String githubUrl;
     private String resumeUrl;
+    private String facebookUrl;
+    private String twitterUrl;
+    private String publishFlag;
+    private String notifyFlag;
+    private String chatUsername;
     private String role;
-    private String publicProfileFlag;
-    private String chatFlag;
-    private String forumFlag;
-    private String developerFlag;
     private String status;
     private String createdTime;
     private String updatedTime;
-
+	private Integer jobTitleId;
 
 	public Integer getId() {
 		return id;
@@ -62,18 +62,6 @@ public class UserDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPhone() {
-		return phone;
-	}
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
 	public String getState() {
 		return state;
 	}
@@ -85,12 +73,6 @@ public class UserDTO {
 	}
 	public void setCountry(String country) {
 		this.country = country;
-	}
-	public String getZip() {
-		return zip;
-	}
-	public void setZip(String zip) {
-		this.zip = zip;
 	}
 	public BigDecimal getLatitude() {
 		return latitude;
@@ -128,12 +110,24 @@ public class UserDTO {
 	public void setPersonalUrl(String personalUrl) {
 		this.personalUrl = personalUrl;
 	}
-	public String getGitHubUrl()
+	public String getGithubUrl()
 	{
-		return gitHubUrl;
+		return githubUrl;
 	}
-	public void setGitHubUrl(String gitHubUrl){
-		this.gitHubUrl = gitHubUrl;
+	public void setGithubUrl(String githubUrl){
+		this.githubUrl = githubUrl;
+	}
+	public String getFacebookUrl() {
+		return facebookUrl;
+	}
+	public void setFacebookUrl(String facebookUrl) {
+		this.facebookUrl = facebookUrl;
+	}
+	public String getTwitterUrl() {
+		return twitterUrl;
+	}
+	public void setTwitterUrl(String twitterUrl) {
+		this.twitterUrl = twitterUrl;
 	}
 	public String getResumeUrl() {
 		return resumeUrl;
@@ -147,29 +141,29 @@ public class UserDTO {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	public String getPublicProfileFlag() {
-		return publicProfileFlag;
+	public String getPhone() {
+		return phone;
 	}
-	public void setPublicProfileFlag(String publicProfileFlag) {
-		this.publicProfileFlag = publicProfileFlag;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
-	public String getChatFlag() {
-		return chatFlag;
+	public String getPublishFlag() {
+		return publishFlag;
 	}
-	public void setChatFlag(String chatFlag) {
-		this.chatFlag = chatFlag;
+	public void setPublishFlag(String publishFlag) {
+		this.publishFlag = publishFlag;
 	}
-	public String getForumFlag() {
-		return forumFlag;
+	public String getNotifyFlag() {
+		return notifyFlag;
 	}
-	public void setForumFlag(String forumFlag) {
-		this.forumFlag = forumFlag;
+	public void setNotifyFlag(String notifyFlag) {
+		this.notifyFlag = notifyFlag;
 	}
-	public String getDeveloperFlag() {
-		return developerFlag;
+	public String getChatUsername() {
+		return chatUsername;
 	}
-	public void setDeveloperFlag(String developerFlag) {
-		this.developerFlag = developerFlag;
+	public void setChatUsername(String chatUsername) {
+		this.chatUsername = chatUsername;
 	}
 	public String getCreatedTime() {
 		return createdTime;
@@ -195,4 +189,12 @@ public class UserDTO {
 	public void setTitle(String title) {
 		this.title = title;
 	}  
+	
+	public Integer getJobTitleId() {
+		return jobTitleId;
+	}
+
+	public void setJobTitleId(Integer jobTitleId) {
+		this.jobTitleId = jobTitleId;
+	}
 }
