@@ -17,7 +17,7 @@ public class CreateOrganizationDTO {
 	@Size(max = 100, message = "Website URL name cannot exceed 100 characters")
 	private String websiteUrl;
 	
-	@Size(max = 1000, message = "Organization description cannot exceed 1000 characters")
+	@Size(max = 10000, message = "Organization description cannot exceed 10000 characters")
 	private String description;
 	
 	@Size(max = 100, message = "Address 1 cannot exceed 100 characters")
