@@ -24,7 +24,7 @@ public interface ProjectService {
 
 	ProjectDTO createProject(CreateProjectDTO project);
 
-	ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus) throws RuntimeException;
+	//ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus) throws RuntimeException;
 	
 	ProjectDTO saveApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag);
 	

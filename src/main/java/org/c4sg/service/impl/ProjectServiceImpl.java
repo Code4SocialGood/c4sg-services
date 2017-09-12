@@ -208,7 +208,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(project);
     }
 
-    @Override
+    /*@Override
     public ProjectDTO saveUserProject(Integer userId, Integer projectId, String status ) {
 
         User user = userDAO.findById(userId);
@@ -229,8 +229,9 @@ public class ProjectServiceImpl implements ProjectService {
         sendEmail(user, project, status);
         
         return projectMapper.getProjectDtoFromEntity(project);
-    }
+    }*/
     
+    @Override
     public ProjectDTO saveApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag){
     	
     	User user = userDAO.findById(userId);
@@ -256,6 +257,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(project);
     } 
     
+    @Override
     public ProjectDTO saveBookmark(Integer userId, Integer projectId){
     	
     	User user = userDAO.findById(userId);
@@ -352,7 +354,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 	        
-	 private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
+	 /*private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
 
 	    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
 	    	
@@ -364,7 +366,7 @@ public class ProjectServiceImpl implements ProjectService {
 	        		throw new UserProjectException("Record already exist");
 	        	}
 	    	}    	
-	    }
+	    }*/
     
     private void isApplied(Integer userId, Integer projectId, String status) throws UserProjectException {
 
