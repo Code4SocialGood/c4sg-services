@@ -135,9 +135,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
     	
-    	List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);  	
-    	return projectMapper.getDtosFromEntities(projects);
-    }
+    	//List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);  	
+    	List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, userProjectStatus);
+    	return projectMapper.getDtosFromApplicationEntities(applications);
+    }    
 
     @Override
     public List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus) {

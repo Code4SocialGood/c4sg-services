@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS application;
 CREATE TABLE application (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL UNIQUE,
-  project_id INT NOT NULL UNIQUE,
+  user_id INT NOT NULL,
+  project_id INT NOT NULL,
   comment VARCHAR(10000),
   resume_flag CHAR(1) NOT NULL DEFAULT 'N' CHECK(resume_flag IN ('Y','N')),
   status CHAR(1) NOT NULL DEFAULT 'A' CHECK(status IN ('A','C','D')),
@@ -14,6 +14,8 @@ CREATE TABLE application (
   FOREIGN KEY (project_id) REFERENCES project (id),
   FOREIGN KEY (user_id) REFERENCES user (id)
 );
+
+CREATE UNIQUE INDEX userid_projectid ON application(user_id, project_id);
 
 DROP TABLE IF EXISTS bookmark;
 CREATE TABLE bookmark (
