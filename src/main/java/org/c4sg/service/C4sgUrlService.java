@@ -12,5 +12,8 @@ public class C4sgUrlService {
 	public String getProjectUrl(Integer id) {
 		return webUrl + "/project/view/" + id;
 	}
-
+	
+	public String getUserUrl(Integer id) {
+		return webUrl + "/user/view/" + id;
+	}
 }
