@@ -1,20 +1,57 @@
 package org.c4sg.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.validation.constraints.Size;
 
+import org.c4sg.dto.afg.FeedLocationDTO;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
+@XmlAccessorType(XmlAccessType.FIELD)
 public class OrganizationDTO {
 	
-	private Integer id;
-	private String name;
+@XmlElement(name="organizationId")
+private Integer id;
+
+  private String name;
+
+	@XmlElement(name="organizationURL")
 	private String websiteUrl;
-    private String logoUrl;
+	
+	@XmlElement(name="logoURL")
+	private String logoUrl;
+
+	@Length(max = 500)
+	private String description;
+	
+	@XmlTransient
+	private String address1;
+	
+	@XmlTransient
+	private String address2;
+	
+	@XmlTransient
+	private String city;
+	
+	@XmlTransient
+	private String state;
+
+	@XmlTransient
+	private String country;
+	
+	@XmlTransient
+	private String websiteUrl;
+
+  private String logoUrl;
 	private String description;
 	private String address1;
 	private String address2;
@@ -26,7 +63,42 @@ public class OrganizationDTO {
 	private String contactTitle;
 	private String contactPhone;
 	private String contactEmail;
+	
+	@XmlTransient
 	private String category;
+	
+	@XmlTransient
+	private String status;
+
+	@XmlTransient
+	private String createdTime;
+	
+	@XmlTransient
+	private String projectUpdatedTime;
+	
+	@XmlElement(name="location")
+	private FeedLocationDTO location;
+	
+	@XmlTransient
+	private List<ProjectDTO> projects;
+
+	public FeedLocationDTO getLocation() {
+		return location;
+	}
+
+	public void setLocation(FeedLocationDTO location) {
+		this.location = location;
+	}
+
+	public List<ProjectDTO> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<ProjectDTO> projects) {
+		this.projects = projects;
+	}
+
+  private String category;
 	private String ein;	
 	private String status;
 	private String createdTime;
