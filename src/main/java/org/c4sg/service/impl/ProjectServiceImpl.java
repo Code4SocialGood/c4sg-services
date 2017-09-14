@@ -3,6 +3,7 @@ package org.c4sg.service.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -132,13 +133,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectPages.map(p -> projectMapper.getProjectDtoFromEntity(p));
     }
     
-    @Override
-    public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
-    	
-    	//List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);  	
-    	List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, userProjectStatus);
-    	return projectMapper.getDtosFromApplicationEntities(applications);
-    }    
+      
 
     @Override
     public List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus) {
@@ -207,6 +202,37 @@ public class ProjectServiceImpl implements ProjectService {
 
         return projectMapper.getProjectDtoFromEntity(project);
     }
+    
+    public List<JobTitleDTO> findJobTitles() {
+		List<JobTitle> jobTitles = projectDAO.findJobTitles();
+		return projectMapper.getJobTitleDtosFromEntities(jobTitles);
+	}
+	
+	@Override
+	public void saveImage(Integer id, String imgUrl) {
+				
+		projectDAO.updateImage(imgUrl, id);
+	}
+    
+    
+    /*---------------------------------------User Project code -----------------------------------------------------------*/
+    
+    @Override
+    public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
+    	
+    	//List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus); 
+    	
+    	List<ProjectDTO> projectDtos = new ArrayList<ProjectDTO>();
+    	
+    	if(userProjectStatus.equals("A")){
+    		List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, userProjectStatus);
+    		projectDtos = projectMapper.getDtosFromApplicationEntities(applications);
+    	}else if(userProjectStatus.equals("B")){
+    		List<Bookmark> bookmarks = bookmarkDAO.findByUser_Id(userId);
+    		projectDtos = projectMapper.getDtosFromBookmarkEntities(bookmarks);
+    	}    	
+    	return projectDtos;
+    }  
 
     /*@Override
     public ProjectDTO saveUserProject(Integer userId, Integer projectId, String status ) {
@@ -290,13 +316,10 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             System.out.println("Project does not exist.");
         }
-    }
-    
-	public List<JobTitleDTO> findJobTitles() {
-		List<JobTitle> jobTitles = projectDAO.findJobTitles();
-		return projectMapper.getJobTitleDtosFromEntities(jobTitles);
-	}
-    
+    }    
+	
+	/*------------------------------------ private methods-------------------------------------------*/
+	
 	@Async
     private void sendEmail(User user, Project project, String status) {
 
@@ -396,9 +419,5 @@ public class ProjectServiceImpl implements ProjectService {
     	}    	
     }
     
-	@Override
-	public void saveImage(Integer id, String imgUrl) {
-				
-		projectDAO.updateImage(imgUrl, id);
-	}
+	
 }

@@ -5,6 +5,7 @@ import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Application;
+import org.c4sg.entity.Bookmark;
 import org.c4sg.entity.JobTitle;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.UserProject;
@@ -56,6 +57,23 @@ public class ProjectMapper extends ModelMapper{
 		}
 		return projectList;
 	}
+	
+	public ProjectDTO getProjectDtoFromEntity(Bookmark bookmark){
+		Type projectTypeDTO = new TypeToken<ProjectDTO>() {}.getType();
+		ProjectDTO projectDTO = map(bookmark.getProject(), projectTypeDTO);
+		return projectDTO;
+	}
+	
+	public List<ProjectDTO> getDtosFromBookmarkEntities(List<Bookmark> bookmarks){
+		List<ProjectDTO> projectList = new ArrayList<ProjectDTO>();
+		Iterator<Bookmark> bookmarkIter = bookmarks.iterator();
+		while (bookmarkIter.hasNext()) {
+			Bookmark bookmark = bookmarkIter.next();
+			projectList.add(getProjectDtoFromEntity(bookmark));
+		}
+		return projectList;
+	}
+	
 
 	public List<ProjectDTO> getDtosFromEntities(List<Project> projects){
 		List<ProjectDTO> projectList = new ArrayList<ProjectDTO>();
