@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -126,8 +127,13 @@ public class ProjectController {
                   + ": UserId=" + userId 
                   + "; Status=" + userProjectStatus 
                   + " **************");
-    	
-        return projectService.findByUser(userId, userProjectStatus);
+    	List<ProjectDTO> projects = new ArrayList<ProjectDTO>();
+    	if(userProjectStatus.equals("A")){
+    		projects = projectService.getApplicationByUserAndStatus(userId, userProjectStatus);	
+    	}else if(userProjectStatus.equals("B")){
+    		projects = projectService.getBookmarkByUser(userId);
+    	}
+    	return projects;
     }
 
     @CrossOrigin

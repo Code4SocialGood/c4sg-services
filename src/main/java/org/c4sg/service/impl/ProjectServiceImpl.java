@@ -217,22 +217,26 @@ public class ProjectServiceImpl implements ProjectService {
     
     /*---------------------------------------User Project code -----------------------------------------------------------*/
     
-    @Override
+    /*@Override
     public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
     	
-    	//List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus); 
+    	List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus); 
+    	return projectMapper.getDtosFromEntities(projects);    	
+    }*/
+    
+    @Override
+    public List<ProjectDTO> getApplicationByUserAndStatus(Integer userId, String userProjectStatus) throws ProjectServiceException {
     	
-    	List<ProjectDTO> projectDtos = new ArrayList<ProjectDTO>();
+    	List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, userProjectStatus);
+    	return projectMapper.getDtosFromApplicationEntities(applications);    	
+    }
+    
+    @Override
+    public List<ProjectDTO> getBookmarkByUser(Integer userId) throws ProjectServiceException {
     	
-    	if(userProjectStatus.equals("A")){
-    		List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, userProjectStatus);
-    		projectDtos = projectMapper.getDtosFromApplicationEntities(applications);
-    	}else if(userProjectStatus.equals("B")){
-    		List<Bookmark> bookmarks = bookmarkDAO.findByUser_Id(userId);
-    		projectDtos = projectMapper.getDtosFromBookmarkEntities(bookmarks);
-    	}    	
-    	return projectDtos;
-    }  
+    	List<Bookmark> bookmarks = bookmarkDAO.findByUser_Id(userId);
+    	return projectMapper.getDtosFromBookmarkEntities(bookmarks);    	
+    }
 
     /*@Override
     public ProjectDTO saveUserProject(Integer userId, Integer projectId, String status ) {
