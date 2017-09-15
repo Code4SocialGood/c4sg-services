@@ -220,7 +220,7 @@ public class ProjectController {
     	
         try {
         	//comment and resumeFlag will be accepted as inputs to the REST API in the future
-        	String comment = "default comment";
+        	String comment = "";
         	String resumeFlag = "N";
         	if(userProjectStatus.equals("B"))
         	{
