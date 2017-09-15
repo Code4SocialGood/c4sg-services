@@ -33,10 +33,18 @@ public interface ProjectService {
 	ProjectDTO saveApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag);
 	
 	ProjectDTO saveBookmark(Integer userId, Integer projectId);
-
+	
+	//ProjectDTO updateApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag);
+	
+	//ProjectDTO updateBookmark(Integer userId, Integer projectId);
+	
 	ProjectDTO updateProject(ProjectDTO project);
 
 	void deleteProject(int id);
+	
+	//void deleteApplication(int id);
+	
+	//void deleteBookmark(int id);
 	
     void saveImage(Integer id, String imgUrl);
 

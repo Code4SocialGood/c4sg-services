@@ -271,13 +271,31 @@ public class ProjectServiceImpl implements ProjectService {
         if (status == null || (!status.equals("A") && !status.equals("C") && !status.equals("D"))) {
         	throw new BadRequestException("Invalid Project Status");
         } else {
-        	isApplied(userId, projectId, status);
-	        Application application = new Application();
-	        application.setUser(user);
-	        application.setProject(project);
-	        application.setStatus(status);
-	        application.setComment(comment);
-	        application.setResumeFlag(resumeFlag);
+        	
+        	Application application = applicationDAO.findByUser_IdAndProject_Id(userId, projectId); 
+        	if(java.util.Objects.isNull(application)){ //create
+        		
+        		application = new Application();
+    	        application.setUser(user);
+    	        application.setProject(project);
+    	        application.setStatus(status);
+    	        application.setComment(comment);
+    	        application.setResumeFlag(resumeFlag);
+    	        application.setAppliedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
+        		
+        	} else{ //update
+        		
+        		isApplied(application, status);
+        		application.setStatus(status);
+        		application.setComment(comment);
+    	        application.setResumeFlag(resumeFlag);
+    	        if(status.equals("C")){
+    	        	application.setAcceptedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
+    	        }else if(status.equals("D")){
+    	        	application.setDeclinedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
+    	        }
+        		
+        	}	        
 	        applicationDAO.save(application);
 	        //userProjectDAO.save(userProject);
 	    }
@@ -307,7 +325,7 @@ public class ProjectServiceImpl implements ProjectService {
         
         return projectMapper.getProjectDtoFromEntity(project);
     	
-    }
+    }    
 
     public void deleteProject(int id) throws UserProjectException  {
         Project localProject = projectDAO.findById(id);
@@ -395,32 +413,37 @@ public class ProjectServiceImpl implements ProjectService {
 	    	}    	
 	    }*/
     
-    private void isApplied(Integer userId, Integer projectId, String status) throws UserProjectException {
+    private void isApplied(Application application, String status) throws UserProjectException {
 
-    	List<Application> applications = applicationDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
+    	//Application application = applicationDAO.findByUser_IdAndProject_Id(userId, projectId);        	
+    	//requireNonNull(application, "Invalid operation");
     	
-    	requireNonNull(applications, "Invalid operation");
-    	for(Application application : applications)
-    	{
-    		if(application.getStatus().equals(status))
+    		if(status.equals("A") && java.util.Objects.nonNull(application.getAppliedTime()))
         	{
-        		throw new UserProjectException("Record already exist");
+        		throw new UserProjectException("Already applied for the porject.");
+        		
+        	} else if (status.equals("C") && java.util.Objects.nonNull(application.getAcceptedTime())){
+        		
+        		throw new UserProjectException("Already accepted for the porject.");	
+        		
+        	} else if (status.equals("D") && java.util.Objects.nonNull(application.getDeclinedTime())){
+        		
+        		throw new UserProjectException("Already declined for the porject.");
         	}
-    	}    	
+    	   	
     }
     
     private void isBookmarked(Integer userId, Integer projectId) throws UserProjectException {
 
-    	List<Bookmark> bookmarks = bookmarkDAO.findByUser_IdAndProject_Id(userId, projectId);
+    	Bookmark bookmark = bookmarkDAO.findByUser_IdAndProject_Id(userId, projectId);
     	
-    	requireNonNull(bookmarks, "Invalid operation");
-    	for(Bookmark bookmark : bookmarks)
-    	{
+    	requireNonNull(bookmark, "Invalid operation");
+    	
     		if(bookmark.getUser().getId().equals(userId) && bookmark.getProject().getId().equals(projectId))
         	{
         		throw new UserProjectException("Record already exist");
         	}
-    	}    	
+    	    	
     }
     
 	

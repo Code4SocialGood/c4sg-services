@@ -128,10 +128,10 @@ public class ProjectController {
                   + "; Status=" + userProjectStatus 
                   + " **************");
     	List<ProjectDTO> projects = new ArrayList<ProjectDTO>();
-    	if(userProjectStatus.equals("A")){
-    		projects = projectService.getApplicationByUserAndStatus(userId, userProjectStatus);	
-    	}else if(userProjectStatus.equals("B")){
+    	if(userProjectStatus.equals("B")){
     		projects = projectService.getBookmarkByUser(userId);
+    	}else{
+    		projects = projectService.getApplicationByUserAndStatus(userId, userProjectStatus);	
     	}
     	return projects;
     }
