@@ -29,13 +29,18 @@ public class AsyncEmailServiceImpl implements AsyncEmailService {
      * @param text       content of the message.
      */
     @Async
-    public void send(String from, String recipient, String subject, String text) {
+    public void send(String from, String recipient, String replyTo, String subject, String text) {
     	
 		Email emailFrom = new Email(from);
 		String emailSubject = subject;
 		Email emailTo = new Email(recipient);
+		
 		Content emailContent = new Content("text/html", text);
 		Mail mail = new Mail(emailFrom, emailSubject, emailTo, emailContent);
+		if(!replyTo.isEmpty()) {
+			Email emailReplyTo = new Email(replyTo);
+			mail.setReplyTo(emailReplyTo);
+		}
 		
 		SendGrid sg = new SendGrid(sendgridApiKey);		
 		Request request = new Request();
@@ -53,10 +58,10 @@ public class AsyncEmailServiceImpl implements AsyncEmailService {
     }
 
 	@Override
-	public void sendWithContext(String from, String recipient, String subject, String template, Map<String, Object> mailContext) {
+	public void sendWithContext(String from, String recipient, String replyTo, String subject, String template, Map<String, Object> mailContext) {
 
 		String text = service.generateFromContext(mailContext, template);
-		send(from, recipient, subject, text);
+		send(from, recipient, replyTo, subject, text);
 	}  
 }
 
