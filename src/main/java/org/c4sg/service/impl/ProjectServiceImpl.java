@@ -437,9 +437,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     	Bookmark bookmark = bookmarkDAO.findByUser_IdAndProject_Id(userId, projectId);
     	
-    	requireNonNull(bookmark, "Invalid operation");
+    	//requireNonNull(bookmark, "Invalid operation");
     	
-    		if(bookmark.getUser().getId().equals(userId) && bookmark.getProject().getId().equals(projectId))
+    	
+    		if(java.util.Objects.nonNull(bookmark) && bookmark.getUser().getId().equals(userId) && bookmark.getProject().getId().equals(projectId))
         	{
         		throw new UserProjectException("Record already exist");
         	}
