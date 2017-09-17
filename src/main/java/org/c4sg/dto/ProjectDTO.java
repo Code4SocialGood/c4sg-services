@@ -7,6 +7,7 @@ public class ProjectDTO {
 	private String organizationId;	
 	private String description;	
     private String imageUrl;
+    private String City;
     private String state;
     private String country;
     private String remoteFlag;	
@@ -54,6 +55,14 @@ public class ProjectDTO {
 	
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public String getCity() {
+		return City;
+	}
+
+	public void setCity(String city) {
+		City = city;
 	}
 
 	public String getState() {
