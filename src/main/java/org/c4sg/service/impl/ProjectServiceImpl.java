@@ -332,7 +332,9 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (localProject != null) {
         	// TODO delete image from S3 by frontend
-        	userProjectDAO.deleteByProjectStatus(new Integer(id),"B");        	
+        	//userProjectDAO.deleteByProjectStatus(new Integer(id),"B");   
+        	applicationDAO.deleteByProject_id(id);
+        	bookmarkDAO.deleteByProject_id(id);
         	projectSkillDAO.deleteByProjectId(id);            	
             projectDAO.deleteProject(id);
         } else {

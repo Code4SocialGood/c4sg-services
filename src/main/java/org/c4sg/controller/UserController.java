@@ -140,7 +140,9 @@ public class UserController {
         try {
             userService.deleteUser(id);
         } catch (Exception e) {
-            LOGGER.error("Exception on delete user:", e);
+        	LOGGER.error("Exception on delete user:", e);
+        	throw new UserServiceException("Error deleting user");
+            
         }
     }
     

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.c4sg.constant.Constants;
+import org.c4sg.dao.ApplicationDAO;
+import org.c4sg.dao.BookmarkDAO;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.ApplicantDTO;
@@ -39,6 +41,12 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private OrganizationDAO organizationDAO;
 
+	@Autowired
+	private ApplicationDAO applicationDAO;
+	
+	@Autowired
+	private BookmarkDAO bookmarkDAO;
+	
 	@Autowired
     private OrganizationService organizationService;
 
@@ -111,8 +119,10 @@ public class UserServiceImpl implements UserService {
         
         user.setStatus(Constants.USER_STATUS_DELETED);
         user.setEmail(user.getEmail() + "-deleted");
-        userDAO.save(user);
-        userDAO.deleteUserProjects(id);
+        userDAO.save(user);        
+        //userDAO.deleteUserProjects(id);
+        applicationDAO.deleteByUser_Id(id); 
+        bookmarkDAO.deleteByUser_Id(id);
         userDAO.deleteUserSkills(id);  
         List<OrganizationDTO> organizations = organizationService.findByUser(id);
         for (OrganizationDTO org:organizations) {
