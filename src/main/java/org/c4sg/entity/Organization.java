@@ -1,5 +1,6 @@
 package org.c4sg.entity;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -46,6 +47,12 @@ public class Organization {
 	
 	@Column(name = "zip")
 	private String zip;
+	
+	@Column(name = "latitude")
+    private BigDecimal latitude;
+    
+    @Column(name = "longitude")
+    private BigDecimal longitude;
 	
 	@Column(name = "contact_name")
 	private String contactName;
@@ -170,6 +177,22 @@ public class Organization {
 
 	public void setZip(String zip) {
 		this.zip = zip;
+	}
+	
+	public BigDecimal getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(BigDecimal latitude) {
+		this.latitude = latitude;
+	}
+	
+	public BigDecimal getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(BigDecimal longitude) {
+		this.longitude = longitude;
 	}
 	
 	public String getContactName() {

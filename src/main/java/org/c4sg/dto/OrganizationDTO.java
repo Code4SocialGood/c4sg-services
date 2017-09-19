@@ -1,5 +1,7 @@
 package org.c4sg.dto;
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -21,6 +23,8 @@ public class OrganizationDTO {
 	private String city;
 	private String state;
 	private String country;
+	private BigDecimal latitude;
+    private BigDecimal longitude;
 	private String zip;
 	private String contactName;
 	private String contactTitle;
@@ -110,6 +114,22 @@ public class OrganizationDTO {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public BigDecimal getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(BigDecimal latitude) {
+		this.latitude = latitude;
+	}
+
+	public BigDecimal getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(BigDecimal longitude) {
+		this.longitude = longitude;
 	}
 
 	public String getZip() {

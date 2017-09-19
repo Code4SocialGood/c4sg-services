@@ -14,6 +14,7 @@ import org.c4sg.entity.UserOrganization;
 import org.c4sg.exception.UserOrganizationException;
 import org.c4sg.mapper.OrganizationMapper;
 import org.c4sg.service.AsyncEmailService;
+import org.c4sg.service.GeocodeService;
 import org.c4sg.service.OrganizationService;
 import org.c4sg.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
+
+import java.math.BigDecimal;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
@@ -52,6 +55,9 @@ public class OrganizationServiceImpl implements OrganizationService {
 	
     @Autowired
     private AsyncEmailService asyncEmailService;
+    
+    @Autowired
+	private GeocodeService geocodeService;
 
     public void save(OrganizationDTO organizationDTO) {
         Organization organization = organizationMapper.getOrganizationEntityFromDto(organizationDTO);
@@ -135,7 +141,16 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (organization == null) {
         	System.out.println("Organization does not exist.");
         } else {
-            organization = organizationDAO.save(organizationMapper.getOrganizationEntityFromDto(organizationDTO));
+        	organization = organizationMapper.getOrganizationEntityFromDto(organizationDTO);
+            try {
+    			Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(organization.getState(), organization.getCountry());
+    			organization.setLatitude(geoCode.get("lat"));
+    			organization.setLongitude(geoCode.get("lng"));
+            }  catch (Exception e) {
+            	//throw new NotFoundException("Error getting geocode");
+            	System.out.println("Error getting geocode: " + e.toString());
+    		}
+            organizationDAO.save(organization);
             String newStatus = organization.getStatus();
             
             // Notify admin users of new organization, or update for a declined organization
