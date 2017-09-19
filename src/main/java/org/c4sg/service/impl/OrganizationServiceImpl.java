@@ -165,7 +165,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             			
             	Map<String, Object> context = new HashMap<String, Object>();
             	context.put("organization", organization);         	
-            	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_NEW_ORGANIZATION_REVIEW, Constants.TEMPLATE_NEW_ORGANIZATION_REVIEW, context);
+            	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, "", Constants.SUBJECT_NEW_ORGANIZATION_REVIEW, Constants.TEMPLATE_NEW_ORGANIZATION_REVIEW, context);
             	System.out.println("New organization email sent: Organization=" + organization.getId() + " ; Email=" + toAddress);
             }
         }
@@ -241,9 +241,9 @@ public class OrganizationServiceImpl implements OrganizationService {
         			
        	Map<String, Object> context = new HashMap<String, Object>();     	
        	if (status.equals(Constants.ORGANIZATION_STATUS_ACTIVE))
-       		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_NEW_ORGANIZATION_APPROVE, Constants.TEMPLATE_NEW_ORGANIZATION_APPROVE, context);
+       		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, "", Constants.SUBJECT_NEW_ORGANIZATION_APPROVE, Constants.TEMPLATE_NEW_ORGANIZATION_APPROVE, context);
        	else if (status.equals(Constants.ORGANIZATION_STATUS_DECLINED))
-       		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, Constants.SUBJECT_NEW_ORGANIZATION_DECLINE, Constants.TEMPLATE_NEW_ORGANIZATION_DECLINE, context);
+       		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, "", Constants.SUBJECT_NEW_ORGANIZATION_DECLINE, Constants.TEMPLATE_NEW_ORGANIZATION_DECLINE, context);
        	System.out.println("Organization approval/decline email sent: Organization=" + id + " ; Email=" + toAddress);
 	}
 }
