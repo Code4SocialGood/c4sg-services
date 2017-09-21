@@ -1,5 +1,6 @@
 package org.c4sg.util;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -18,7 +19,7 @@ public class JwtUtil {
 	 */
 	public static boolean isAdmin() {
 		AuthenticationJsonWebToken auth = (AuthenticationJsonWebToken) SecurityContextHolder.getContext().getAuthentication();
-	    if (auth != null && auth.getAuthorities() != null && auth.getAuthorities().contains("ADMIN")) {
+	    if (auth != null && auth.getAuthorities() != null && auth.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
 	        return true;
 	    }
 	    return false;
