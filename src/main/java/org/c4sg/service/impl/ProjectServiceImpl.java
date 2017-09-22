@@ -3,12 +3,15 @@ package org.c4sg.service.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.c4sg.constant.Constants;
+import org.c4sg.dao.ApplicationDAO;
+import org.c4sg.dao.BookmarkDAO;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.ProjectSkillDAO;
@@ -17,6 +20,8 @@ import org.c4sg.dao.UserProjectDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.Application;
+import org.c4sg.entity.Bookmark;
 import org.c4sg.entity.JobTitle;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
@@ -49,6 +54,12 @@ public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     private UserProjectDAO userProjectDAO;
+    
+    @Autowired
+    private ApplicationDAO applicationDAO;
+    
+    @Autowired
+    private BookmarkDAO bookmarkDAO;
     
     @Autowired
     private ProjectSkillDAO projectSkillDAO;
@@ -122,12 +133,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectPages.map(p -> projectMapper.getProjectDtoFromEntity(p));
     }
     
-    @Override
-    public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
-    	
-    	List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus);  	
-    	return projectMapper.getDtosFromEntities(projects);
-    }
+      
 
     @Override
     public List<ProjectDTO> findByOrganization(Integer orgId, String projectStatus) {
@@ -196,8 +202,43 @@ public class ProjectServiceImpl implements ProjectService {
 
         return projectMapper.getProjectDtoFromEntity(project);
     }
-
+    
+    public List<JobTitleDTO> findJobTitles() {
+		List<JobTitle> jobTitles = projectDAO.findJobTitles();
+		return projectMapper.getJobTitleDtosFromEntities(jobTitles);
+	}
+	
+	@Override
+	public void saveImage(Integer id, String imgUrl) {
+				
+		projectDAO.updateImage(imgUrl, id);
+	}
+    
+    
+    /*---------------------------------------User Project code -----------------------------------------------------------*/
+    
+    /*@Override
+    public List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException {
+    	
+    	List<Project> projects = projectDAO.findByUserIdAndUserProjectStatus(userId, userProjectStatus); 
+    	return projectMapper.getDtosFromEntities(projects);    	
+    }*/
+    
     @Override
+    public List<ProjectDTO> getApplicationByUserAndStatus(Integer userId, String userProjectStatus) throws ProjectServiceException {
+    	
+    	List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, userProjectStatus);
+    	return projectMapper.getDtosFromApplicationEntities(applications);    	
+    }
+    
+    @Override
+    public List<ProjectDTO> getBookmarkByUser(Integer userId) throws ProjectServiceException {
+    	
+    	List<Bookmark> bookmarks = bookmarkDAO.findByUser_Id(userId);
+    	return projectMapper.getDtosFromBookmarkEntities(bookmarks);    	
+    }
+
+    /*@Override
     public ProjectDTO saveUserProject(Integer userId, Integer projectId, String status ) {
 
         User user = userDAO.findById(userId);
@@ -218,26 +259,91 @@ public class ProjectServiceImpl implements ProjectService {
         sendEmail(user, project, status);
         
         return projectMapper.getProjectDtoFromEntity(project);
-    }
+    }*/
+    
+    @Override
+    public ProjectDTO saveApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag){
+    	
+    	User user = userDAO.findById(userId);
+        requireNonNull(user, "Invalid User Id");
+        Project project = projectDAO.findById(projectId);
+        requireNonNull(project, "Invalid Project Id");
+        if (status == null || (!status.equals("A") && !status.equals("C") && !status.equals("D"))) {
+        	throw new BadRequestException("Invalid Project Status");
+        } else {
+        	
+        	Application application = applicationDAO.findByUser_IdAndProject_Id(userId, projectId); 
+        	if(java.util.Objects.isNull(application)){ //create
+        		
+        		application = new Application();
+    	        application.setUser(user);
+    	        application.setProject(project);
+    	        application.setStatus(status);
+    	        application.setComment(comment);
+    	        application.setResumeFlag(resumeFlag);
+    	        application.setAppliedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
+        		
+        	} else{ //update
+        		
+        		isApplied(application, status);
+        		application.setStatus(status);
+        		application.setComment(comment);
+    	        application.setResumeFlag(resumeFlag);
+    	        if(status.equals("C")){
+    	        	application.setAcceptedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
+    	        }else if(status.equals("D")){
+    	        	application.setDeclinedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
+    	        }
+        		
+        	}	        
+	        applicationDAO.save(application);
+	        //userProjectDAO.save(userProject);
+	    }
+        
+        sendEmail(user, project, status);
+        
+        return projectMapper.getProjectDtoFromEntity(project);
+    } 
+    
+    @Override
+    public ProjectDTO saveBookmark(Integer userId, Integer projectId){
+    	
+    	User user = userDAO.findById(userId);
+        requireNonNull(user, "Invalid User Id");
+        Project project = projectDAO.findById(projectId);
+        requireNonNull(project, "Invalid Project Id");
+       
+        isBookmarked(userId, projectId);
+	    Bookmark bookmark = new Bookmark();
+	    bookmark.setUser(user);
+	    bookmark.setProject(project);	        
+	    bookmarkDAO.save(bookmark);
+	        //userProjectDAO.save(userProject);
+	    
+        
+        //sendEmail(user, project, status);
+        
+        return projectMapper.getProjectDtoFromEntity(project);
+    	
+    }    
 
     public void deleteProject(int id) throws UserProjectException  {
         Project localProject = projectDAO.findById(id);
 
         if (localProject != null) {
         	// TODO delete image from S3 by frontend
-        	userProjectDAO.deleteByProjectStatus(new Integer(id),"B");        	
+        	//userProjectDAO.deleteByProjectStatus(new Integer(id),"B");   
+        	applicationDAO.deleteByProject_id(id);
+        	bookmarkDAO.deleteByProject_id(id);
         	projectSkillDAO.deleteByProjectId(id);            	
             projectDAO.deleteProject(id);
         } else {
             System.out.println("Project does not exist.");
         }
-    }
-    
-	public List<JobTitleDTO> findJobTitles() {
-		List<JobTitle> jobTitles = projectDAO.findJobTitles();
-		return projectMapper.getJobTitleDtosFromEntities(jobTitles);
-	}
-    
+    }    
+	
+	/*------------------------------------ private methods-------------------------------------------*/
+	
 	@Async
     private void sendEmail(User user, Project project, String status) {
 
@@ -295,23 +401,53 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 	        
-    private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
+	 /*private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
 
-    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
+	    	List<UserProject> userProjects = userProjectDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
+	    	
+	    	requireNonNull(userProjects, "Invalid operation");
+	    	for(UserProject userProject : userProjects)
+	    	{
+	    		if(userProject.getStatus().equals(status))
+	        	{
+	        		throw new UserProjectException("Record already exist");
+	        	}
+	    	}    	
+	    }*/
+    
+    private void isApplied(Application application, String status) throws UserProjectException {
+
+    	//Application application = applicationDAO.findByUser_IdAndProject_Id(userId, projectId);        	
+    	//requireNonNull(application, "Invalid operation");
     	
-    	requireNonNull(userProjects, "Invalid operation");
-    	for(UserProject userProject : userProjects)
-    	{
-    		if(userProject.getStatus().equals(status))
+    		if(status.equals("A") && java.util.Objects.nonNull(application.getAppliedTime()))
+        	{
+        		throw new UserProjectException("Already applied for the porject.");
+        		
+        	} else if (status.equals("C") && java.util.Objects.nonNull(application.getAcceptedTime())){
+        		
+        		throw new UserProjectException("Already accepted for the porject.");	
+        		
+        	} else if (status.equals("D") && java.util.Objects.nonNull(application.getDeclinedTime())){
+        		
+        		throw new UserProjectException("Already declined for the porject.");
+        	}
+    	   	
+    }
+    
+    private void isBookmarked(Integer userId, Integer projectId) throws UserProjectException {
+
+    	Bookmark bookmark = bookmarkDAO.findByUser_IdAndProject_Id(userId, projectId);
+    	
+    	//requireNonNull(bookmark, "Invalid operation");
+    	
+    	
+    		if(java.util.Objects.nonNull(bookmark) && bookmark.getUser().getId().equals(userId) && bookmark.getProject().getId().equals(projectId))
         	{
         		throw new UserProjectException("Record already exist");
         	}
-    	}    	
+    	    	
     }
     
-	@Override
-	public void saveImage(Integer id, String imgUrl) {
-				
-		projectDAO.updateImage(imgUrl, id);
-	}
+	
 }
