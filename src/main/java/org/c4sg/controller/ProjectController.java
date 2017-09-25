@@ -210,7 +210,9 @@ public class ProjectController {
     		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
             @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId,
             @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
-            @RequestParam("userProjectStatus") String userProjectStatus) {
+            @RequestParam("userProjectStatus") String userProjectStatus,
+            @ApiParam(value="Application comment", required=false) @RequestParam("comment") String comment,
+            @ApiParam(value="Resume flag", required=true) @RequestParam("resumeFlag") String resumeFlag) {
     	
     	System.out.println("************** ProjectController.createUserProject()" 
                 + ": userId=" + userId 
@@ -220,8 +222,8 @@ public class ProjectController {
     	
         try {
         	//comment and resumeFlag will be accepted as inputs to the REST API in the future
-        	String comment = "";
-        	String resumeFlag = "N";
+        	//String comment = "";
+        	//String resumeFlag = "N";
         	if(userProjectStatus.equals("B"))
         	{
         		projectService.saveBookmark(userId, projectId);
