@@ -2,6 +2,7 @@ package org.c4sg.controller;
 
 import io.swagger.annotations.*;
 
+import org.c4sg.dto.ApplicationDTO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
@@ -206,38 +207,45 @@ public class ProjectController {
             @ApiResponse(code = 404, message = "ID of project or user invalid")
     })
     //TODO: Replace explicit user{id} with AuthN user id.
+    /*
+     *  @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
+            @RequestParam("userProjectStatus") String userProjectStatus,
+            @ApiParam(value="Application comment", required=false) @RequestParam("comment") String comment,
+            @ApiParam(value="Resume flag", required=true) @RequestParam("resumeFlag") String resumeFlag
+     * */
     public ResponseEntity<?> createUserProject(
     		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
             @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId,
             @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
-            @RequestParam("userProjectStatus") String userProjectStatus,
-            @ApiParam(value="Application comment", required=false) @RequestParam("comment") String comment,
-            @ApiParam(value="Resume flag", required=true) @RequestParam("resumeFlag") String resumeFlag) {
+            @RequestBody ApplicationDTO application) {
     	
     	System.out.println("************** ProjectController.createUserProject()" 
                 + ": userId=" + userId 
                 + "; projectId=" + projectId 
-                + "; userProjectStatus=" + userProjectStatus 
+                + "; userProjectStatus=" + application 
                 + " **************");
+    	
+    	
     	
         try {
         	//comment and resumeFlag will be accepted as inputs to the REST API in the future
-        	//String comment = "";
-        	//String resumeFlag = "N";
-        	if(userProjectStatus.equals("B"))
+        	String comment = application.getComment();
+        	String resumeFlag = application.getResumeFlag();
+        	String status = application.getStatus();
+        	if(status.equals("B"))
         	{
         		projectService.saveBookmark(userId, projectId);
         	}
         	else{
-        		projectService.saveApplication(userId, projectId, userProjectStatus, comment, resumeFlag);
+        		projectService.saveApplication(userId, projectId, status, comment, resumeFlag);
         	}        	
             //projectService.saveUserProject(userId, projectId, userProjectStatus);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                       .path("/{id}/users/{userId}")
-                                                      .buildAndExpand(projectId, userId, userProjectStatus).toUri();
+                                                      .buildAndExpand(projectId, userId, status).toUri();
             return ResponseEntity.created(location).build();
         } catch (NullPointerException e) {
-            throw new NotFoundException("ID of project or user invalid");
+            throw new NotFoundException("Error in the application");
         }
         catch (UserProjectException | BadRequestException e) {
         	throw e;
