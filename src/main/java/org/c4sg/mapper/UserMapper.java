@@ -54,17 +54,15 @@ public class UserMapper extends ModelMapper {
 			applicant.setFirstName((String)o[2]);
 			applicant.setLastName((String)o[3]);
 			applicant.setTitle((String)o[4]);
-			if (o[5] != null) {
-				applicant.setAppliedTime(new SimpleDateFormat(DATE_FORMAT).format(o[5]));
-				applicant.setApplicationStatus("A");
-			} 	
+			applicant.setApplicationStatus(String.valueOf(o[5]));
 			if (o[6] != null) {
-				applicant.setAcceptedTime(new SimpleDateFormat(DATE_FORMAT).format(o[6]));
-				applicant.setApplicationStatus("C");
+				applicant.setAppliedTime(new SimpleDateFormat(DATE_FORMAT).format(o[6]));				
 			} 	
 			if (o[7] != null) {
-				applicant.setDeclinedTime(new SimpleDateFormat(DATE_FORMAT).format(o[7]));
-				applicant.setApplicationStatus("D");
+				applicant.setAcceptedTime(new SimpleDateFormat(DATE_FORMAT).format(o[7]));				
+			} 	
+			if (o[8] != null) {
+				applicant.setDeclinedTime(new SimpleDateFormat(DATE_FORMAT).format(o[8]));				
 			} 	
 			
 			applicantList.add(applicant);
