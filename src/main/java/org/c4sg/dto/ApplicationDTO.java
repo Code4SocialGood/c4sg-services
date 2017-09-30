@@ -2,9 +2,27 @@ package org.c4sg.dto;
 
 public class ApplicationDTO {
 	
+	private Integer projectId;
+	private Integer userId;
 	private String status;
 	private String comment;
-	private String resumeFlag;
+	private Boolean resumeFlag;
+	
+	public Integer getProjectId(){
+		return projectId;
+	}
+	
+	public void setProjectId(Integer projectId){
+		this.projectId = projectId;
+	}
+	
+	public Integer getUserId(){
+		return userId;
+	}
+	
+	public void setUserId(Integer userId){
+		this.userId = userId;
+	}
 	
 	public String getStatus(){
 		return status;
@@ -22,11 +40,11 @@ public class ApplicationDTO {
 		this.comment = comment;
 	}
 	
-	public String getResumeFlag(){
+	public Boolean getResumeFlag(){
 		return resumeFlag;
 	}
 	
-	public void setResumeFlag(String resumeFlag){
+	public void setResumeFlag(Boolean resumeFlag){
 		this.resumeFlag = resumeFlag;
 	}
 

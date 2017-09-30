@@ -12,7 +12,7 @@ public interface ApplicationDAO extends CrudRepository<Application, Long> {
 	
 	String DELETE_USER_PROJECTS = "DELETE FROM UserProject up WHERE up.user.id=:userId";
 	
-	List<Application> findByUser_IdAndProject_IdAndStatus(Integer userId, Integer projectId, String status);
+	Application findByUser_IdAndProject_IdAndStatus(Integer userId, Integer projectId, String status);
 	Application findByUser_IdAndProject_Id(Integer userId, Integer projectId);
 	List<Application> findByUser_Id(Integer userId);
 	List<Application> findByUser_IdAndStatus(Integer userId, String status);

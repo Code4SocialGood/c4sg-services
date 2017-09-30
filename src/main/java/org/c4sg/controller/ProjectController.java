@@ -10,6 +10,7 @@ import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
+import org.c4sg.service.ApplicationService;
 import org.c4sg.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,9 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+    
+    @Autowired
+    private ApplicationService applicationService;
     
     private final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
@@ -199,6 +203,29 @@ public class ProjectController {
 
         return responseData;
     }
+    
+  //TODO: Replace explicit user{id} with AuthN user id. 
+    @CrossOrigin
+    @RequestMapping(value = "/applications", method = RequestMethod.POST)
+    @ApiOperation(value = "Create new application")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "ID of project or user invalid")})       
+    public Map<String, Object> createApplication(
+            @ApiParam(value = "Application object", required = true) @RequestBody @Valid ApplicationDTO application) {
+    	   	    
+    	Map<String, Object> responseData = null;
+        try {        	
+        	ApplicationDTO applicationDto = applicationService.createApplication(application);        	        	
+        	responseData = Collections.synchronizedMap(new HashMap<>());
+            responseData.put("application", applicationDto);
+        } catch (NullPointerException e) {
+            throw new NotFoundException("Error in the application");
+        }
+        catch (UserProjectException | BadRequestException e) {
+        	throw e;
+        }
+        
+        return responseData;
+    }    
 
     @CrossOrigin
     @RequestMapping(value = "/{id}/users/{userId}", method = RequestMethod.POST)
@@ -230,7 +257,10 @@ public class ProjectController {
         try {
         	//comment and resumeFlag will be accepted as inputs to the REST API in the future
         	String comment = application.getComment();
-        	String resumeFlag = application.getResumeFlag();
+        	String resumeFlag = "N";
+        	if(application.getResumeFlag()){
+        		resumeFlag = "Y";
+        	}
         	String status = application.getStatus();
         	if(status.equals("B"))
         	{

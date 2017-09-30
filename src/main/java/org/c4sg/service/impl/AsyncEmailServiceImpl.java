@@ -1,8 +1,19 @@
 package org.c4sg.service.impl;
 
+<<<<<<< HEAD
 import org.c4sg.dto.EmailDTO;
+=======
+import org.c4sg.constant.Constants;
+import org.c4sg.dao.OrganizationDAO;
+import org.c4sg.dao.UserDAO;
+import org.c4sg.entity.Organization;
+import org.c4sg.entity.Project;
+import org.c4sg.entity.User;
+>>>>>>> Design changes for Applicationn
 import org.c4sg.service.AsyncEmailService;
+import org.c4sg.service.C4sgUrlService;
 import org.c4sg.service.EmailTemplateService;
+import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -10,6 +21,8 @@ import org.springframework.stereotype.Service;
 import com.sendgrid.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -20,6 +33,7 @@ public class AsyncEmailServiceImpl implements AsyncEmailService {
 
     @Value("${sendgrid_api_key}")
     private String sendgridApiKey;
+
 
     /**
      * Sends an email message asynchronously through SendGrid.
