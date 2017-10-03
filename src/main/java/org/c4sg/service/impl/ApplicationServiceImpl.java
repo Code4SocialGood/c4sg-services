@@ -100,7 +100,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     	application.setStatus(applicationDto.getStatus());
     	application.setComment(applicationDto.getComment());
     	application.setResumeFlag(booleanToStringConverter.convert(applicationDto.getResumeFlag()));
-    	application.setAppliedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
+    	application.setAppliedTime(applicationDto.getAppliedTime());
+    	//application.setAppliedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
         applicationDAO.save(application);
 	    
         asyncEmailService.sendEmail(user, project, applicationDto.getStatus());

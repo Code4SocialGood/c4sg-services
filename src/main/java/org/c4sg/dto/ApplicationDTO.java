@@ -1,5 +1,7 @@
 package org.c4sg.dto;
 
+import java.util.Date;
+
 public class ApplicationDTO {
 	
 	private Integer projectId;
@@ -7,6 +9,9 @@ public class ApplicationDTO {
 	private String status;
 	private String comment;
 	private Boolean resumeFlag;
+	private Date appliedTime;
+	private Date acceptedTime;
+	private Date declinedTime;
 	
 	public Integer getProjectId(){
 		return projectId;
@@ -46,6 +51,30 @@ public class ApplicationDTO {
 	
 	public void setResumeFlag(Boolean resumeFlag){
 		this.resumeFlag = resumeFlag;
+	}
+	
+	public Date getAppliedTime(){
+		return this.appliedTime;
+	}
+	
+	public void setAppliedTime(Date appliedTime){
+		this.appliedTime = appliedTime;
+	}
+	
+	public Date getAcceptedTime(){
+		return this.acceptedTime;
+	}
+	
+	public void setAcceptedTime(Date acceptedTime){
+		this.acceptedTime = acceptedTime;
+	}
+	
+	public Date getDeclinedTime(){
+		return this.declinedTime;
+	}
+	
+	public void setDeclinedTime(Date declinedTime){
+		this.declinedTime = declinedTime;
 	}
 
 }
