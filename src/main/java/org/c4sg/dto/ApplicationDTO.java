@@ -2,13 +2,26 @@ package org.c4sg.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class ApplicationDTO {
 	
+	@NotNull(message = "Project Id is required")
 	private Integer projectId;
+	
+	@NotNull(message = "User Id is required")
 	private Integer userId;
+	
+	@NotNull(message = "Application status is required")
 	private String status;
+	
+	@Size(max = 10000, message = "Application comment cannot exceed 10000 characters")
 	private String comment;
+	
+	@NotNull(message = "Resume flag is required")
 	private Boolean resumeFlag;
+	
 	private Date appliedTime;
 	private Date acceptedTime;
 	private Date declinedTime;
