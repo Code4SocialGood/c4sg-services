@@ -113,35 +113,6 @@ public class ProjectController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    @ApiOperation(
-    		value = "Find projects by user", 
-    		notes = "Returns a list of projects searched by user ID and user-project status (applied/bookmarked). "
-    				+ "If user-project status is not provided, returns all projects related to the user. "
-    				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
-    		response =ProjectDTO.class , 
-    		responseContainer = "List")
-    	@ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
-    public List<ProjectDTO> getUserProjects(
-    		@ApiParam(value = "User ID", required = true) @RequestParam Integer userId,
-    		@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
-    		@RequestParam (required = false) String userProjectStatus)	
-            throws ProjectServiceException {
-    	
-    	System.out.println("************** ProjectController.getUserProjects()" 
-                  + ": UserId=" + userId 
-                  + "; Status=" + userProjectStatus 
-                  + " **************");
-    	List<ProjectDTO> projects = new ArrayList<ProjectDTO>();
-    	if(userProjectStatus.equals("B")){
-    		projects = projectService.getBookmarkByUser(userId);
-    	}else{
-    		projects = projectService.getApplicationByUserAndStatus(userId, userProjectStatus);	
-    	}
-    	return projects;
-    }
-
-    @CrossOrigin
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new project")
     public Map<String, Object> createProject(
@@ -204,19 +175,37 @@ public class ProjectController {
         return responseData;
     }
     
+
+    @CrossOrigin
+    @RequestMapping(value = "/applications", method = RequestMethod.GET)
+    @ApiOperation(value = "Find projects by user")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
+    public List<ApplicationDTO> getApplications(
+    		@ApiParam(value = "User ID", required = true) @RequestParam Integer userId,
+    		@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
+    		@RequestParam (required = false) String status)	
+            throws ProjectServiceException {
+    	
+    	System.out.println("************** ProjectController.getUserProjects()" 
+                  + ": UserId=" + userId 
+                  + "; Status=" + status 
+                  + " **************");
+    	List<ApplicationDTO> applications = applicationService.getApplicationsByUser(userId, status);     	
+    	return applications;
+    }    
+    
   //TODO: Replace explicit user{id} with AuthN user id. 
     @CrossOrigin
     @RequestMapping(value = "/applications", method = RequestMethod.POST)
     @ApiOperation(value = "Create new application")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "ID of project or user invalid")})       
-    public Map<String, Object> createApplication(
+    public ApplicationDTO createApplication(
             @ApiParam(value = "Application object", required = true) @RequestBody @Valid ApplicationDTO application) {
     	   	    
-    	Map<String, Object> responseData = null;
-        try {        	
-        	ApplicationDTO applicationDto = applicationService.createApplication(application);        	        	
-        	responseData = Collections.synchronizedMap(new HashMap<>());
-            responseData.put("application", applicationDto);
+    	ApplicationDTO applicationDto = null;
+        try {      
+        	applicationDto = applicationService.createApplication(application);        	        	
+        	
         } catch (NullPointerException e) {
             throw new NotFoundException("Error in the application");
         }
@@ -224,8 +213,60 @@ public class ProjectController {
         	throw e;
         }
         
-        return responseData;
-    }    
+        return applicationDto;
+    } 
+    
+  //TODO: Replace explicit user{id} with AuthN user id. 
+    @CrossOrigin
+    @RequestMapping(value = "/applications", method = RequestMethod.PUT)
+    @ApiOperation(value = "Create new application")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "ID of project or user invalid")})       
+    public ApplicationDTO updateApplication(
+            @ApiParam(value = "Application object", required = true) @RequestBody @Valid ApplicationDTO application) {
+    	   	    
+    	ApplicationDTO applicationDto = null;
+        try {        	
+        	applicationDto = applicationService.updateApplication(application);         	
+        } catch (NullPointerException e) {
+            throw new NotFoundException("Error in the application");
+        }
+        catch (UserProjectException | BadRequestException e) {
+        	throw e;
+        }
+        
+        return applicationDto;
+    } 
+    
+    
+
+    @CrossOrigin
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @ApiOperation(
+    		value = "Find projects by user", 
+    		notes = "Returns a list of projects searched by user ID and user-project status (applied/bookmarked). "
+    				+ "If user-project status is not provided, returns all projects related to the user. "
+    				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
+    		response =ProjectDTO.class , 
+    		responseContainer = "List")
+    	@ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
+    public List<ProjectDTO> getUserProjects(
+    		@ApiParam(value = "User ID", required = true) @RequestParam Integer userId,
+    		@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
+    		@RequestParam (required = false) String userProjectStatus)	
+            throws ProjectServiceException {
+    	
+    	System.out.println("************** ProjectController.getUserProjects()" 
+                  + ": UserId=" + userId 
+                  + "; Status=" + userProjectStatus 
+                  + " **************");
+    	List<ProjectDTO> projects = new ArrayList<ProjectDTO>();
+    	if(userProjectStatus.equals("B")){
+    		projects = projectService.getBookmarkByUser(userId);
+    	}else{
+    		projects = projectService.getApplicationByUserAndStatus(userId, userProjectStatus);	
+    	}
+    	return projects;
+    }
 
     @CrossOrigin
     @RequestMapping(value = "/{id}/users/{userId}", method = RequestMethod.POST)
