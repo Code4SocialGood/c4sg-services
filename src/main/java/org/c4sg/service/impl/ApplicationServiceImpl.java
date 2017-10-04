@@ -3,6 +3,7 @@ package org.c4sg.service.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.c4sg.constant.Constants;
 import org.c4sg.dao.ApplicationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
+import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
 import org.c4sg.entity.Application;
 import org.c4sg.entity.Organization;
@@ -20,6 +22,7 @@ import org.c4sg.entity.User;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ApplicationMapper;
+import org.c4sg.mapper.UserMapper;
 import org.c4sg.mapper.converter.BooleanToStringConverter;
 import org.c4sg.service.ApplicationService;
 import org.c4sg.service.AsyncEmailService;
@@ -84,6 +87,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 		
 	}
 	
+	@Override
+	public List<ApplicantDTO> getApplicants(Integer projectId) {
+		
+		List<Application> applications = applicationDAO.findByProject_Id(projectId);
+		return applicationMapper.getApplicantDtosFromEntities(applications);
+		
+	}
+	
 	public ApplicationDTO createApplication(ApplicationDTO applicationDto){
 				
 		validateApplication(applicationDto);
@@ -101,6 +112,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     	application.setComment(applicationDto.getComment());
     	application.setResumeFlag(booleanToStringConverter.convert(applicationDto.getResumeFlag()));
     	application.setAppliedTime(applicationDto.getAppliedTime());
+    	application.setCreatedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
     	//application.setAppliedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
         applicationDAO.save(application);
 	    
@@ -123,6 +135,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     	}else if(applicationDto.getStatus().equals("D")){
     	    application.setDeclinedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
     	}
+    	application.setUpdatedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
         applicationDAO.save(application);
 	    
         User user = userDAO.findById(applicationDto.getUserId());

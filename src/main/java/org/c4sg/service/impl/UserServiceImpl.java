@@ -135,17 +135,7 @@ public class UserServiceImpl implements UserService {
     	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, Constants.C4SG_ADDRESS, "", Constants.SUBJECT_DELETE_USER, Constants.TEMPLATE_DELETE_USER, context);
     	System.out.println("Delete user email sent: User=" + id);
 
-    }
-		
-	@Override
-	public List<ApplicantDTO> getApplicants(Integer projectId) {
-		//List<User> users = userDAO.findByUserProjectId(projectId, Constants.USER_PROJECT_STATUS_APPLIED);
-		//List<Applicant> users = userDAO.findApplicants(projectId);
-		List<Object[]> applicants = userDAO.findApplicants(projectId);
-   		List<ApplicantDTO> applicantDTOS = new UserMapper().getApplicantDTOs(applicants);
-       	return applicantDTOS;     
-		//return userMapper.getDtosFromEntities(users);
-	}
+    }	
 
 	@Override
 	public Page<UserDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String role, String publishFlag, Integer page, Integer size) {

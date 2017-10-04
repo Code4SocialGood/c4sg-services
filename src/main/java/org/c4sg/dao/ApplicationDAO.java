@@ -6,7 +6,9 @@ import javax.transaction.Transactional;
 
 import org.c4sg.entity.Application;
 import org.c4sg.entity.UserProject;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 public interface ApplicationDAO extends CrudRepository<Application, Long> {
 	
@@ -18,7 +20,7 @@ public interface ApplicationDAO extends CrudRepository<Application, Long> {
 	List<Application> findByUser_IdAndStatus(Integer userId, String status);
 	List<Application> findByProject_Id(Integer projectId);
 	List<Application> findByProject_IdAndStatus(Integer projectId, String status);
-	
+		
 	@Transactional
 	Long deleteById(Integer id);	
 	@Transactional

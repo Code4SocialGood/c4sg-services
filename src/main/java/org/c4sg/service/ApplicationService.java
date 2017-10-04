@@ -2,6 +2,7 @@ package org.c4sg.service;
 
 import java.util.List;
 
+import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
 
 
@@ -13,6 +14,7 @@ public interface ApplicationService {
 	List<ApplicationDTO> getApplicationsByUser(Integer userId, String status);
 	List<ApplicationDTO> getApplicationsByProject(Integer projectId);
 	List<ApplicationDTO> getApplicationsByProject(Integer projectId, String status);
+	List<ApplicantDTO> getApplicants(Integer projectId);
 	
 	ApplicationDTO createApplication(ApplicationDTO application);
 	ApplicationDTO updateApplication(ApplicationDTO application);

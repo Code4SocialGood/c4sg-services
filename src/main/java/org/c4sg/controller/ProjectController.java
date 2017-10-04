@@ -2,6 +2,7 @@ package org.c4sg.controller;
 
 import io.swagger.annotations.*;
 
+import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.JobTitleDTO;
@@ -176,7 +177,7 @@ public class ProjectController {
     }
     
 
-    @CrossOrigin
+   /* @CrossOrigin
     @RequestMapping(value = "/applications", method = RequestMethod.GET)
     @ApiOperation(value = "Find projects by user")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
@@ -192,7 +193,20 @@ public class ProjectController {
                   + " **************");
     	List<ApplicationDTO> applications = applicationService.getApplicationsByUser(userId, status);     	
     	return applications;
-    }    
+    }  */
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/applicants", method = RequestMethod.GET)
+    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
+    public List<ApplicantDTO> getApplicants(
+    		@ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
+    	
+    	System.out.println("************** UserController.getApplicants()" 
+                + ": projectId=" + projectId  
+                + " **************");
+    	
+        return applicationService.getApplicants(projectId);
+    }
     
   //TODO: Replace explicit user{id} with AuthN user id. 
     @CrossOrigin
