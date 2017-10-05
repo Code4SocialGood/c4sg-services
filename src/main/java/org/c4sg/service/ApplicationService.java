@@ -9,12 +9,6 @@ import org.c4sg.dto.ProjectDTO;
 
 public interface ApplicationService {
 	
-	/*ApplicationDTO getApplicationByProjectandByUser(Integer userId, Integer projectId);
-	ApplicationDTO getApplicationsByProjectAndByUser(Integer userId, Integer projectId, String status);
-	List<ApplicationDTO> getApplicationsByUser(Integer userId);		
-	List<ApplicationDTO> getApplicationsByProject(Integer projectId);
-	List<ApplicationDTO> getApplicationsByProject(Integer projectId, String status);*/
-	
 	List<ProjectDTO> getApplicationsByUser(Integer userId, String status);
 	List<ApplicantDTO> getApplicants(Integer projectId);
 	

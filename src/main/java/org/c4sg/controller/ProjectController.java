@@ -235,8 +235,7 @@ public class ProjectController {
         }
         
         return applicationDto;
-    } 
-    
+    }     
     
   //TODO: Replace explicit user{id} with AuthN user id. 
     @CrossOrigin
@@ -260,7 +259,6 @@ public class ProjectController {
         
         return bookmarkDto;
     }
-    
 
     @CrossOrigin
     @RequestMapping(value = "/user", method = RequestMethod.GET)
@@ -290,55 +288,6 @@ public class ProjectController {
     	}
     	return projects;
     }
-
-    /*@CrossOrigin
-    @RequestMapping(value = "/{id}/users/{userId}", method = RequestMethod.POST)
-    @ApiOperation(value = "Create a relation between user and project")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "ID of project or user invalid")
-    })
-    //TODO: Replace explicit user{id} with AuthN user id.    
-    public ResponseEntity<?> createUserProject(
-    		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
-            @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId,
-            @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
-            @RequestBody ApplicationDTO application) {
-    	
-    	System.out.println("************** ProjectController.createUserProject()" 
-                + ": userId=" + userId 
-                + "; projectId=" + projectId 
-                + "; userProjectStatus=" + application 
-                + " **************");
-    	
-    	
-    	
-        try {
-        	//comment and resumeFlag will be accepted as inputs to the REST API in the future
-        	String comment = application.getComment();
-        	String resumeFlag = "N";
-        	if(application.getResumeFlag()){
-        		resumeFlag = "Y";
-        	}
-        	String status = application.getStatus();
-        	if(status.equals("B"))
-        	{
-        		//projectService.saveBookmark(userId, projectId);
-        	}
-        	else{
-        		//projectService.saveApplication(userId, projectId, status, comment, resumeFlag);
-        	}        	
-            //projectService.saveUserProject(userId, projectId, userProjectStatus);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                                                      .path("/{id}/users/{userId}")
-                                                      .buildAndExpand(projectId, userId, status).toUri();
-            return ResponseEntity.created(location).build();
-        } catch (NullPointerException e) {
-            throw new NotFoundException("Error in the application");
-        }
-        catch (UserProjectException | BadRequestException e) {
-        	throw e;
-        }
-    }*/
         
     @CrossOrigin
     @RequestMapping(value = "/{id}/image", params = "imgUrl", method = RequestMethod.PUT)

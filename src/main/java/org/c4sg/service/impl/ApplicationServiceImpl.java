@@ -51,48 +51,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	
 	@Autowired
 	private BooleanToStringConverter booleanToStringConverter;
-	
-	/*@Override
-	public ApplicationDTO getApplicationByProjectandByUser(Integer userId, Integer projectId){
 		
-		Application application = applicationDAO.findByUser_IdAndProject_Id(userId, projectId);
-		return applicationMapper.getApplicationDtoFromEntity(application);
-		
-	}
-	
-	@Override
-	public ApplicationDTO getApplicationsByProjectAndByUser(Integer userId, Integer projectId, String status){
-		
-		Application application = applicationDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
-		return applicationMapper.getApplicationDtoFromEntity(application);
-	}
-	
-	@Override
-	public List<ApplicationDTO> getApplicationsByUser(Integer userId){
-		
-		List<Application> applications = applicationDAO.findByUser_Id(userId);
-		return applicationMapper.getApplicationDtosFromEntities(applications);
-		
-	}
-	
-	
-	
-	@Override
-	public List<ApplicationDTO> getApplicationsByProject(Integer projectId){
-		
-		List<Application> applications = applicationDAO.findByProject_Id(projectId);
-		return applicationMapper.getApplicationDtosFromEntities(applications);
-		
-	}
-	
-	@Override
-	public List<ApplicationDTO> getApplicationsByProject(Integer projectId, String status){
-		
-		List<Application> applications = applicationDAO.findByProject_IdAndStatus(projectId, status);
-		return applicationMapper.getApplicationDtosFromEntities(applications);
-		
-	}*/
-	
 	@Override
 	public List<ProjectDTO> getApplicationsByUser(Integer userId, String status){
 		
