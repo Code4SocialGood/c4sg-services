@@ -40,40 +40,7 @@ public class ProjectMapper extends ModelMapper{
 		Type projectTypeDTO = new TypeToken<ProjectDTO>() {}.getType();
 		ProjectDTO projectDTO = map(userProject.getProject(), projectTypeDTO);
 		return projectDTO;
-	}
-	
-	public ProjectDTO getProjectDtoFromEntity(Application application){
-		Type projectTypeDTO = new TypeToken<ProjectDTO>() {}.getType();
-		ProjectDTO projectDTO = map(application.getProject(), projectTypeDTO);
-		return projectDTO;
-	}
-	
-	public List<ProjectDTO> getDtosFromApplicationEntities(List<Application> applications){
-		List<ProjectDTO> projectList = new ArrayList<ProjectDTO>();
-		Iterator<Application> applicationIter = applications.iterator();
-		while (applicationIter.hasNext()) {
-			Application application = applicationIter.next();
-			projectList.add(getProjectDtoFromEntity(application));
-		}
-		return projectList;
-	}
-	
-	public ProjectDTO getProjectDtoFromEntity(Bookmark bookmark){
-		Type projectTypeDTO = new TypeToken<ProjectDTO>() {}.getType();
-		ProjectDTO projectDTO = map(bookmark.getProject(), projectTypeDTO);
-		return projectDTO;
-	}
-	
-	public List<ProjectDTO> getDtosFromBookmarkEntities(List<Bookmark> bookmarks){
-		List<ProjectDTO> projectList = new ArrayList<ProjectDTO>();
-		Iterator<Bookmark> bookmarkIter = bookmarks.iterator();
-		while (bookmarkIter.hasNext()) {
-			Bookmark bookmark = bookmarkIter.next();
-			projectList.add(getProjectDtoFromEntity(bookmark));
-		}
-		return projectList;
-	}
-	
+	}		
 
 	public List<ProjectDTO> getDtosFromEntities(List<Project> projects){
 		List<ProjectDTO> projectList = new ArrayList<ProjectDTO>();

@@ -15,6 +15,7 @@ import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
+import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Application;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
@@ -51,39 +52,52 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Autowired
 	private BooleanToStringConverter booleanToStringConverter;
 	
+	/*@Override
 	public ApplicationDTO getApplicationByProjectandByUser(Integer userId, Integer projectId){
 		
 		Application application = applicationDAO.findByUser_IdAndProject_Id(userId, projectId);
 		return applicationMapper.getApplicationDtoFromEntity(application);
 		
 	}
+	
+	@Override
 	public ApplicationDTO getApplicationsByProjectAndByUser(Integer userId, Integer projectId, String status){
 		
 		Application application = applicationDAO.findByUser_IdAndProject_IdAndStatus(userId, projectId, status);
 		return applicationMapper.getApplicationDtoFromEntity(application);
 	}
+	
+	@Override
 	public List<ApplicationDTO> getApplicationsByUser(Integer userId){
 		
 		List<Application> applications = applicationDAO.findByUser_Id(userId);
 		return applicationMapper.getApplicationDtosFromEntities(applications);
 		
 	}
-	public List<ApplicationDTO> getApplicationsByUser(Integer userId, String status){
-		
-		List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, status);
-		return applicationMapper.getApplicationDtosFromEntities(applications);
-		
-	}
+	
+	
+	
+	@Override
 	public List<ApplicationDTO> getApplicationsByProject(Integer projectId){
 		
 		List<Application> applications = applicationDAO.findByProject_Id(projectId);
 		return applicationMapper.getApplicationDtosFromEntities(applications);
 		
 	}
+	
+	@Override
 	public List<ApplicationDTO> getApplicationsByProject(Integer projectId, String status){
 		
 		List<Application> applications = applicationDAO.findByProject_IdAndStatus(projectId, status);
 		return applicationMapper.getApplicationDtosFromEntities(applications);
+		
+	}*/
+	
+	@Override
+	public List<ProjectDTO> getApplicationsByUser(Integer userId, String status){
+		
+		List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, status);
+		return applicationMapper.getProjectDtosFromApplicationEntities(applications);
 		
 	}
 	
@@ -95,6 +109,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		
 	}
 	
+	@Override
 	public ApplicationDTO createApplication(ApplicationDTO applicationDto){
 				
 		validateApplication(applicationDto);
@@ -121,6 +136,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationMapper.getApplicationDtoFromEntity(application);
 		
 	}
+	
+	@Override
 	public ApplicationDTO updateApplication(ApplicationDTO applicationDto){
 		
 		validateApplication(applicationDto);
@@ -144,9 +161,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         
         return applicationMapper.getApplicationDtoFromEntity(application);
 	}
+	
+	@Override
 	public Long deleteApplication(Integer id){
 		return applicationDAO.deleteById(id);
 	}
+	
 	
 	private void validateApplication(ApplicationDTO application){
 		

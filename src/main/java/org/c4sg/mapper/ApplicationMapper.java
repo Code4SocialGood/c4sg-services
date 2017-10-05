@@ -1,5 +1,6 @@
 package org.c4sg.mapper;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.c4sg.entity.Project;
 import org.c4sg.mapper.converter.BooleanToStringConverter;
 import org.c4sg.mapper.converter.StringToBooleanConverter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -68,4 +70,21 @@ public class ApplicationMapper extends ModelMapper {
 		
 	}
 
+	public ProjectDTO getProjectDtoFromEntity(Application application){
+		Type projectTypeDTO = new TypeToken<ProjectDTO>() {}.getType();
+		ProjectDTO projectDTO = map(application.getProject(), projectTypeDTO);
+		return projectDTO;
+	}
+	
+	public List<ProjectDTO> getProjectDtosFromApplicationEntities(List<Application> applications){
+		List<ProjectDTO> projectList = new ArrayList<ProjectDTO>();
+		Iterator<Application> applicationIter = applications.iterator();
+		while (applicationIter.hasNext()) {
+			Application application = applicationIter.next();
+			projectList.add(getProjectDtoFromEntity(application));
+		}
+		return projectList;
+	}	
+	
+	
 }
