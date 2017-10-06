@@ -11,10 +11,12 @@ import java.util.Map;
 
 import org.c4sg.constant.Constants;
 import org.c4sg.dao.ApplicationDAO;
+import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
+import org.c4sg.dto.EmailDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Application;
 import org.c4sg.entity.Organization;
@@ -27,6 +29,8 @@ import org.c4sg.mapper.UserMapper;
 import org.c4sg.mapper.converter.BooleanToStringConverter;
 import org.c4sg.service.ApplicationService;
 import org.c4sg.service.AsyncEmailService;
+import org.c4sg.service.C4sgUrlService;
+import org.c4sg.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -51,6 +55,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 	
 	@Autowired
 	private BooleanToStringConverter booleanToStringConverter;
+	
+	@Autowired
+    private SkillService skillService;
+	
+	@Autowired
+    private C4sgUrlService urlService;
+	
+	@Autowired
+    private OrganizationDAO organizationDAO;
 		
 	@Override
 	public List<ProjectDTO> getApplicationsByUser(Integer userId, String status){
@@ -90,7 +103,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     	//application.setAppliedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
         applicationDAO.save(application);
 	    
-        asyncEmailService.sendEmail(user, project, applicationDto.getStatus());
+        sendEmail(user, project, applicationDto.getStatus());
         
         return applicationMapper.getApplicationDtoFromEntity(application);
 		
@@ -116,7 +129,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	    
         User user = userDAO.findById(applicationDto.getUserId());
 		Project project = projectDAO.findById(applicationDto.getProjectId());
-        asyncEmailService.sendEmail(user, project, applicationDto.getStatus());
+        sendEmail(user, project, applicationDto.getStatus());
         
         return applicationMapper.getApplicationDtoFromEntity(application);
 	}
@@ -156,6 +169,63 @@ public class ApplicationServiceImpl implements ApplicationService {
         		throw new UserProjectException("Already declined for the project.");
         	}
     	   	
+    }
+	
+	@Async
+    private void sendEmail(User user, Project project, String status) {
+
+        Integer orgId = project.getOrganization().getId();
+        List<User> users = userDAO.findByOrgId(orgId);
+        if (users != null && !users.isEmpty()) {
+        	
+        	List<String> userSkills = skillService.findSkillsForUser(user.getId());
+        	User orgUser = users.get(0);
+        	Organization org = organizationDAO.findOne(project.getOrganization().getId());
+        	
+        	if (status.equals("A")) {
+        		// send email to organization
+        		Map<String, Object> contextOrg = new HashMap<String, Object>();
+        		contextOrg.put("user", user);
+        		contextOrg.put("skills", userSkills);
+        		contextOrg.put("project", project);
+        		contextOrg.put("projectLink", urlService.getProjectUrl(project.getId()));
+        		contextOrg.put("userLink", urlService.getUserUrl(user.getId()));
+        		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, orgUser.getEmail(),user.getEmail(), Constants.SUBJECT_APPLICAITON_ORGANIZATION, Constants.TEMPLATE_APPLICAITON_ORGANIZATION, contextOrg);
+        	
+        		// send email to volunteer        		
+       			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+       			contextVolunteer.put("org", org);
+       			contextVolunteer.put("orgUser", orgUser);
+       			contextVolunteer.put("project", project);
+       			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_VOLUNTEER, Constants.TEMPLATE_APPLICAITON_VOLUNTEER, contextVolunteer);
+        	
+        		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail() + " ; OrgEmail=" + orgUser.getEmail());
+        	
+        	} else if (status.equals("C")) {
+        		// send email to volunteer
+       			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+       			contextVolunteer.put("org", org);
+       			contextVolunteer.put("orgUser", orgUser);
+       			contextVolunteer.put("project", project);
+       			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ACCEPT, Constants.TEMPLATE_APPLICAITON_ACCEPT, contextVolunteer);
+        		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
+   
+        	} else if (status.equals("D")) {
+        		// send email to volunteer
+       			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+       			contextVolunteer.put("org", org);
+       			contextVolunteer.put("orgUser", orgUser);
+       			contextVolunteer.put("project", project);
+       			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+       			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_DECLINE, Constants.TEMPLATE_APPLICAITON_DECLINE, contextVolunteer);        	
+        		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
+
+        	} else if (status.equals("B")) {
+        		// do nothing
+        	}
+        }
     }
 	
 	

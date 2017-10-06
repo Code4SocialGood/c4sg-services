@@ -1,15 +1,7 @@
 package org.c4sg.service.impl;
 
-<<<<<<< HEAD
+
 import org.c4sg.dto.EmailDTO;
-=======
-import org.c4sg.constant.Constants;
-import org.c4sg.dao.OrganizationDAO;
-import org.c4sg.dao.UserDAO;
-import org.c4sg.entity.Organization;
-import org.c4sg.entity.Project;
-import org.c4sg.entity.User;
->>>>>>> Design changes for Applicationn
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.C4sgUrlService;
 import org.c4sg.service.EmailTemplateService;
