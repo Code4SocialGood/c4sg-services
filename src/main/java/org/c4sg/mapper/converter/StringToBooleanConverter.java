@@ -8,7 +8,7 @@ import java.util.Optional;
 @Component
 public class StringToBooleanConverter extends AbstractConverter<String, Boolean> {
     @Override
-    protected Boolean convert(String s) {
+    public Boolean convert(String s) {
         if (Optional.ofNullable(s).isPresent()) {
             return s.equalsIgnoreCase("Y");
         }

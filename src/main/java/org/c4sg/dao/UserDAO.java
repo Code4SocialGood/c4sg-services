@@ -52,12 +52,7 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
      		"WHERE upa.project_id = :projectId " + 
             "ORDER BY upa.created_time DESC";*/
     
-    String FIND_APPLICANT_QUERY =     
-     		"SELECT a.user_id, a.project_id, u.first_name, u.last_name, u.title, a.status, a.applied_time, a.accepted_time, a.declined_time " +  
-     		"FROM user u " + 
-     		"LEFT OUTER JOIN application a ON a.user_id = u.id " +
-     		"WHERE a.project_id = :projectId " + 
-            "ORDER BY a.created_time DESC";
+    
            
     String SEARCH_FIRST = 
     	       	"SELECT DISTINCT u"
@@ -121,10 +116,6 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     @Modifying
     @Query(SAVE_AVATAR)
     void updateAvatar(@Param("imgUrl") String imgUrl, @Param("userId") Integer userId);
-
-    // Native query for temporal table
-    @Query(value = FIND_APPLICANT_QUERY, nativeQuery = true)
-    List<Object[]> findApplicants(@Param("projectId") Integer projectId);
     
     @Query(FIND_BY_KEYWORD)
     List<User> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);

@@ -1,5 +1,7 @@
 package org.c4sg.dto;
 
+import java.util.Date;
+
 public class ApplicantDTO {
 	
     private Integer userId;
@@ -8,9 +10,11 @@ public class ApplicantDTO {
     private String lastName;
     private String title;
     private String applicationStatus;
-    private String appliedTime;
-    private String acceptedTime;
-    private String declinedTime;
+    private String comment;
+    private Boolean resumeFlag;
+    private Date appliedTime;
+    private Date acceptedTime;
+    private Date declinedTime;
 
 	public Integer getUserId() {
 		return userId;
@@ -59,27 +63,43 @@ public class ApplicantDTO {
 		this.applicationStatus = applicationStatus;
 	}
 	
-	public String getAppliedTime() {
+	public String getComment(){
+		return comment;
+	}
+	
+	public void setComment(String comment){
+		this.comment = comment;
+	}
+	
+	public Boolean getResumeFlag(){
+		return resumeFlag;
+	}
+	
+	public void setResumeFlag(Boolean resumeFlag){
+		this.resumeFlag = resumeFlag;
+	}
+	
+	public Date getAppliedTime() {
 		return appliedTime;
 	}
 	
-	public void setAppliedTime(String appliedTime) {
+	public void setAppliedTime(Date appliedTime) {
 		this.appliedTime = appliedTime;
 	}
 	
-	public String getAcceptedTime() {
+	public Date getAcceptedTime() {
 		return acceptedTime;
 	}
 	
-	public void setAcceptedTime(String acceptedTime) {
+	public void setAcceptedTime(Date acceptedTime) {
 		this.acceptedTime = acceptedTime;
 	}
 
-	public String getDeclinedTime() {
+	public Date getDeclinedTime() {
 		return declinedTime;
 	} 
 	
-	public void setDeclinedTime(String declinedTime) {
+	public void setDeclinedTime(Date declinedTime) {
 		this.declinedTime = declinedTime;
 	}
 }

@@ -112,20 +112,7 @@ public class UserController {
         } catch (Exception e) {
             throw new UserServiceException("Error creating user entity: " + e.getCause().getMessage());
         }
-    }
-    
-    @CrossOrigin
-    @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
-    public List<ApplicantDTO> getApplicants(
-    		@ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
-    	
-    	System.out.println("************** UserController.getApplicants()" 
-                + ": projectId=" + projectId  
-                + " **************");
-    	
-        return userService.getApplicants(projectId);
-    }
+    }   
     
 	@CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
