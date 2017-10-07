@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.c4sg.service.GeocodeService;
+import org.c4sg.util.CountryCodeConverterUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +37,9 @@ public class GoogleGeocodeService implements GeocodeService {
 			if (state != null && !state.isEmpty()) {
 				address.append(state);
 				address.append(",");
-			}	
-			address.append(country);
+			}
+			String countryCode = CountryCodeConverterUtil.convertToIso2(country);
+			address.append(countryCode);
 			
 			try {
 				URL url = getRequestUrl(address.toString());
