@@ -103,7 +103,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     	//application.setAppliedTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
         applicationDAO.save(application);
 	    
-        sendEmail(user, project, applicationDto.getStatus());
+        sendEmail(user, project, application);
         
         return applicationMapper.getApplicationDtoFromEntity(application);
 		
@@ -129,7 +129,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	    
         User user = userDAO.findById(applicationDto.getUserId());
 		Project project = projectDAO.findById(applicationDto.getProjectId());
-        sendEmail(user, project, applicationDto.getStatus());
+        sendEmail(user, project, application);
         
         return applicationMapper.getApplicationDtoFromEntity(application);
 	}
@@ -172,7 +172,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 	
 	@Async
-    private void sendEmail(User user, Project project, String status) {
+    private void sendEmail(User user, Project project, Application application) {
 
         Integer orgId = project.getOrganization().getId();
         List<User> users = userDAO.findByOrgId(orgId);
@@ -182,7 +182,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         	User orgUser = users.get(0);
         	Organization org = organizationDAO.findOne(project.getOrganization().getId());
         	
-        	if (status.equals("A")) {
+        	if (application.getStatus().equals("A")) {
         		// send email to organization
         		Map<String, Object> contextOrg = new HashMap<String, Object>();
         		contextOrg.put("user", user);
@@ -190,6 +190,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         		contextOrg.put("project", project);
         		contextOrg.put("projectLink", urlService.getProjectUrl(project.getId()));
         		contextOrg.put("userLink", urlService.getUserUrl(user.getId()));
+        		contextOrg.put("application", application);
         		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, orgUser.getEmail(),user.getEmail(), Constants.SUBJECT_APPLICAITON_ORGANIZATION, Constants.TEMPLATE_APPLICAITON_ORGANIZATION, contextOrg);
         	
         		// send email to volunteer        		
@@ -202,7 +203,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         	
         		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail() + " ; OrgEmail=" + orgUser.getEmail());
         	
-        	} else if (status.equals("C")) {
+        	} else if (application.getStatus().equals("C")) {
         		// send email to volunteer
        			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
        			contextVolunteer.put("org", org);
@@ -212,7 +213,7 @@ public class ApplicationServiceImpl implements ApplicationService {
        			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ACCEPT, Constants.TEMPLATE_APPLICAITON_ACCEPT, contextVolunteer);
         		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
    
-        	} else if (status.equals("D")) {
+        	} else if (application.getStatus().equals("D")) {
         		// send email to volunteer
        			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
        			contextVolunteer.put("org", org);
@@ -222,7 +223,7 @@ public class ApplicationServiceImpl implements ApplicationService {
        			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_DECLINE, Constants.TEMPLATE_APPLICAITON_DECLINE, contextVolunteer);        	
         		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
 
-        	} else if (status.equals("B")) {
+        	} else if (application.getStatus().equals("B")) {
         		// do nothing
         	}
         }
