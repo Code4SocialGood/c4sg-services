@@ -14,14 +14,17 @@ import org.c4sg.dao.ApplicationDAO;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
+import org.c4sg.dao.UserOrganizationDAO;
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
+import org.c4sg.dto.ApplicationProjectDTO;
 import org.c4sg.dto.EmailDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Application;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
+import org.c4sg.entity.UserOrganization;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.ApplicationMapper;
@@ -49,6 +52,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 	
 	@Autowired
 	private ProjectDAO projectDAO;
+	
+	@Autowired
+	private UserOrganizationDAO userOrganizationDAO;
 	
 	@Autowired
 	private ApplicationMapper applicationMapper;
@@ -80,6 +86,37 @@ public class ApplicationServiceImpl implements ApplicationService {
 		return applicationMapper.getApplicantDtosFromEntities(applications);
 		
 	}
+	
+	@Override
+	public List<ApplicationProjectDTO> getApplicationsByOrgAndByApplicant(Integer userId, Integer nonProfitUserId, String status){
+		
+		//get org id from nonProfitUserId;
+		List<UserOrganization> userOrganizations = userOrganizationDAO.findByUserId(nonProfitUserId);
+		
+		//get projects for the org
+		List<Project> projects = new ArrayList<Project>();		
+		for(UserOrganization userOrganization: userOrganizations){
+			
+			//list gets overwritten here becasue there should be only one organization for one nonprofit user
+			projects = projectDAO.getProjectsByOrganization(userOrganization.getOrganization().getId(),"A");
+		}
+		
+		//get applications by project and userId
+		List<Application> applications = new ArrayList<Application>();
+		Application application;
+		for(Project project: projects){
+			
+			application = new Application();
+			application = applicationDAO.findByUser_IdAndProject_IdAndStatus(userId, project.getId(), status);
+			if(java.util.Objects.nonNull(application)){
+				applications.add(application);
+			}
+						
+		}		
+			
+		return applicationMapper.getApplicationProjectDtosFromEntities(applications);
+	}
+	
 	
 	@Override
 	public ApplicationDTO createApplication(ApplicationDTO applicationDto){
