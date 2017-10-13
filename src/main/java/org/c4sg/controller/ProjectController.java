@@ -6,13 +6,16 @@ import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
 import org.c4sg.dto.BookmarkDTO;
 import org.c4sg.dto.CreateProjectDTO;
+import org.c4sg.dto.HeroDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.Badge;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.service.ApplicationService;
+import org.c4sg.service.BadgeService;
 import org.c4sg.service.BookmarkService;
 import org.c4sg.service.ProjectService;
 import org.slf4j.Logger;
@@ -51,6 +54,9 @@ public class ProjectController {
     
     @Autowired
     private BookmarkService bookmarkService;
+    
+    @Autowired
+    private BadgeService badgeService;
     
     private final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
@@ -260,6 +266,43 @@ public class ProjectController {
         return bookmarkDto;
     }
 
+    //TODO: Replace explicit user{id} with AuthN user id.
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/users/{userId}/badge", method = RequestMethod.POST)
+    @ApiOperation(value = "Give out badge for a volunteer")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "ID of project or user invalid")})
+    public Badge giveBadge(
+		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
+        @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId)
+        {
+	
+		System.out.println("************** ProjectController.giveBadge()" 
+	            + ": userId=" + userId 
+	            + "; projectId=" + projectId 
+	            + " **************");
+		
+	    try {
+    		Badge badge = badgeService.saveBadge(userId, projectId);
+    		return badge;
+	    } catch (NullPointerException e) {
+	        throw new NotFoundException("ID of project or user invalid");
+	    } catch (Exception e)	{
+	    	throw e;
+	    }
+        
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/heroes", method = RequestMethod.GET)
+    @ApiOperation(value = "Find heroes sorted by number of badges", notes = "Returns a collection of users")
+    public List<HeroDTO> getBadges() {
+    	
+    	System.out.println("************** ProjectController.getBadges() **************");
+    	
+        return badgeService.getBadges();
+    }
+           
     @CrossOrigin
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     @ApiOperation(
