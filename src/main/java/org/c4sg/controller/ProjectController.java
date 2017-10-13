@@ -4,6 +4,7 @@ import io.swagger.annotations.*;
 
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
+import org.c4sg.dto.ApplicationProjectDTO;
 import org.c4sg.dto.BookmarkDTO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.HeroDTO;
@@ -186,6 +187,35 @@ public class ProjectController {
 
         return responseData;
     }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @ApiOperation(
+    		value = "Find projects by user", 
+    		notes = "Returns a list of projects searched by user ID and user-project status (applied/bookmarked). "
+    				+ "If user-project status is not provided, returns all projects related to the user. "
+    				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
+    		response =ProjectDTO.class , 
+    		responseContainer = "List")
+    	@ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
+    public List<ProjectDTO> getApplicationsAndBookmarksByUser(
+    		@ApiParam(value = "User ID", required = true) @RequestParam Integer userId,
+    		@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
+    		@RequestParam (required = false) String status)	
+            throws ProjectServiceException {
+    	
+    	System.out.println("************** ProjectController.getUserProjects()" 
+                  + ": UserId=" + userId 
+                  + "; Status=" + status 
+                  + " **************");
+    	List<ProjectDTO> projects = new ArrayList<ProjectDTO>();
+    	if(status.equals("B")){
+    		projects = bookmarkService.getBookmarkByUser(userId);
+    	}else{
+    		projects = applicationService.getApplicationsByUser(userId, status);	
+    	}
+    	return projects;
+    }
       
     @CrossOrigin
     @RequestMapping(value = "/{id}/applicants", method = RequestMethod.GET)
@@ -198,6 +228,22 @@ public class ProjectController {
                 + " **************");
     	
         return applicationService.getApplicants(projectId);
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/applicants/{applicantid}/users/{nonprofituserid}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
+    public List<ApplicationProjectDTO> getApplicationsByOrgAndApplicant(
+    		@ApiParam(value = "ID of applicant", required = true) @PathVariable("applicantid") Integer applicantId,
+    		@ApiParam(value = "ID of non-profit user", required = true) @PathVariable("nonprofituserid") Integer nonProfitUserId,
+    		@ApiParam(value = "Application status", required = true) @RequestParam (required = false) String status) {
+    	
+    	System.out.println("************** UserController.getApplicants()" 
+                + ": applicantid=" + applicantId
+                + ": non profit user=" + nonProfitUserId
+                + " **************");
+    	
+        return applicationService.getApplicationsByOrgAndByApplicant(applicantId, nonProfitUserId, status);
     }
     
   //TODO: Replace explicit user{id} with AuthN user id. 
@@ -301,35 +347,6 @@ public class ProjectController {
     	System.out.println("************** ProjectController.getBadges() **************");
     	
         return badgeService.getBadges();
-    }
-           
-    @CrossOrigin
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    @ApiOperation(
-    		value = "Find projects by user", 
-    		notes = "Returns a list of projects searched by user ID and user-project status (applied/bookmarked). "
-    				+ "If user-project status is not provided, returns all projects related to the user. "
-    				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
-    		response =ProjectDTO.class , 
-    		responseContainer = "List")
-    	@ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
-    public List<ProjectDTO> getApplicationsAndBookmarksByUser(
-    		@ApiParam(value = "User ID", required = true) @RequestParam Integer userId,
-    		@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
-    		@RequestParam (required = false) String status)	
-            throws ProjectServiceException {
-    	
-    	System.out.println("************** ProjectController.getUserProjects()" 
-                  + ": UserId=" + userId 
-                  + "; Status=" + status 
-                  + " **************");
-    	List<ProjectDTO> projects = new ArrayList<ProjectDTO>();
-    	if(status.equals("B")){
-    		projects = bookmarkService.getBookmarkByUser(userId);
-    	}else{
-    		projects = applicationService.getApplicationsByUser(userId, status);	
-    	}
-    	return projects;
     }
         
     @CrossOrigin
