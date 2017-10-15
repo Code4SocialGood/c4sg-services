@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.ApplicationDTO;
+import org.c4sg.dto.ApplicationProjectDTO;
 import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Application;
 import org.c4sg.entity.Project;
@@ -69,6 +70,31 @@ public class ApplicationMapper extends ModelMapper {
 		return applicantList;
 		
 	}
+	
+	public List<ApplicationProjectDTO> getApplicationProjectDtosFromEntities(List<Application> applications){
+		
+		List<ApplicationProjectDTO> applicationList = new ArrayList<ApplicationProjectDTO>();
+		ApplicationProjectDTO applicationProject;
+		
+		for(Application application: applications){
+			applicationProject = new ApplicationProjectDTO();
+			
+			applicationProject.setUserId(application.getUser().getId());
+			applicationProject.setProjectId(application.getProject().getId());
+			applicationProject.setProjectName(application.getProject().getName());			
+			applicationProject.setApplicationStatus(application.getStatus());
+			applicationProject.setComment(application.getComment());
+			applicationProject.setResumeFlag(stringToBooleanConverter.convert(application.getResumeFlag()));
+			applicationProject.setAppliedTime(application.getAppliedTime());
+			applicationProject.setAcceptedTime(application.getAcceptedTime());
+			applicationProject.setDeclinedTime(application.getDeclinedTime());	
+			
+			applicationList.add(applicationProject);
+		}		
+		
+		return applicationList;
+		
+	}
 
 	public ProjectDTO getProjectDtoFromEntity(Application application){
 		Type projectTypeDTO = new TypeToken<ProjectDTO>() {}.getType();
@@ -85,6 +111,5 @@ public class ApplicationMapper extends ModelMapper {
 		}
 		return projectList;
 	}	
-	
 	
 }
