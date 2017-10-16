@@ -10,14 +10,15 @@ import org.c4sg.dao.BadgeDAO;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
+import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.HeroDTO;
 import org.c4sg.entity.Badge;
-import org.c4sg.entity.Bookmark;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.BadgeMapper;
+import org.c4sg.service.ApplicationService;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.BadgeService;
 import org.c4sg.service.C4sgUrlService;
@@ -41,6 +42,9 @@ public class BadgeServiceImpl implements BadgeService {
 	
 	@Autowired
     private C4sgUrlService urlService;
+	
+	@Autowired
+    private ApplicationService applicationService;
 	
 	@Autowired
     private OrganizationDAO organizationDAO;
@@ -93,4 +97,20 @@ public class BadgeServiceImpl implements BadgeService {
     		throw new UserProjectException("Record already exist");
         }  	
     }
+
+	@Override
+	public Map<Integer, String> getApplicantIdsWithHeroFlagMap(Integer projectId) {
+		// returns a map of Applicants Id as key and Hero Flag "Y"/"N" as value
+		List <ApplicantDTO> applicantDtos = applicationService.getApplicants(projectId);
+		Map<Integer, String> applicantIdsWithHeroFlagMap = new HashMap<Integer, String>();
+		for(ApplicantDTO applicantDto: applicantDtos)	{
+			String heroFlag = "N";
+			Integer applicantId = applicantDto.getUserId();
+			if(badgeDAO.findByUser_IdAndProject_Id(applicantId, projectId) != null)	{
+				heroFlag = "Y";
+			}
+			applicantIdsWithHeroFlagMap.put(applicantId, heroFlag);
+		}
+		return applicantIdsWithHeroFlagMap;
+	}
 }
