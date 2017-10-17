@@ -2,16 +2,23 @@ package org.c4sg.config;
 
 import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
   @Value("${auth0.audience}")
   private String audience;
 
@@ -22,12 +29,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     
 	http.headers().frameOptions().disable();
-	  
+
     JwtWebSecurityConfigurer
     .forRS256(audience, issuer)
     .configure(http)
     .authorizeRequests()
-    .antMatchers("/", "/silent-mylocal.html","/silent.html", "/silent-local.html", "/silent-dev.html", "/silent-staging.html", "/resources/public/**", "/public/**/", "/resources/**").permitAll()
+    .antMatchers("/", "/silent-dev-local.html", "/silent-dev-remote.html", "/silent-staging-remote.html", "/resources/public/**", "/public/**/", "/resources/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/users/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/organizations/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/skills/**").permitAll()

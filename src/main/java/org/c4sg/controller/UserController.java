@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import javax.validation.constraints.Pattern;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api/users")
 @Api(description = "Operations about Users", tags = "user")
@@ -73,7 +72,8 @@ public class UserController {
     public UserDTO getUserByEmail(
     		@ApiParam(value = "email address", required = true) @PathVariable("email") String email) {
     	
-    	System.out.println("************** UserController.getUserByEmail()" 
+
+    	System.out.println("************** UserController.getUserByEmail()"
                 + ": email=" + email  
                 + " **************");
     	

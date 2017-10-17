@@ -225,7 +225,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (localProject != null) {
         	// TODO delete image from S3 by frontend
-        	userProjectDAO.deleteByProjectStatus(new Integer(id),"B");        	
+        	userProjectDAO.deleteByProjectStatus(id,"B");
         	projectSkillDAO.deleteByProjectId(id);            	
             projectDAO.deleteProject(id);
         } else {
@@ -239,7 +239,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
     
 	@Async
-    private void sendEmail(User user, Project project, String status) {
+	void sendEmail(User user, Project project, String status) {
 
         Integer orgId = project.getOrganization().getId();
         List<User> users = userDAO.findByOrgId(orgId);
