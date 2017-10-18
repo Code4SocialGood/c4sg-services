@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
   @Value("${auth0.audience}")
   private String audience;
 
@@ -27,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     .forRS256(audience, issuer)
     .configure(http)
     .authorizeRequests()
-    .antMatchers("/", "/silent-mylocal.html","/silent.html", "/silent-local.html", "/silent-dev.html", "/silent-staging.html", "/resources/public/**", "/public/**/", "/resources/**").permitAll()
+    .antMatchers("/","/silent.html", "/silent-dev-local.html", "/silent-dev-remote.html", "/silent-staging-remote.html", "/resources/public/**", "/public/**/", "/resources/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/users/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/organizations/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/skills/**").permitAll()
