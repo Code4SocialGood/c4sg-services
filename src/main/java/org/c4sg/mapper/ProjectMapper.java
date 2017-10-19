@@ -4,6 +4,8 @@ import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.Application;
+import org.c4sg.entity.Bookmark;
 import org.c4sg.entity.JobTitle;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.UserProject;
@@ -38,7 +40,7 @@ public class ProjectMapper extends ModelMapper{
 		Type projectTypeDTO = new TypeToken<ProjectDTO>() {}.getType();
 		ProjectDTO projectDTO = map(userProject.getProject(), projectTypeDTO);
 		return projectDTO;
-	}
+	}		
 
 	public List<ProjectDTO> getDtosFromEntities(List<Project> projects){
 		List<ProjectDTO> projectList = new ArrayList<ProjectDTO>();

@@ -131,7 +131,7 @@ public class SkillServiceImpl implements SkillService {
 			projectSkill.setSkill(skill); //skill
 			int displayOrder = skillsList.indexOf(skillName)+1;
 			projectSkill.setDisplayOrder(displayOrder); //displayOrder
-			
+		
 			projectSkills.add(projectSkill);
 		}
 		

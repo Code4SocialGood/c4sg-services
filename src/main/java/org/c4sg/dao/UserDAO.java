@@ -43,14 +43,16 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     
     String SAVE_AVATAR = "UPDATE User u set u.avatarUrl = :imgUrl where u.id = :userId";
     
-    String FIND_APPLICANT_QUERY =     
+    /*String FIND_APPLICANT_QUERY =     
      		"SELECT upa.user_id, upa.project_id, u.first_name, u.last_name, u.title, upa.created_time as applied_time, upc.created_time as approved_time, upd.created_time as declined_time " +  
      		"FROM user u " + 
      		"LEFT OUTER JOIN user_project upa ON upa.user_id = u.id AND upa.project_id = :projectId AND upa.status = 'A' " +
      		"LEFT OUTER JOIN user_project upc ON upc.user_id = u.id AND upc.project_id = :projectId AND upc.status = 'C' " +
      		"LEFT OUTER JOIN user_project upd ON upd.user_id = u.id AND upd.project_id = :projectId AND upd.status = 'D' " +
      		"WHERE upa.project_id = :projectId " + 
-            "ORDER BY upa.created_time DESC";    
+            "ORDER BY upa.created_time DESC";*/
+    
+    
            
     String SEARCH_FIRST = 
     	       	"SELECT DISTINCT u"
@@ -114,10 +116,6 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     @Modifying
     @Query(SAVE_AVATAR)
     void updateAvatar(@Param("imgUrl") String imgUrl, @Param("userId") Integer userId);
-
-    // Native query for temporal table
-    @Query(value = FIND_APPLICANT_QUERY, nativeQuery = true)
-    List<Object[]> findApplicants(@Param("projectId") Integer projectId);
     
     @Query(FIND_BY_KEYWORD)
     List<User> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);
