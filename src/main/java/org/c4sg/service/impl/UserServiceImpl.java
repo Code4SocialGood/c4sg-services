@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.c4sg.constant.Constants;
+import org.c4sg.dao.ApplicationDAO;
+import org.c4sg.dao.BookmarkDAO;
 import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.ApplicantDTO;
@@ -39,6 +41,12 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private OrganizationDAO organizationDAO;
 
+	@Autowired
+	private ApplicationDAO applicationDAO;
+	
+	@Autowired
+	private BookmarkDAO bookmarkDAO;
+	
 	@Autowired
     private OrganizationService organizationService;
 
@@ -111,8 +119,10 @@ public class UserServiceImpl implements UserService {
         
         user.setStatus(Constants.USER_STATUS_DELETED);
         user.setEmail(user.getEmail() + "-deleted");
-        userDAO.save(user);
-        userDAO.deleteUserProjects(id);
+        userDAO.save(user);        
+        //userDAO.deleteUserProjects(id);
+        applicationDAO.deleteByUser_Id(id); 
+        bookmarkDAO.deleteByUser_Id(id);
         userDAO.deleteUserSkills(id);  
         List<OrganizationDTO> organizations = organizationService.findByUser(id);
         for (OrganizationDTO org:organizations) {
@@ -122,20 +132,10 @@ public class UserServiceImpl implements UserService {
         // Sends notification to admin user. Delete user will be performed by admin user from Auth0 internally to reduce risk.  			
     	Map<String, Object> context = new HashMap<String, Object>();
     	context.put("user", user);         	
-    	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, Constants.C4SG_ADDRESS, Constants.SUBJECT_DELETE_USER, Constants.TEMPLATE_DELETE_USER, context);
+    	asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, Constants.C4SG_ADDRESS, "", Constants.SUBJECT_DELETE_USER, Constants.TEMPLATE_DELETE_USER, context);
     	System.out.println("Delete user email sent: User=" + id);
 
-    }
-		
-	@Override
-	public List<ApplicantDTO> getApplicants(Integer projectId) {
-		//List<User> users = userDAO.findByUserProjectId(projectId, Constants.USER_PROJECT_STATUS_APPLIED);
-		//List<Applicant> users = userDAO.findApplicants(projectId);
-		List<Object[]> applicants = userDAO.findApplicants(projectId);
-   		List<ApplicantDTO> applicantDTOS = new UserMapper().getApplicantDTOs(applicants);
-       	return applicantDTOS;     
-		//return userMapper.getDtosFromEntities(users);
-	}
+    }	
 
 	@Override
 	public Page<UserDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String role, String publishFlag, Integer page, Integer size) {

@@ -75,7 +75,7 @@ public class EmailServiceTest {
     	mailContext.put("project", project);
     	mailContext.put("message", message);
     	
-    	mailService.sendWithContext(from, user.getEmail(), "Test Email", "volunteer-application", mailContext);
+    	mailService.sendWithContext(from, user.getEmail(), "", "Test Email", "volunteer-application", mailContext);
     	
     	// received message
     	MimeMessage[] receivedMessages = mailer.getReceivedMessages();
@@ -112,7 +112,7 @@ public class EmailServiceTest {
     	mailContext.put("projectLink", "http://codeforsocialgood.org");
     	mailContext.put("project", project);
     	
-    	mailService.sendWithContext(from, user.getEmail(), "Test Email", "applicant-application", mailContext);
+    	mailService.sendWithContext(from, user.getEmail(), "", "Test Email", "applicant-application", mailContext);
     	
     	// received message
     	MimeMessage[] receivedMessages = mailer.getReceivedMessages();

@@ -8,7 +8,7 @@ import java.util.Optional;
 @Component
 public class BooleanToStringConverter extends AbstractConverter<Boolean, String> {
     @Override
-    protected String convert(Boolean aBoolean) {
+    public String convert(Boolean aBoolean) {
         if (!Optional.ofNullable(aBoolean).isPresent()) {
             return null;
         }

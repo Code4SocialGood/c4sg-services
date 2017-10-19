@@ -15,12 +15,12 @@ import javax.transaction.Transactional;
 
 public interface ProjectDAO extends CrudRepository<Project, Long> {
 
-    String FIND_BY_USER_ID_AND_STATUS = 
+    /*String FIND_BY_USER_ID_AND_STATUS = 
     		"SELECT p FROM UserProject up " +
             "JOIN up.project p " +
             "WHERE up.user.id = :userId" +
             " AND (:userProjectStatus is null OR up.status = :userProjectStatus)" +
-            "ORDER BY up.createdTime DESC";
+            "ORDER BY up.createdTime DESC";*/
 
     String FIND_BY_ORGANIZATION_ID_AND_STATUS = 
     		"SELECT p FROM Project p " +
@@ -84,8 +84,8 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
 	@Query(FIND_BY_ORGANIZATION_ID_AND_STATUS)
 	List<Project> getProjectsByOrganization(@Param("orgId") Integer orgId, @Param("projectStatus") String projectStatus);
 	
-	@Query(FIND_BY_USER_ID_AND_STATUS)
-	List<Project> findByUserIdAndUserProjectStatus(@Param("userId") Integer userId, @Param("userProjectStatus") String userProjectStatus);
+	/*@Query(FIND_BY_USER_ID_AND_STATUS)
+	List<Project> findByUserIdAndUserProjectStatus(@Param("userId") Integer userId, @Param("userProjectStatus") String userProjectStatus);*/
 	
 	@Transactional
     @Modifying
