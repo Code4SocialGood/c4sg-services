@@ -16,12 +16,12 @@
       clientID: AUTH0_CLIENT_ID,
       scope: 'openid profile',
       responseType: 'token id_token',
-      redirectUri: 'http://dev.code4socialgood.org'
+      redirectUri: 'http://localhost:4200'
     });
   </script>
   <script>
     webAuth.parseHash(window.location.hash, function (err, response) {
-    	parent.postMessage(err || response, 'http://dev.code4socialgood.org');
+    	parent.postMessage(err || response, 'https://dev.code4socialgood.org');
     });
   </script>
 </head>
