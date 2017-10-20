@@ -25,15 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -347,6 +344,22 @@ public class ProjectController {
     	System.out.println("************** ProjectController.getBadges() **************");
     	
         return badgeService.getBadges();
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/applicantHeroMap", method = RequestMethod.GET)
+    @ApiOperation(
+    			value = "Find applicants Id with hero flag for a project", 
+    			notes = "Returns a map with applicant ids as keys and Hero flag 'Y'/'N' as values for the project",
+    			response =Map.class , 
+    			responseContainer = "Map")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "ID of project or user invalid")})
+    public Map<Integer,String> getApplicantHeroMap(@ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
+    	
+    	System.out.println("************** ProjectController.isHero() **************"+projectId);
+    	
+        return badgeService.getApplicantIdsWithHeroFlagMap(projectId);
     }
         
     @CrossOrigin
