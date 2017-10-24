@@ -8,6 +8,7 @@ import org.c4sg.dto.HeroDTO;
 import org.c4sg.entity.Application;
 import org.c4sg.entity.Badge;
 import org.c4sg.entity.User;
+import org.c4sg.service.BadgeService;
 import org.c4sg.service.SkillService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class BadgeMapper extends ModelMapper {
 
 	@Autowired
 	private SkillService skillService;
+	
+	@Autowired
+	private BadgeService badgeService;
 
 	public List<HeroDTO> getHeroDTOs(List<Object[]> heroes) {	
 		List<HeroDTO> heroList = new ArrayList<>();
@@ -37,6 +41,7 @@ public class BadgeMapper extends ModelMapper {
 			hero.setCountry(user.getCountry());
 			hero.setPublishFlag(user.getPublishFlag());
 			hero.setBadgeCount((int)(long)o[1]); //Number of Badges 
+			hero.setProject(badgeService.findProjectsForHero(user.getId()));
 			
 			heroList.add(hero);
 		}
