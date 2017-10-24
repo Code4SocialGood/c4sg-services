@@ -325,15 +325,15 @@ public class ProjectController {
 	            + "; projectId=" + projectId 
 	            + " **************");
 		
+		Badge badge = null;
 	    try {
-    		Badge badge = badgeService.saveBadge(userId, projectId);
-    		return badge;
+	    	badge = badgeService.saveBadge(userId, projectId);
 	    } catch (NullPointerException e) {
 	        throw new NotFoundException("ID of project or user invalid");
 	    } catch (Exception e)	{
 	    	throw e;
 	    }
-        
+	    return badge;
     }
     
     @CrossOrigin

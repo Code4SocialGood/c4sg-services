@@ -11,6 +11,7 @@ public class HeroDTO {
     private String state;
     private String country;
     private Integer badgeCount;
+    private List<ProjectDTO> project;
     private List<String> skill;
     private String publishFlag;
     
@@ -61,6 +62,12 @@ public class HeroDTO {
 	}
 	public void setBadgeCount(Integer badgeCount) {
 		this.badgeCount = badgeCount;
+	}
+	public List<ProjectDTO> getProject() {
+		return project;
+	}
+	public void setProject(List<ProjectDTO> project) {
+		this.project = project;
 	}
 	public List<String> getSkill() {
 		return skill;

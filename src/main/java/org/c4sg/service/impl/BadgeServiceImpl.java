@@ -2,6 +2,7 @@ package org.c4sg.service.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +13,14 @@ import org.c4sg.dao.ProjectDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.ApplicantDTO;
 import org.c4sg.dto.HeroDTO;
+import org.c4sg.dto.ProjectDTO;
 import org.c4sg.entity.Badge;
 import org.c4sg.entity.Organization;
 import org.c4sg.entity.Project;
 import org.c4sg.entity.User;
 import org.c4sg.exception.UserProjectException;
 import org.c4sg.mapper.BadgeMapper;
+import org.c4sg.mapper.ProjectMapper;
 import org.c4sg.service.ApplicationService;
 import org.c4sg.service.AsyncEmailService;
 import org.c4sg.service.BadgeService;
@@ -47,6 +50,9 @@ public class BadgeServiceImpl implements BadgeService {
     private ApplicationService applicationService;
 	
 	@Autowired
+    private ProjectMapper projectMapper;
+	
+	@Autowired
     private OrganizationDAO organizationDAO;
 	
 	@Autowired
@@ -58,6 +64,7 @@ public class BadgeServiceImpl implements BadgeService {
 		 * Send out email to the volunteer
 		 * Save it to the database
 		*/
+		System.out.println("save Badge called...");
 		User user = userDAO.findById(userId);
         requireNonNull(user, "Invalid User Id");
         Project project = projectDAO.findById(projectId);
@@ -70,7 +77,8 @@ public class BadgeServiceImpl implements BadgeService {
     	heroBadge.setUser(user);
     	heroBadge.setProject(project);
         heroBadge = badgeDAO.save(heroBadge);		
-        		        
+        System.out.println("Hero Badge Given to" +userId+","+ projectId );
+        
         //send email to the volunteer
         Map<String, Object> contextVolunteer = new HashMap<String, Object>();
 		contextVolunteer.put("heroesLink", urlService.getHeroUrl());
@@ -86,12 +94,14 @@ public class BadgeServiceImpl implements BadgeService {
 	@Override
 	public List<HeroDTO> getBadges() {
 		// Get heroes from the Badge table
+		System.out.println("getBadges called...");
 		List<Object[]>  heroes = badgeDAO.findHeroes();
 		List<HeroDTO> heroDTOs = badgeMapper.getHeroDTOs(heroes);
 		return heroDTOs;
 	}
 	
 	private void isBadgeGiven(Integer userId, Integer projectId) throws UserProjectException {
+		System.out.println("isBadgeGiven called...");
     	Badge badge = badgeDAO.findByUser_IdAndProject_Id(userId, projectId);    	
     	if(java.util.Objects.nonNull(badge) && badge.getUser().getId().equals(userId) && badge.getProject().getId().equals(projectId))	{
     		throw new UserProjectException("Record already exist");
@@ -101,6 +111,7 @@ public class BadgeServiceImpl implements BadgeService {
 	@Override
 	public Map<Integer, String> getApplicantIdsWithHeroFlagMap(Integer projectId) {
 		// returns a map of Applicants Id as key and Hero Flag "Y"/"N" as value
+		System.out.println("getApplicantIdsWithHeroFlagMap called...");
 		List <ApplicantDTO> applicantDtos = applicationService.getApplicants(projectId);
 		Map<Integer, String> applicantIdsWithHeroFlagMap = new HashMap<Integer, String>();
 		for(ApplicantDTO applicantDto: applicantDtos)	{
@@ -112,5 +123,19 @@ public class BadgeServiceImpl implements BadgeService {
 			applicantIdsWithHeroFlagMap.put(applicantId, heroFlag);
 		}
 		return applicantIdsWithHeroFlagMap;
+	}
+
+	@Override
+	public List<ProjectDTO> findProjectsForHero(Integer userId) {
+		// To display it in Heroes page
+		System.out.println("findProjectsForHero called...");
+		List<Badge> badges = badgeDAO.findByUser_IdOrderByCreatedTimeAsc(userId);
+		List<ProjectDTO> projectDtos = new ArrayList<ProjectDTO>();
+		List<Project> projects = new ArrayList<Project>();
+		for(Badge badge: badges)	{
+			projects.add(badge.getProject());
+		}
+		projectDtos = projectMapper.getDtosFromEntities(projects);
+		return projectDtos;
 	}
 }
