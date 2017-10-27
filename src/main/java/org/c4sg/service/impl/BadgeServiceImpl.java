@@ -32,31 +32,31 @@ import org.c4sg.constant.Constants;
 @Service
 public class BadgeServiceImpl implements BadgeService {
 	@Autowired
-    private UserDAO userDAO;
+    	private UserDAO userDAO;
 	
 	@Autowired
-    private ProjectDAO projectDAO;
+    	private ProjectDAO projectDAO;
 	
 	@Autowired
-    private BadgeDAO badgeDAO;
+    	private BadgeDAO badgeDAO;
 	
 	@Autowired
-    private BadgeMapper badgeMapper;
+    	private BadgeMapper badgeMapper;
 	
 	@Autowired
-    private C4sgUrlService urlService;
+    	private C4sgUrlService urlService;
 	
 	@Autowired
-    private ApplicationService applicationService;
+    	private ApplicationService applicationService;
 	
 	@Autowired
-    private ProjectMapper projectMapper;
+    	private ProjectMapper projectMapper;
 	
 	@Autowired
-    private OrganizationDAO organizationDAO;
+    	private OrganizationDAO organizationDAO;
 	
 	@Autowired
-    private AsyncEmailService asyncEmailService;
+    	private AsyncEmailService asyncEmailService;
 	
 	@Override
 	public Badge saveBadge(Integer userId, Integer projectId) {
@@ -66,29 +66,33 @@ public class BadgeServiceImpl implements BadgeService {
 		*/
 		System.out.println("save Badge called...");
 		User user = userDAO.findById(userId);
-        requireNonNull(user, "Invalid User Id");
-        Project project = projectDAO.findById(projectId);
-        requireNonNull(project, "Invalid Project Id");
+        	requireNonNull(user, "Invalid User Id");
+        	Project project = projectDAO.findById(projectId);
+        	requireNonNull(project, "Invalid Project Id");
         
-        Integer orgId = project.getOrganization().getId();
-        Organization org = organizationDAO.findOne(orgId);
-        isBadgeGiven(userId, projectId);        
-    	Badge heroBadge = new Badge();   
-    	heroBadge.setUser(user);
-    	heroBadge.setProject(project);
-        heroBadge = badgeDAO.save(heroBadge);		
-        System.out.println("Hero Badge Given to" +userId+","+ projectId );
+        	Integer orgId = project.getOrganization().getId();
+        	Organization org = organizationDAO.findOne(orgId);
+        	List<User> users = userDAO.findByOrgId(orgId);
+        	User orgUser = users.get(0);
         
-        //send email to the volunteer
-        Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+        	isBadgeGiven(userId, projectId);        
+    		Badge heroBadge = new Badge();   
+    		heroBadge.setUser(user);
+    		heroBadge.setProject(project);
+        	heroBadge = badgeDAO.save(heroBadge);		
+        	System.out.println("Hero Badge Given to" +userId+","+ projectId );
+        
+        	//send email to the volunteer
+        	Map<String, Object> contextVolunteer = new HashMap<String, Object>();
 		contextVolunteer.put("heroesLink", urlService.getHeroUrl());
 		contextVolunteer.put("org", org);
+		contextVolunteer.put("orgUser", orgUser);
 		contextVolunteer.put("project", project);
 		contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
-		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), org.getContactEmail(), Constants.SUBJECT_HERO_USER, Constants.TEMPLATE_HERO_USER, contextVolunteer);   
+		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_HERO_USER, Constants.TEMPLATE_HERO_USER, contextVolunteer);   
 		
 		System.out.println("Hero Badge email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
-        return heroBadge;
+        	return heroBadge;
 	}
 
 	@Override
@@ -102,11 +106,11 @@ public class BadgeServiceImpl implements BadgeService {
 	
 	private void isBadgeGiven(Integer userId, Integer projectId) throws UserProjectException {
 		System.out.println("isBadgeGiven called...");
-    	Badge badge = badgeDAO.findByUser_IdAndProject_Id(userId, projectId);    	
-    	if(java.util.Objects.nonNull(badge) && badge.getUser().getId().equals(userId) && badge.getProject().getId().equals(projectId))	{
-    		throw new UserProjectException("Record already exist");
-        }  	
-    }
+    		Badge badge = badgeDAO.findByUser_IdAndProject_Id(userId, projectId);    	
+    		if(java.util.Objects.nonNull(badge) && badge.getUser().getId().equals(userId) && badge.getProject().getId().equals(projectId))	{
+    			throw new UserProjectException("Record already exist");
+        	}  	
+    	}
 
 	@Override
 	public Map<Integer, String> getApplicantIdsWithHeroFlagMap(Integer projectId) {
@@ -134,6 +138,7 @@ public class BadgeServiceImpl implements BadgeService {
 		List<Project> projects = new ArrayList<Project>();
 		for(Badge badge: badges)	{
 			projects.add(badge.getProject());
+			System.out.println("findProjectsForHero called..."+badge.getProject().getName());
 		}
 		projectDtos = projectMapper.getDtosFromEntities(projects);
 		return projectDtos;
