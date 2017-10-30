@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
   @Value("${auth0.audience}")
   private String audience;
 
@@ -22,12 +23,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     
 	http.headers().frameOptions().disable();
-	  
+
     JwtWebSecurityConfigurer
     .forRS256(audience, issuer)
     .configure(http)
     .authorizeRequests()
-    .antMatchers("/", "/silent-mylocal.html","/silent.html", "/silent-local.html", "/silent-dev.html", "/silent-staging.html", "/resources/public/**", "/public/**/", "/resources/**").permitAll()
+    .antMatchers("/", "/silent-dev-local.html", "/silent-dev-remote.html", "/silent-staging-remote.html", "/resources/public/**", "/public/**/", "/resources/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/users/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/organizations/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/skills/**").permitAll()
@@ -44,6 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     .antMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority("VOLUNTEER","ADMIN","ORGANIZATION")
     .antMatchers(HttpMethod.DELETE, "/api/projects/**").hasAnyAuthority("ADMIN","ORGANIZATION")
     .antMatchers(HttpMethod.DELETE, "/api/organizations/**").hasAnyAuthority("ADMIN","ORGANIZATION")
+    .antMatchers(HttpMethod.POST, "/api/email/send").permitAll()
     .anyRequest().authenticated();
   }
   

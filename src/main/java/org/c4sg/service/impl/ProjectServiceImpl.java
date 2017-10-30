@@ -48,6 +48,9 @@ public class ProjectServiceImpl implements ProjectService {
 	
     @Autowired
     private ProjectDAO projectDAO;
+    
+    @Autowired
+    private BookmarkDAO bookmarkDAO;
 
     @Autowired
     private UserDAO userDAO;
@@ -57,9 +60,6 @@ public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     private ApplicationDAO applicationDAO;
-    
-    @Autowired
-    private BookmarkDAO bookmarkDAO;
     
     @Autowired
     private ProjectSkillDAO projectSkillDAO;
@@ -224,19 +224,13 @@ public class ProjectServiceImpl implements ProjectService {
     	return projectMapper.getDtosFromEntities(projects);    	
     }*/
     
-    @Override
+   /* @Override
     public List<ProjectDTO> getApplicationByUserAndStatus(Integer userId, String userProjectStatus) throws ProjectServiceException {
     	
     	List<Application> applications = applicationDAO.findByUser_IdAndStatus(userId, userProjectStatus);
     	return projectMapper.getDtosFromApplicationEntities(applications);    	
-    }
+    } */   
     
-    @Override
-    public List<ProjectDTO> getBookmarkByUser(Integer userId) throws ProjectServiceException {
-    	
-    	List<Bookmark> bookmarks = bookmarkDAO.findByUser_Id(userId);
-    	return projectMapper.getDtosFromBookmarkEntities(bookmarks);    	
-    }
 
     /*@Override
     public ProjectDTO saveUserProject(Integer userId, Integer projectId, String status ) {
@@ -261,7 +255,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(project);
     }*/
     
-    @Override
+    /*@Override
     public ProjectDTO saveApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag){
     	
     	User user = userDAO.findById(userId);
@@ -303,29 +297,7 @@ public class ProjectServiceImpl implements ProjectService {
         sendEmail(user, project, status);
         
         return projectMapper.getProjectDtoFromEntity(project);
-    } 
-    
-    @Override
-    public ProjectDTO saveBookmark(Integer userId, Integer projectId){
-    	
-    	User user = userDAO.findById(userId);
-        requireNonNull(user, "Invalid User Id");
-        Project project = projectDAO.findById(projectId);
-        requireNonNull(project, "Invalid Project Id");
-       
-        isBookmarked(userId, projectId);
-	    Bookmark bookmark = new Bookmark();
-	    bookmark.setUser(user);
-	    bookmark.setProject(project);	        
-	    bookmarkDAO.save(bookmark);
-	        //userProjectDAO.save(userProject);
-	    
-        
-        //sendEmail(user, project, status);
-        
-        return projectMapper.getProjectDtoFromEntity(project);
-    	
-    }    
+    } */      
 
     public void deleteProject(int id) throws UserProjectException  {
         Project localProject = projectDAO.findById(id);
@@ -344,7 +316,7 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	/*------------------------------------ private methods-------------------------------------------*/
 	
-	@Async
+	/*@Async
     private void sendEmail(User user, Project project, String status) {
 
         Integer orgId = project.getOrganization().getId();
@@ -399,7 +371,7 @@ public class ProjectServiceImpl implements ProjectService {
         		// do nothing
         	}
         }
-    }
+    }*/
 	        
 	 /*private void isRecordExist(Integer userId, Integer projectId, String status) throws UserProjectException {
 
@@ -415,7 +387,7 @@ public class ProjectServiceImpl implements ProjectService {
 	    	}    	
 	    }*/
     
-    private void isApplied(Application application, String status) throws UserProjectException {
+    /*private void isApplied(Application application, String status) throws UserProjectException {
 
     	//Application application = applicationDAO.findByUser_IdAndProject_Id(userId, projectId);        	
     	//requireNonNull(application, "Invalid operation");
@@ -433,21 +405,9 @@ public class ProjectServiceImpl implements ProjectService {
         		throw new UserProjectException("Already declined for the porject.");
         	}
     	   	
-    }
+    }*/
     
-    private void isBookmarked(Integer userId, Integer projectId) throws UserProjectException {
-
-    	Bookmark bookmark = bookmarkDAO.findByUser_IdAndProject_Id(userId, projectId);
-    	
-    	//requireNonNull(bookmark, "Invalid operation");
-    	
-    	
-    		if(java.util.Objects.nonNull(bookmark) && bookmark.getUser().getId().equals(userId) && bookmark.getProject().getId().equals(projectId))
-        	{
-        		throw new UserProjectException("Record already exist");
-        	}
-    	    	
-    }
+    
     
 	
 }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import javax.validation.constraints.Pattern;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api/users")
 @Api(description = "Operations about Users", tags = "user")
@@ -73,7 +72,8 @@ public class UserController {
     public UserDTO getUserByEmail(
     		@ApiParam(value = "email address", required = true) @PathVariable("email") String email) {
     	
-    	System.out.println("************** UserController.getUserByEmail()" 
+
+    	System.out.println("************** UserController.getUserByEmail()"
                 + ": email=" + email  
                 + " **************");
     	
@@ -112,20 +112,7 @@ public class UserController {
         } catch (Exception e) {
             throw new UserServiceException("Error creating user entity: " + e.getCause().getMessage());
         }
-    }
-    
-    @CrossOrigin
-    @RequestMapping(value = "/applicant/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
-    public List<ApplicantDTO> getApplicants(
-    		@ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
-    	
-    	System.out.println("************** UserController.getApplicants()" 
-                + ": projectId=" + projectId  
-                + " **************");
-    	
-        return userService.getApplicants(projectId);
-    }
+    }   
     
 	@CrossOrigin
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

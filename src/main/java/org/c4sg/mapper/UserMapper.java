@@ -9,8 +9,10 @@ import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,13 +58,13 @@ public class UserMapper extends ModelMapper {
 			applicant.setTitle((String)o[4]);
 			applicant.setApplicationStatus(String.valueOf(o[5]));
 			if (o[6] != null) {
-				applicant.setAppliedTime(new SimpleDateFormat(DATE_FORMAT).format(o[6]));				
+				applicant.setAppliedTime((Date)o[6]);				
 			} 	
 			if (o[7] != null) {
-				applicant.setAcceptedTime(new SimpleDateFormat(DATE_FORMAT).format(o[7]));				
+				applicant.setAcceptedTime((Date) o[7]);				
 			} 	
 			if (o[8] != null) {
-				applicant.setDeclinedTime(new SimpleDateFormat(DATE_FORMAT).format(o[8]));				
+				applicant.setDeclinedTime((Date) o[8]);				
 			} 	
 			
 			applicantList.add(applicant);

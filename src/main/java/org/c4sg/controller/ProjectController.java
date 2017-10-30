@@ -2,13 +2,22 @@ package org.c4sg.controller;
 
 import io.swagger.annotations.*;
 
+import org.c4sg.dto.ApplicantDTO;
+import org.c4sg.dto.ApplicationDTO;
+import org.c4sg.dto.ApplicationProjectDTO;
+import org.c4sg.dto.BookmarkDTO;
 import org.c4sg.dto.CreateProjectDTO;
+import org.c4sg.dto.HeroDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
+import org.c4sg.entity.Badge;
 import org.c4sg.exception.BadRequestException;
 import org.c4sg.exception.NotFoundException;
 import org.c4sg.exception.ProjectServiceException;
 import org.c4sg.exception.UserProjectException;
+import org.c4sg.service.ApplicationService;
+import org.c4sg.service.BadgeService;
+import org.c4sg.service.BookmarkService;
 import org.c4sg.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +46,15 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+    
+    @Autowired
+    private ApplicationService applicationService;
+    
+    @Autowired
+    private BookmarkService bookmarkService;
+    
+    @Autowired
+    private BadgeService badgeService;
     
     private final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
@@ -108,35 +123,6 @@ public class ProjectController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    @ApiOperation(
-    		value = "Find projects by user", 
-    		notes = "Returns a list of projects searched by user ID and user-project status (applied/bookmarked). "
-    				+ "If user-project status is not provided, returns all projects related to the user. "
-    				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
-    		response =ProjectDTO.class , 
-    		responseContainer = "List")
-    	@ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
-    public List<ProjectDTO> getUserProjects(
-    		@ApiParam(value = "User ID", required = true) @RequestParam Integer userId,
-    		@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
-    		@RequestParam (required = false) String userProjectStatus)	
-            throws ProjectServiceException {
-    	
-    	System.out.println("************** ProjectController.getUserProjects()" 
-                  + ": UserId=" + userId 
-                  + "; Status=" + userProjectStatus 
-                  + " **************");
-    	List<ProjectDTO> projects = new ArrayList<ProjectDTO>();
-    	if(userProjectStatus.equals("B")){
-    		projects = projectService.getBookmarkByUser(userId);
-    	}else{
-    		projects = projectService.getApplicationByUserAndStatus(userId, userProjectStatus);	
-    	}
-    	return projects;
-    }
-
-    @CrossOrigin
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Add a new project")
     public Map<String, Object> createProject(
@@ -198,48 +184,182 @@ public class ProjectController {
 
         return responseData;
     }
-
+    
     @CrossOrigin
-    @RequestMapping(value = "/{id}/users/{userId}", method = RequestMethod.POST)
-    @ApiOperation(value = "Create a relation between user and project")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "ID of project or user invalid")
-    })
-    //TODO: Replace explicit user{id} with AuthN user id.
-    public ResponseEntity<?> createUserProject(
-    		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
-            @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId,
-            @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
-            @RequestParam("userProjectStatus") String userProjectStatus) {
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @ApiOperation(
+    		value = "Find projects by user", 
+    		notes = "Returns a list of projects searched by user ID and user-project status (applied/bookmarked). "
+    				+ "If user-project status is not provided, returns all projects related to the user. "
+    				+ "The projects are sorted in descending order of the timestamp they are bounded to the user.",
+    		response =ProjectDTO.class , 
+    		responseContainer = "List")
+    	@ApiResponses(value = {@ApiResponse(code = 404, message = "Missing required input")})  
+    public List<ProjectDTO> getApplicationsAndBookmarksByUser(
+    		@ApiParam(value = "User ID", required = true) @RequestParam Integer userId,
+    		@ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Accepted, D-Declined", allowableValues = "A, B, C, D")
+    		@RequestParam (required = false) String status)	
+            throws ProjectServiceException {
     	
-    	System.out.println("************** ProjectController.createUserProject()" 
-                + ": userId=" + userId 
-                + "; projectId=" + projectId 
-                + "; userProjectStatus=" + userProjectStatus 
+    	System.out.println("************** ProjectController.getUserProjects()" 
+                  + ": UserId=" + userId 
+                  + "; Status=" + status 
+                  + " **************");
+    	List<ProjectDTO> projects = new ArrayList<ProjectDTO>();
+    	if(status.equals("B")){
+    		projects = bookmarkService.getBookmarkByUser(userId);
+    	}else{
+    		projects = applicationService.getApplicationsByUser(userId, status);	
+    	}
+    	return projects;
+    }
+      
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/applicants", method = RequestMethod.GET)
+    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
+    public List<ApplicantDTO> getApplicants(
+    		@ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
+    	
+    	System.out.println("************** UserController.getApplicants()" 
+                + ": projectId=" + projectId  
                 + " **************");
     	
-        try {
-        	//comment and resumeFlag will be accepted as inputs to the REST API in the future
-        	String comment = "";
-        	String resumeFlag = "N";
-        	if(userProjectStatus.equals("B"))
-        	{
-        		projectService.saveBookmark(userId, projectId);
-        	}
-        	else{
-        		projectService.saveApplication(userId, projectId, userProjectStatus, comment, resumeFlag);
-        	}        	
-            //projectService.saveUserProject(userId, projectId, userProjectStatus);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                                                      .path("/{id}/users/{userId}")
-                                                      .buildAndExpand(projectId, userId, userProjectStatus).toUri();
-            return ResponseEntity.created(location).build();
+        return applicationService.getApplicants(projectId);
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/applicants/{applicantid}/users/{nonprofituserid}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find applicants of a given project", notes = "Returns a collection of users")
+    public List<ApplicationProjectDTO> getApplicationsByOrgAndApplicant(
+    		@ApiParam(value = "ID of applicant", required = true) @PathVariable("applicantid") Integer applicantId,
+    		@ApiParam(value = "ID of non-profit user", required = true) @PathVariable("nonprofituserid") Integer nonProfitUserId,
+    		@ApiParam(value = "Application status", required = true) @RequestParam (required = false) String status) {
+    	
+    	System.out.println("************** UserController.getApplicants()" 
+                + ": applicantid=" + applicantId
+                + ": non profit user=" + nonProfitUserId
+                + " **************");
+    	
+        return applicationService.getApplicationsByOrgAndByApplicant(applicantId, nonProfitUserId, status);
+    }
+    
+  //TODO: Replace explicit user{id} with AuthN user id. 
+    @CrossOrigin
+    @RequestMapping(value = "/applications", method = RequestMethod.POST)
+    @ApiOperation(value = "Create new application")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "ID of project or user invalid")})       
+    public ApplicationDTO createApplication(
+            @ApiParam(value = "Application object", required = true) @RequestBody @Valid ApplicationDTO application) {
+    	   	    
+    	ApplicationDTO applicationDto = null;
+        try {      
+        	applicationDto = applicationService.createApplication(application);        	        	
+        	
         } catch (NullPointerException e) {
-            throw new NotFoundException("ID of project or user invalid");
+            throw new NotFoundException("Error in the application");
         }
         catch (UserProjectException | BadRequestException e) {
         	throw e;
         }
+        
+        return applicationDto;
+    } 
+    
+  //TODO: Replace explicit user{id} with AuthN user id. 
+    @CrossOrigin
+    @RequestMapping(value = "/applications", method = RequestMethod.PUT)
+    @ApiOperation(value = "Create new application")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "ID of project or user invalid")})       
+    public ApplicationDTO updateApplication(
+            @ApiParam(value = "Application object", required = true) @RequestBody @Valid ApplicationDTO application) {
+    	   	    
+    	ApplicationDTO applicationDto = null;
+        try {        	
+        	applicationDto = applicationService.updateApplication(application);         	
+        } catch (NullPointerException e) {
+            throw new NotFoundException("Error in the application");
+        }
+        catch (UserProjectException | BadRequestException e) {
+        	throw e;
+        }
+        
+        return applicationDto;
+    }     
+    
+  //TODO: Replace explicit user{id} with AuthN user id. 
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/users/{userId}/bookmarks", method = RequestMethod.POST)
+    @ApiOperation(value = "Create new bookmark")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "ID of project or user invalid")})       
+    public BookmarkDTO createBookmark(
+    		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
+            @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
+    	   	    
+    	BookmarkDTO bookmarkDto = null;
+        try {      
+        	bookmarkDto = bookmarkService.createBookmark(userId,projectId);        	        	
+        	
+        } catch (NullPointerException e) {
+            throw new NotFoundException("Error in the application");
+        }
+        catch (UserProjectException | BadRequestException e) {
+        	throw e;
+        }
+        
+        return bookmarkDto;
+    }
+
+    //TODO: Replace explicit user{id} with AuthN user id.
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/users/{userId}/badge", method = RequestMethod.POST)
+    @ApiOperation(value = "Give out badge for a volunteer")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "ID of project or user invalid")})
+    public Badge giveBadge(
+		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
+        @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId)
+        {
+	
+		System.out.println("************** ProjectController.giveBadge()" 
+	            + ": userId=" + userId 
+	            + "; projectId=" + projectId 
+	            + " **************");
+		
+		Badge badge = null;
+	    try {
+	    	badge = badgeService.saveBadge(userId, projectId);
+	    } catch (NullPointerException e) {
+	        throw new NotFoundException("ID of project or user invalid");
+	    } catch (Exception e)	{
+	    	throw e;
+	    }
+	    return badge;
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/heroes", method = RequestMethod.GET)
+    @ApiOperation(value = "Find heroes sorted by number of badges", notes = "Returns a collection of users")
+    public List<HeroDTO> getBadges() {
+    	
+    	System.out.println("************** ProjectController.getBadges() **************");
+    	
+        return badgeService.getBadges();
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/applicantHeroMap", method = RequestMethod.GET)
+    @ApiOperation(
+    			value = "Find applicants Id with hero flag for a project", 
+    			notes = "Returns a map with applicant ids as keys and Hero flag 'Y'/'N' as values for the project",
+    			response =Map.class , 
+    			responseContainer = "Map")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "ID of project or user invalid")})
+    public Map<Integer,String> getApplicantHeroMap(@ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId) {
+    	
+    	System.out.println("************** ProjectController.isHero() **************"+projectId);
+    	
+        return badgeService.getApplicantIdsWithHeroFlagMap(projectId);
     }
         
     @CrossOrigin

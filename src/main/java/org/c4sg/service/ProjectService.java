@@ -24,15 +24,15 @@ public interface ProjectService {
 
 	//List<ProjectDTO> findByUser(Integer userId, String userProjectStatus) throws ProjectServiceException;
 	
-	List<ProjectDTO> getApplicationByUserAndStatus(Integer userId, String userProjectStatus);
+	//List<ProjectDTO> getApplicationByUserAndStatus(Integer userId, String userProjectStatus);
 	
-	List<ProjectDTO> getBookmarkByUser(Integer userId);
+	//List<ProjectDTO> getBookmarkByUser(Integer userId);
 	
 	//ProjectDTO saveUserProject(Integer userId, Integer projectId, String userProjectStatus) throws RuntimeException;
 	
-	ProjectDTO saveApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag);
+	//ProjectDTO saveApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag);
 	
-	ProjectDTO saveBookmark(Integer userId, Integer projectId);
+	
 	
 	//ProjectDTO updateApplication(Integer userId, Integer projectId, String status, String comment, String resumeFlag);
 	
