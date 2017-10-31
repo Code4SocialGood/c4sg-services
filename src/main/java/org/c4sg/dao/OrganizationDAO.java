@@ -53,6 +53,13 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
                 + " AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false))"
                 + ")  ORDER BY o.name ASC";
 
+    String COUNT_BY_COUNTRY = "SELECT COUNT(DISTINCT country) " +
+                                "FROM ( " +
+                                    "    SELECT country FROM organization " +
+                                    " UNION " +
+                                    "    SELECT country from user " +
+                                ") c WHERE country IS NOT NULL AND country <> ''";
+
     String DELETE_USER_ORGANIZATIONS = "DELETE FROM UserOrganization uo WHERE uo.organization.id=:id";
     
     String SAVE_LOGO = "UPDATE Organization o set o.logoUrl = :imgUrl where o.id = :organizationId";
@@ -64,6 +71,9 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     List<Organization> findAllByOrderByIdDesc();
     
     Organization findOne(Integer id);
+
+    @Query(value = COUNT_BY_COUNTRY, nativeQuery = true)
+    int countByCountry();
 
     /*@Query("SELECT o FROM Organization o WHERE LOWER(o.name) LIKE LOWER(CONCAT('%',:keyword,'%')) OR LOWER(o.description) LIKE LOWER(CONCAT('%',:keyword,'%'))")
     List<Organization> findByKeyword(String keyword);*/
@@ -119,4 +129,5 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     @Modifying
     @Query(APPROVE_DECLINE)
     void approveOrDecline(@Param("organizationId") Integer organizationId, @Param("status") String status);
+
 }
