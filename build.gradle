@@ -6,6 +6,12 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
+idea {
+    module {
+        downloadJavadoc = true
+    }
+}
+
 jar {
     baseName = 'c4sg-services'
     version = '0.0.1-SNAPSHOT'

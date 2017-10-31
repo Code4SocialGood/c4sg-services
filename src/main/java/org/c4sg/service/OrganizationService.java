@@ -21,4 +21,5 @@ public interface OrganizationService {
     List<OrganizationDTO> findByUser(Integer userId);
     void saveLogo(Integer id, String imgUrl);
     void approveOrDecline(Integer id, String status);
+    int countByCountry();
 }
