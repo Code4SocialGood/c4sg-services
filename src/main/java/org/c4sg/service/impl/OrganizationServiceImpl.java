@@ -246,4 +246,9 @@ public class OrganizationServiceImpl implements OrganizationService {
        		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, "", Constants.SUBJECT_NEW_ORGANIZATION_DECLINE, Constants.TEMPLATE_NEW_ORGANIZATION_DECLINE, context);
        	System.out.println("Organization approval/decline email sent: Organization=" + id + " ; Email=" + toAddress);
 	}
+
+	@Override
+	public int countByCountry() {
+		return organizationDAO.countByCountry();
+	}
 }

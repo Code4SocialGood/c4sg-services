@@ -18,6 +18,7 @@ import org.c4sg.exception.UserOrganizationException;
 import org.c4sg.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -235,5 +236,16 @@ public class OrganizationController {
                 + " **************");
     	
     	organizationService.approveOrDecline(id, status);
+	}
+
+	@CrossOrigin
+	@RequestMapping(value="/countries/total", method = RequestMethod.GET)
+	@ApiOperation(value = "Total number of countries (Organizations & Users) involved in the project")
+	public ResponseEntity<Map<String, String>> getJobTitles() {
+		HashMap<String, String> map = new HashMap<>();
+		int totalCountries = organizationService.countByCountry();
+		map.put("total", String.valueOf(totalCountries));
+
+		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 }
