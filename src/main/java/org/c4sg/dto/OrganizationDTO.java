@@ -34,7 +34,10 @@ public class OrganizationDTO {
 	private String ein;	
 	private String status;
 	private String createdTime;
-	private String projectUpdatedTime;	
+	private String projectUpdatedTime;
+	private String facebook_url;
+	private String twitter_url;
+	private String linkedin_url;
 
 	@ApiModelProperty(value = "Organization ID")
 	public Integer getId() {
@@ -212,5 +215,29 @@ public class OrganizationDTO {
 
 	public void setEin(String ein) {
 		this.ein = ein;
+	}
+
+	public String getFacebook_url() {
+		return facebook_url;
+	}
+
+	public void setFacebook_url(String facebook_url) {
+		this.facebook_url = facebook_url;
+	}
+
+	public String getTwitter_url() {
+		return twitter_url;
+	}
+
+	public void setTwitter_url(String twitter_url) {
+		this.twitter_url = twitter_url;
+	}
+
+	public String getLinkedin_url() {
+		return linkedin_url;
+	}
+
+	public void setLinkedin_url(String linkedin_url) {
+		this.linkedin_url = linkedin_url;
 	}
 }
