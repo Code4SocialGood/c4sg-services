@@ -44,6 +44,7 @@ public class ProjectControllerTest extends C4SGTest {
        POST /api/projects Add a new project
        POST /api/projects/{id}/image Add new image file for project   
        POST /api/projects/{id}/users/{userId}  Create a relation between user and project
+       DELETE /api/projects/{id}/users/{userId}  Deletes relation between user and project
        PUT /api/projects/{id} Update an existing project
        DELETE /api/projects/{id} Deletes a project
     */
@@ -61,6 +62,7 @@ public class ProjectControllerTest extends C4SGTest {
     private static final String URI_GET_PROJECT_IMAGE = "/api/projects/{id}/image";
     private static final String URI_SAVE_PROJECT_IMAGE = "/api/projects/{id}/image";    
     private static final String URI_ADD_PROJECT_FOR_USER = "/api/projects/{id}/users/{userId}";
+    private static final String URI_DELETE_PROJECT_FOR_USER = "/api/projects/{id}/users/{userId}";
     
     @Before
     public void setup() throws Exception {
@@ -193,6 +195,10 @@ public class ProjectControllerTest extends C4SGTest {
     @Test
     public void testAddProjectForUser() throws Exception {
     	fail("Not yet implemented");  	
+    	
+    @Test
+    public void testDeleteProjectForUser() throws Exception {
+    	fail("Not yet implemented");  
     }*/
 
 }

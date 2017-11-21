@@ -299,6 +299,23 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectDtoFromEntity(project);
     } */      
 
+    @Override
+    public void deleteUserProject(Integer userId, Integer projectId, String userProjectStatus) {
+
+        User user = userDAO.findById(userId);
+        requireNonNull(user, "Invalid User Id");
+        //System.out.println(user.getFirstName());
+        Project project = projectDAO.findById(projectId);
+        requireNonNull(project, "Invalid Project Id");
+        UserProject userproj = userProjectDAO.findByUser_IdAndProject_Id(userId, projectId);
+        if (userproj!=null && userproj.getStatus().equals(userProjectStatus)) {
+	        userProjectDAO.deleteByUserProject(projectId, userId);
+        } else {
+	        throw new BadRequestException("User is not a part of the project or the status of the user does not match");
+	    }
+       		
+    }
+    
     public void deleteProject(int id) throws UserProjectException  {
         Project localProject = projectDAO.findById(id);
 

@@ -18,9 +18,15 @@ public interface UserProjectDAO extends CrudRepository<UserProject, Long>{
     List<UserProject> findByUser_IdAndProject_IdAndStatus(Integer userId, Integer projectId, String status);   
         
     String DELETE_BY_PROJECT_STATUS = "DELETE UserProject up WHERE up.project.id = :projId and up.status = :userProjectStatus" ;
-        
+    String DELETE_BY_USER_ID_PROJECT_ID ="DELETE UserProject up WHERE up.project.id = :projId and up.user.id = :userId";      
     @Transactional
     @Modifying
 	@Query(DELETE_BY_PROJECT_STATUS)
     Integer deleteByProjectStatus(@Param("projId") Integer projId, @Param("userProjectStatus") String userProjectStatus);
+    
+    
+    @Transactional
+    @Modifying
+	@Query(DELETE_BY_USER_ID_PROJECT_ID)
+    Integer deleteByUserProject(@Param("projId") Integer projId, @Param("userId") Integer userId);
 }

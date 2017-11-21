@@ -361,7 +361,40 @@ public class ProjectController {
     	
         return badgeService.getApplicantIdsWithHeroFlagMap(projectId);
     }
-        
+     
+    
+    @CrossOrigin
+    @RequestMapping(value = "/{id}/users/{userId}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete a relation between user and project")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "ID of project or user invalid")
+    })
+    //TODO: Replace explicit user{id} with AuthN user id.
+    public ResponseEntity<?> deleteUserProject(
+    		@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
+            @ApiParam(value = "ID of project", required = true) @PathVariable("id") Integer projectId,
+            @ApiParam(value = "User project status, A-Applied, B-Bookmarked, C-Approved, D-Declined", allowableValues = "A, B, C, D", required = true)
+    		@RequestParam("userProjectStatus") String userProjectStatus) {
+    	System.out.println("************** ProjectController.deleteUserProject()" 
+                + ": userId=" + userId 
+                + "; projectId=" + projectId 
+                + "; userProjectStatus=" + userProjectStatus
+                + " **************");
+    	
+        try {
+            projectService.deleteUserProject(userId, projectId, userProjectStatus);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                                                      .path("/{id}/users/{userId}")
+                                                      .buildAndExpand(projectId, userId).toUri();
+            return ResponseEntity.created(location).build();
+        } catch (NullPointerException e) {
+            throw new NotFoundException("ID of project or user invalid");
+        }
+        catch (UserProjectException | BadRequestException e) {
+        	throw e;
+        }
+    }
+	
     @CrossOrigin
     @RequestMapping(value = "/{id}/image", params = "imgUrl", method = RequestMethod.PUT)
 	@ApiOperation(value = "Upload a project image")
