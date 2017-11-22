@@ -118,8 +118,8 @@ public class UserServiceImpl implements UserService {
         }
         
         user.setStatus(Constants.USER_STATUS_DELETED);
-        user.setEmail(user.getEmail() + "-deleted");
-        userDAO.save(user);        
+        user.setEmail(user.getEmail() + Constants.DELETED_USER_SUFFIX);
+        userDAO.save(user);
         //userDAO.deleteUserProjects(id);
         applicationDAO.deleteByUser_Id(id); 
         bookmarkDAO.deleteByUser_Id(id);
@@ -176,9 +176,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDTO createUser(CreateUserDTO createUserDTO) {
+		User existingUser = userDAO.findByEmail(createUserDTO.getEmail() + Constants.DELETED_USER_SUFFIX);
+		if (existingUser != null) {
+			userDAO.delete(existingUser);
+		}
 		
 		User user = userMapper.getUserEntityFromCreateUserDto(createUserDTO);
-		
+
 		if ((user!= null) && !StringUtils.isEmpty(user.getCountry())) {
 			try {
 				Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(user.getState(), user.getCountry());
@@ -211,4 +215,5 @@ public class UserServiceImpl implements UserService {
 	public void saveAvatar(Integer id, String imgUrl) {
 		userDAO.updateAvatar(imgUrl, id);
 	}
+
 }

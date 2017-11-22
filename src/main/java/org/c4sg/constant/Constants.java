@@ -55,4 +55,6 @@ public final class Constants {
 	public static final String TEMPLATE_NEW_ORGANIZATION_DECLINE = "new-organization-decline";
 	public static final String TEMPLATE_DELETE_USER = "delete-user";
 	public static final String TEMPLATE_HERO_USER = "hero-user";
+
+	public static final String DELETED_USER_SUFFIX = "-deleted";
 }
