@@ -241,6 +241,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail() + " ; OrgEmail=" + orgUser.getEmail());
         	
         	} else if (application.getStatus().equals("C")) {
+				// send email to organization
+				Map<String, Object> contextOrg = new HashMap<String, Object>();
+				contextOrg.put("user", user);
+				contextOrg.put("skills", userSkills);
+				contextOrg.put("project", project);
+				contextOrg.put("projectLink", urlService.getProjectUrl(project.getId()));
+				contextOrg.put("userLink", urlService.getUserUrl(user.getId()));
+				contextOrg.put("application", application);
+				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, orgUser.getEmail(),user.getEmail(), Constants.SUBJECT_APPLICAITON_ORGANIZATION, Constants.TEMPLATE_APPLICAITON_ACCEPT_ORGANIZATION, contextOrg);
+				System.out.println("Application email sent to org user: Project=" + project.getId() + " ; OrgUserEmail=" + orgUser.getEmail());
+
         		// send email to volunteer
        			Map<String, Object> contextVolunteer = new HashMap<String, Object>();
        			contextVolunteer.put("org", org);
@@ -248,7 +259,7 @@ public class ApplicationServiceImpl implements ApplicationService {
        			contextVolunteer.put("project", project);
        			contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
        			asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ACCEPT, Constants.TEMPLATE_APPLICAITON_ACCEPT, contextVolunteer);
-        		System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
+        		System.out.println("Application email sent to volunteer: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
    
         	} else if (application.getStatus().equals("D")) {
         		// send email to volunteer

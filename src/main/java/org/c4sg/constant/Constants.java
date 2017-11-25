@@ -48,6 +48,7 @@ public final class Constants {
 	public static final String TEMPLATE_APPLICAITON_ORGANIZATION = "project-application-organization";
 	public static final String TEMPLATE_APPLICAITON_VOLUNTEER = "project-application-volunteer";
 	public static final String TEMPLATE_APPLICAITON_ACCEPT = "project-application-accept";
+	public static final String TEMPLATE_APPLICAITON_ACCEPT_ORGANIZATION = "project-application-accept-organization";
 	public static final String TEMPLATE_APPLICAITON_DECLINE = "project-application-decline";
 	public static final String TEMPLATE_NEW_PROJECT_NOTIFICATION = "new-project-notification";
 	public static final String TEMPLATE_NEW_ORGANIZATION_REVIEW = "new-organization-review";
