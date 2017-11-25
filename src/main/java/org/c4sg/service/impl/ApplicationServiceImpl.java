@@ -197,7 +197,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         	{
         		throw new UserProjectException("Already applied for the porject.");
         		
-        	} else if (status.equals("C") && java.util.Objects.nonNull(application.getAcceptedTime())){
+        	} else if (status.equals("C") && java.util.Objects.nonNull(application.getAcceptedTime()) && (java.util.Objects.isNull(application.getDeclinedTime()) ||
+                    (java.util.Objects.nonNull(application.getDeclinedTime()) && application.getAcceptedTime().after(application.getDeclinedTime())))){
         		
         		throw new UserProjectException("Already accepted for the project.");	
         		
