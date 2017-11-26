@@ -185,7 +185,7 @@ public class ProjectServiceImpl implements ProjectService {
         	String newStatus = project.getStatus();
         	
             // Notify volunteer users of new project
-        	if (oldStatus.equals(Constants.ORGANIZATION_STATUS_NEW) && newStatus.equals(Constants.ORGANIZATION_STATUS_ACTIVE)) {
+        	if (Constants.PROJECT_STATUS_NEW.equals(oldStatus) && Constants.PROJECT_STATUS_ACTIVE.equals(newStatus)) {
         		List<User> notifyUsers = userDAO.findByNotify();
         		if (notifyUsers != null && !notifyUsers.isEmpty()) {
         			for (int i=0; i<notifyUsers.size(); i++) {
@@ -197,6 +197,22 @@ public class ProjectServiceImpl implements ProjectService {
         			}
         			System.out.println("New project email sent: Project=" + projectDTO.getId());
         		} 
+        	} else if (Constants.PROJECT_STATUS_CLOSED.equals(newStatus) && !Constants.PROJECT_STATUS_CLOSED.equals(oldStatus)) {
+        		Organization org = project.getOrganization();
+        		User orgUser = userDAO.findByOrgId(org.getId()).get(0);
+        		List<UserProject> userProjects = userProjectDAO.findByProjectId(project.getId());
+        		if (userProjects != null) {
+        			for (UserProject userProject : userProjects) {
+        				User user = userProject.getUser();
+        				Map<String, Object> contextVolunteer = new HashMap<String, Object>();
+        				contextVolunteer.put("org", org);
+        				contextVolunteer.put("orgUser", orgUser);
+        				contextVolunteer.put("project", project);
+        				contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
+        				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ACCEPT, Constants.TEMPLATE_APPLICAITON_ACCEPT, contextVolunteer);
+        				System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
+        			}
+        		}
         	}
         } 
 
