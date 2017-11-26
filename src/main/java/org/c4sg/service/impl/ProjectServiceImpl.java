@@ -191,28 +191,17 @@ public class ProjectServiceImpl implements ProjectService {
         			for (int i=0; i<notifyUsers.size(); i++) {
         				String toAddress = notifyUsers.get(i).getEmail();
         				Map<String, Object> context = new HashMap<String, Object>();
-        				context.put("project", projectDTO);         	
-        				context.put("projectLink", urlService.getProjectUrl(projectDTO.getId()));
+        				addProjectAndUrlToContext(context, projectDTO);
         				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, "",Constants.SUBJECT_NEW_PROJECT_NOTIFICATION, Constants.TEMPLATE_NEW_PROJECT_NOTIFICATION, context);
         			}
         			System.out.println("New project email sent: Project=" + projectDTO.getId());
         		} 
         	} else if (Constants.PROJECT_STATUS_CLOSED.equals(newStatus) && !Constants.PROJECT_STATUS_CLOSED.equals(oldStatus)) {
-        		Organization org = project.getOrganization();
-        		User orgUser = userDAO.findByOrgId(org.getId()).get(0);
-        		List<UserProject> userProjects = userProjectDAO.findByProjectId(project.getId());
-        		if (userProjects != null) {
-        			for (UserProject userProject : userProjects) {
-        				User user = userProject.getUser();
-        				Map<String, Object> contextVolunteer = new HashMap<String, Object>();
-        				contextVolunteer.put("org", org);
-        				contextVolunteer.put("orgUser", orgUser);
-        				contextVolunteer.put("project", project);
-        				contextVolunteer.put("projectLink", urlService.getProjectUrl(project.getId()));
-        				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, user.getEmail(), orgUser.getEmail(), Constants.SUBJECT_APPLICAITON_ACCEPT, Constants.TEMPLATE_APPLICAITON_ACCEPT, contextVolunteer);
-        				System.out.println("Application email sent: Project=" + project.getId() + " ; ApplicantEmail=" + user.getEmail());
-        			}
-        		}
+        		
+				Map<String, Object> context = new HashMap<String, Object>();
+				addProjectAndUrlToContext(context, projectDTO);
+				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, Constants.C4SG_ADDRESS, Constants.C4SG_ADDRESS, Constants.SUBJECT_PROJECT_CLOSE, Constants.TEMPLATE_PROJECT_CLOSE, context);
+				System.out.println("Close Project email sent: Project=" + projectDTO.getId() + " Email id ; =" + Constants.C4SG_ADDRESS);
         	}
         } 
 
@@ -424,6 +413,11 @@ public class ProjectServiceImpl implements ProjectService {
     }*/
     
     
+    private void addProjectAndUrlToContext(Map<String, Object> context, ProjectDTO projectDTO) {
+		context.put("project", projectDTO);
+		context.put("projectLink", urlService.getProjectUrl(projectDTO.getId()));
+	}
+
     
 	
 }
