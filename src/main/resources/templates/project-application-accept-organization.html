@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+	<span>You have accepted an application for your project on Code for Social Good. Please reach out to the applicant and provide the instruction for the next step.</span>
+	<br></br>
+	<br></br>
+	Project:
+	<ul>
+		<li>Project Name: <span th:text="${project.name}"></span></li>
+		<li>Project Link: <span th:text="${projectLink}"></span></li>	
+	</ul>	
+	Applicant Profile:
+	<ul>
+		<li>Applicant Full Name: <span th:text="${user.firstName + ' ' + user.lastName}"></span></li>
+		<li>Applicant Email: <span th:text="${user.email}"></span></li>			
+		<li>Applicant Title: <span th:text="${user.title}"></span></li>
+		<li>Applicant Slack: <span th:if="${user.chatUsername}" th:text="${'https://code4socialgood.slack.com/messages/@' + user.chatUsername}"></span></li>
+		<li>Applicant Skills: <span th:each="skill: ${skills}"><i th:text="${skill + ','}"></i></span></li>
+		<li>Applicant Overview: <span th:text="${user.introduction}"></span></li>
+		<li>Applicant Comment: <span th:text="${application.comment}"></span></li>
+	</ul>
+</body>
+</html>
