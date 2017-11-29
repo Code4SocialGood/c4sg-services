@@ -185,18 +185,23 @@ public class ProjectServiceImpl implements ProjectService {
         	String newStatus = project.getStatus();
         	
             // Notify volunteer users of new project
-        	if (oldStatus.equals(Constants.ORGANIZATION_STATUS_NEW) && newStatus.equals(Constants.ORGANIZATION_STATUS_ACTIVE)) {
+        	if (Constants.PROJECT_STATUS_NEW.equals(oldStatus) && Constants.PROJECT_STATUS_ACTIVE.equals(newStatus)) {
         		List<User> notifyUsers = userDAO.findByNotify();
         		if (notifyUsers != null && !notifyUsers.isEmpty()) {
         			for (int i=0; i<notifyUsers.size(); i++) {
         				String toAddress = notifyUsers.get(i).getEmail();
         				Map<String, Object> context = new HashMap<String, Object>();
-        				context.put("project", projectDTO);         	
-        				context.put("projectLink", urlService.getProjectUrl(projectDTO.getId()));
+        				addProjectAndUrlToContext(context, projectDTO);
         				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, "",Constants.SUBJECT_NEW_PROJECT_NOTIFICATION, Constants.TEMPLATE_NEW_PROJECT_NOTIFICATION, context);
         			}
         			System.out.println("New project email sent: Project=" + projectDTO.getId());
         		} 
+        	} else if (Constants.PROJECT_STATUS_CLOSED.equals(newStatus) && !Constants.PROJECT_STATUS_CLOSED.equals(oldStatus)) {
+        		
+				Map<String, Object> context = new HashMap<String, Object>();
+				addProjectAndUrlToContext(context, projectDTO);
+				asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, Constants.C4SG_ADDRESS, Constants.C4SG_ADDRESS, Constants.SUBJECT_PROJECT_CLOSE, Constants.TEMPLATE_PROJECT_CLOSE, context);
+				System.out.println("Close Project email sent: Project=" + projectDTO.getId() + " Email id ; =" + Constants.C4SG_ADDRESS);
         	}
         } 
 
@@ -407,7 +412,9 @@ public class ProjectServiceImpl implements ProjectService {
     	   	
     }*/
     
-    
-    
-	
+    private void addProjectAndUrlToContext(Map<String, Object> context, ProjectDTO projectDTO) {
+		context.put("project", projectDTO);
+		context.put("projectLink", urlService.getProjectUrl(projectDTO.getId()));
+	}
+
 }

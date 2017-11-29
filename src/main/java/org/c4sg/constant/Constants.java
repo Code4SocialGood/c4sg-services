@@ -44,10 +44,12 @@ public final class Constants {
 	public static final String SUBJECT_NEW_ORGANIZATION_DECLINE= "Code for Social Good: Your Organization is declined";
 	public static final String SUBJECT_DELETE_USER= "Code for Social Good: Delete User Notification";
 	public static final String SUBJECT_HERO_USER= "Code for Social Good: You received a badge";
+	public static final String SUBJECT_PROJECT_CLOSE = "A Project is closed";
     
 	public static final String TEMPLATE_APPLICAITON_ORGANIZATION = "project-application-organization";
 	public static final String TEMPLATE_APPLICAITON_VOLUNTEER = "project-application-volunteer";
 	public static final String TEMPLATE_APPLICAITON_ACCEPT = "project-application-accept";
+	public static final String TEMPLATE_APPLICAITON_ACCEPT_ORGANIZATION = "project-application-accept-organization";
 	public static final String TEMPLATE_APPLICAITON_DECLINE = "project-application-decline";
 	public static final String TEMPLATE_NEW_PROJECT_NOTIFICATION = "new-project-notification";
 	public static final String TEMPLATE_NEW_ORGANIZATION_REVIEW = "new-organization-review";
@@ -55,4 +57,6 @@ public final class Constants {
 	public static final String TEMPLATE_NEW_ORGANIZATION_DECLINE = "new-organization-decline";
 	public static final String TEMPLATE_DELETE_USER = "delete-user";
 	public static final String TEMPLATE_HERO_USER = "hero-user";
+	public static final String TEMPLATE_PROJECT_CLOSE = "project-close";
+
 }

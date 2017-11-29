@@ -4,11 +4,7 @@ import org.c4sg.dao.OrganizationDAO;
 import org.c4sg.dto.CreateProjectDTO;
 import org.c4sg.dto.JobTitleDTO;
 import org.c4sg.dto.ProjectDTO;
-import org.c4sg.entity.Application;
-import org.c4sg.entity.Bookmark;
-import org.c4sg.entity.JobTitle;
-import org.c4sg.entity.Project;
-import org.c4sg.entity.UserProject;
+import org.c4sg.entity.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
@@ -21,17 +17,15 @@ import java.util.Iterator;
 import java.util.List;
 
 @Component
-public class ProjectMapper extends ModelMapper{
+public class ProjectMapper extends ModelMapper {
+
 	@Autowired
 	private OrganizationDAO organizationDAO;
 	
-	public ProjectDTO getProjectDtoFromEntity(Project project){
+	public ProjectDTO getProjectDtoFromEntity(Project project) {
 		getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		ProjectDTO projectDTO = map(project, ProjectDTO.class);
-		if (project.getOrganization() != null) {
-			projectDTO.setOrganizationId(project.getOrganization().getId().toString());
-			projectDTO.setOrganizationName(project.getOrganization().getName());
-		} 
+		mapFromOrganization(project, projectDTO);
 		
 		return projectDTO;
 	}
@@ -67,5 +61,15 @@ public class ProjectMapper extends ModelMapper{
 	public List<JobTitleDTO> getJobTitleDtosFromEntities(List<JobTitle> jobTitles){
         Type listTypeDTO = new TypeToken<List<JobTitleDTO>>() {}.getType();
 		return map(jobTitles, listTypeDTO);
+	}
+
+	private void mapFromOrganization(Project project, ProjectDTO projectDTO) {
+		Organization organization = project.getOrganization();
+
+		if ( organization != null ) {
+			projectDTO.setOrganizationId(organization.getId().toString());
+			projectDTO.setOrganizationName(organization.getName());
+			projectDTO.setOrganizationLogoUrl(organization.getLogoUrl());
+		}
 	}
 }
