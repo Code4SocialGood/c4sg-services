@@ -7,7 +7,7 @@ public class ProjectDTO {
 	private String organizationId;	
 	private String description;	
     private String imageUrl;
-    private String City;
+    private String city;
     private String state;
     private String country;
     private String remoteFlag;	
@@ -15,6 +15,7 @@ public class ProjectDTO {
 	private String createdTime;	
     private String updatedTime;
 	private String organizationName;
+	private String organizationLogoUrl;
 	private Integer jobTitleId;
 	
 	public int getId() {
@@ -58,11 +59,11 @@ public class ProjectDTO {
 	}
 
 	public String getCity() {
-		return City;
+		return city;
 	}
 
 	public void setCity(String city) {
-		City = city;
+		this.city = city;
 	}
 
 	public String getState() {
@@ -127,5 +128,13 @@ public class ProjectDTO {
 
 	public void setJobTitleId(Integer jobTitleId) {
 		this.jobTitleId = jobTitleId;
+	}
+
+	public String getOrganizationLogoUrl() {
+		return organizationLogoUrl;
+	}
+
+	public void setOrganizationLogoUrl(String organizationLogoUrl) {
+		this.organizationLogoUrl = organizationLogoUrl;
 	}
 }
