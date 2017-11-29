@@ -58,4 +58,5 @@ public final class Constants {
 	public static final String TEMPLATE_DELETE_USER = "delete-user";
 	public static final String TEMPLATE_HERO_USER = "hero-user";
 	public static final String TEMPLATE_PROJECT_CLOSE = "project-close";
+
 }

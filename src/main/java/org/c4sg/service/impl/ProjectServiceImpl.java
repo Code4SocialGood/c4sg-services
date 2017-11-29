@@ -412,12 +412,9 @@ public class ProjectServiceImpl implements ProjectService {
     	   	
     }*/
     
-    
     private void addProjectAndUrlToContext(Map<String, Object> context, ProjectDTO projectDTO) {
 		context.put("project", projectDTO);
 		context.put("projectLink", urlService.getProjectUrl(projectDTO.getId()));
 	}
 
-    
-	
 }
