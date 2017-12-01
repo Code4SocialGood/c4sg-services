@@ -34,10 +34,11 @@ public final class Constants {
 	// Email Delivery Service
 	public static final String C4SG_ADDRESS = "info@code4socialgood.org";
     
-	public static final String SUBJECT_APPLICAITON_ORGANIZATION = "Code for Social Good: You received an application";
-	public static final String SUBJECT_APPLICAITON_VOLUNTEER = "Code for Social Good: Your application is submitted";
-	public static final String SUBJECT_APPLICAITON_ACCEPT = "Code for Social Good: Your application is accepted";
-	public static final String SUBJECT_APPLICAITON_DECLINE = "Code for Social Good: Your application is declined";
+	public static final String SUBJECT_APPLICATION_ORGANIZATION = "Code for Social Good: You received an application";
+	public static final String SUBJECT_APPLICATION_ACCEPT_ORGANIZATION = "Code for Social Good: You accepted an application";
+	public static final String SUBJECT_APPLICATION_VOLUNTEER = "Code for Social Good: Your application is submitted";
+	public static final String SUBJECT_APPLICATION_ACCEPT = "Code for Social Good: Your application is accepted";
+	public static final String SUBJECT_APPLICATION_DECLINE = "Code for Social Good: Your application is declined";
 	public static final String SUBJECT_NEW_PROJECT_NOTIFICATION = "Code for Social Good: New Project Notification";
 	public static final String SUBJECT_NEW_ORGANIZATION_REVIEW = "Code for Social Good: A New Organization is ready for review";
 	public static final String SUBJECT_NEW_ORGANIZATION_APPROVE = "Code for Social Good: Your Organization is approved";
