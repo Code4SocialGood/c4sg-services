@@ -32,6 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     .antMatchers(HttpMethod.GET, "/api/users/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/organizations/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/skills/**").permitAll()
+    .antMatchers(HttpMethod.GET, "/api/stories/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
     .antMatchers(HttpMethod.GET, "/api/chat/**").permitAll()
     .antMatchers(HttpMethod.POST, "/api/users").hasAnyAuthority("VOLUNTEER","ADMIN","ORGANIZATION")
