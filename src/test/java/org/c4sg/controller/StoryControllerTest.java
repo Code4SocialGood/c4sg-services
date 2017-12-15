@@ -2,9 +2,17 @@ package org.c4sg.controller;
 
 import org.c4sg.C4SgApplication;
 import org.c4sg.TestDataSet;
+import org.c4sg.dto.StoryDTO;
+import org.c4sg.mapper.StoryMapper;
+import org.c4sg.service.StoryService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -12,43 +20,34 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * An integration test, that starts the C4SgApplication application and loads the actual spring context. These tests will hit the underlying database.
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {C4SgApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@RunWith(MockitoJUnitRunner.class)
 public class StoryControllerTest {
 
-    private static final String URI_GET_PROJECTS = "/api/stories";
+    @Mock
+    private StoryService storyService;
 
-    @Autowired
-    private StoryController storyController;
-
-    private MockMvc mockMvc;
-
-    @Before
-    public void setup() throws Exception {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(storyController).build();
-    }
+    @InjectMocks
+    StoryController cut = new StoryController();
 
     @Test
-    public void getStories() throws Exception {
+    public void getStories()  {
 
-        this.mockMvc.perform(
-                get(URI_GET_PROJECTS).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(greaterThan(1))))
-                .andExpect(jsonPath("$[1].title", is(TestDataSet.STORY_1_TITLE)))
-                .andExpect(jsonPath("$[0].title", is(TestDataSet.STORY_2_TITLE)))
-                .andExpect(jsonPath("$[0].userOrganization.organization.name", is(TestDataSet.STORY_2_TITLE)));
+        List<StoryDTO> stories = new ArrayList<>();
+        when(storyService.findStories()).thenReturn(stories);
+
+        assertEquals(stories, cut.getStories());
     }
 
 }

@@ -4,6 +4,7 @@ import org.c4sg.dto.StoryDTO;
 import org.c4sg.entity.Story;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,10 +17,10 @@ public class StoryMapperTest {
     StoryMapper mapper = new StoryMapper();
 
     @Test
-    public void getDtosFromEntities()  {
+    public void getDtosFromEntities() {
 
-        Integer id1 =998;
-        Integer id2 =999;
+        Integer id1 = 998;
+        Integer id2 = 999;
         Story story1 = mock(Story.class);
         when(story1.getId()).thenReturn(id1);
         Story story2 = mock(Story.class);
@@ -34,7 +35,12 @@ public class StoryMapperTest {
     }
 
     @Test
-    public void getDtosFromEntities_nullParam()  {
+    public void getDtosFromEntities_NullEntities() {
         assertTrue(mapper.getDtosFromEntities(null).isEmpty());
+    }
+
+    @Test
+    public void getDtosFromEntities_EmptyEntities() {
+        assertTrue(mapper.getDtosFromEntities(new ArrayList<>()).isEmpty());
     }
 }

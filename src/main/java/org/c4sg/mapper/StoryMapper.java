@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class StoryMapper extends ModelMapper {
@@ -19,18 +20,9 @@ public class StoryMapper extends ModelMapper {
         return storyDTO;
     }
 
-    public List<StoryDTO> getDtosFromEntities(List<Story> stories) {
-
-        List<StoryDTO> storyDTOS = new ArrayList<>();
-
-        if (stories != null) {
-
-            Iterator<Story> storyIterator = stories.iterator();
-            while (storyIterator.hasNext()) {
-                Story story = storyIterator.next();
-                storyDTOS.add(getStoryDtoFromEntity(story));
-            }
-        }
-        return storyDTOS;
+    public List<StoryDTO> getDtosFromEntities(List<Story> entities) {
+        if (entities == null)
+            return new ArrayList<>();
+        return entities.stream().map(entity -> getStoryDtoFromEntity(entity)).collect(Collectors.toList());
     }
 }

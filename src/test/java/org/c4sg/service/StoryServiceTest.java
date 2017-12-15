@@ -32,40 +32,44 @@ public class StoryServiceTest {
     private StoryMapper storyMapper;
 
     @InjectMocks
-    StoryService cut;
+    StoryService cut = new StoryServiceImpl();
 
     @Before
-    public void setup(){
-        assertNotNull(cut );
+    public void setup() {
+        assertNotNull(cut);
     }
 
     @Test
-    public void findStories()  {
+    public void findStories() {
 
-        Story story1 = mock(Story.class);
-        Story story2 = mock(Story.class);
+        // Setup
         StoryDTO story1_dto = mock(StoryDTO.class);
         StoryDTO story2_dto = mock(StoryDTO.class);
-        List<Story> stories = asList(story1, story2);
+        List<Story> stories = asList(mock(Story.class), mock(Story.class));
         List<StoryDTO> storyDTOs = asList(story1_dto, story2_dto);
 
         when(storyDAO.findAllByOrderByIdDesc()).thenReturn(stories);
         when(storyMapper.getDtosFromEntities(stories)).thenReturn(storyDTOs);
 
+        // execute
         List<StoryDTO> result = cut.findStories();
+
+        // verify
         assertTrue(result.contains(story1_dto));
         assertTrue(result.contains(story2_dto));
     }
 
-
     @Test
-    public void findStories_none_exist()  {
+    public void findStories_none_exist() {
 
+        // Setup
         when(storyDAO.findAllByOrderByIdDesc()).thenReturn(null);
         when(storyMapper.getDtosFromEntities(null)).thenReturn(new ArrayList<>());
 
+        // execute
         List<StoryDTO> result = cut.findStories();
+
+        // verify
         assertTrue(result.isEmpty());
     }
-
 }

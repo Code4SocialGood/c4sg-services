@@ -21,7 +21,7 @@ import java.util.List;
 public class StoryController {
 
     @Autowired
-    StoryService storyService;
+    private StoryService storyService;
 
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
