@@ -47,7 +47,8 @@ public class StoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThan(1))))
                 .andExpect(jsonPath("$[1].title", is(TestDataSet.STORY_1_TITLE)))
-                .andExpect(jsonPath("$[0].title", is(TestDataSet.STORY_2_TITLE)));
+                .andExpect(jsonPath("$[0].title", is(TestDataSet.STORY_2_TITLE)))
+                .andExpect(jsonPath("$[0].userOrganization.organization.name", is(TestDataSet.STORY_2_TITLE)));
     }
 
 }
