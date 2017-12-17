@@ -1,6 +1,5 @@
 package org.c4sg.controller;
 
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,7 +42,7 @@ public class StoryController {
         try {
             return storyService.createStory(createStoryDTO);
         } catch (Exception e) {
-            throw new StoryServiceException("Error creating story entity: " + e.getCause().getMessage());
+            throw new StoryServiceException("Error creating story entity: " + e.getMessage());
         }
     }
 }

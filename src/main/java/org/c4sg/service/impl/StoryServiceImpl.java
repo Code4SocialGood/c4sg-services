@@ -1,6 +1,5 @@
 package org.c4sg.service.impl;
 
-
 import org.c4sg.dao.StoryDAO;
 import org.c4sg.dao.UserDAO;
 import org.c4sg.dto.CreateStoryDTO;
@@ -38,7 +37,7 @@ public class StoryServiceImpl implements StoryService {
         Story story = storyMapper.getStoryEntityFromCreateStoryDto(createStoryDTO);
 
         User user = userDAO.findById(createStoryDTO.getUserId());
-        requireNonNull(user, "Invalid User Id");
+        requireNonNull(user, "Null User found for Id [" + createStoryDTO.getUserId()+"]");
         story.setUser(user);
 
         Story storyEntity = storyDAO.save(story);

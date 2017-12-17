@@ -1,7 +1,6 @@
 package org.c4sg.dto;
 
 import org.c4sg.entity.StoryType;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
