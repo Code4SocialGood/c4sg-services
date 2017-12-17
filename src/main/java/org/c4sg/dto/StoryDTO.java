@@ -2,40 +2,58 @@ package org.c4sg.dto;
 
 public class StoryDTO {
 
-	private int id;
-	private String imageUrl;
-	private String title;
-	private String body;
+    private int id;
+    private String imageUrl;
+    private String title;
+    private String body;
+    private String type;
+    private Integer userId;
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public Integer getUserId() {
+        return userId;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getBody() {
-		return body;
-	}
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-	public void setBody(String body) {
-		this.body = body;
-	}
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

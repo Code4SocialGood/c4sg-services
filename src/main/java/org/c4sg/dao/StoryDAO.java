@@ -1,6 +1,5 @@
 package org.c4sg.dao;
 
-import org.c4sg.entity.Project;
 import org.c4sg.entity.Story;
 import org.springframework.data.repository.CrudRepository;
 

@@ -10,12 +10,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -46,10 +43,10 @@ public class StoryServiceTest {
         StoryDTO story1_dto = mock(StoryDTO.class);
         StoryDTO story2_dto = mock(StoryDTO.class);
         List<Story> stories = asList(mock(Story.class), mock(Story.class));
-        List<StoryDTO> storyDTOs = asList(story1_dto, story2_dto);
+        List<StoryDTO> storyDTOS = asList(story1_dto, story2_dto);
 
         when(storyDAO.findAllByOrderByIdDesc()).thenReturn(stories);
-        when(storyMapper.getDtosFromEntities(stories)).thenReturn(storyDTOs);
+        when(storyMapper.getDtosFromEntities(stories)).thenReturn(storyDTOS);
 
         // execute
         List<StoryDTO> result = cut.findStories();

@@ -2,10 +2,13 @@ package org.c4sg.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.sql.Timestamp;
@@ -13,6 +16,31 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "story")
 public class Story {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", nullable = false, updatable = false)
+	private Integer id;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "type", nullable = false, updatable = false)
+	private StoryType type;
+
+	@Column(name = "image_url")
+	private String imageURL;
+
+	@Column(name = "title")
+	private String title;
+    
+	@Column(name = "body")
+	private String body;
+
+	@Column(name = "created_time", nullable = false, updatable = false)
+	private Timestamp createdTime;
+
+	@OneToOne
+	@JoinColumn(name = "user_id", nullable = false, updatable = false)
+	private User user;
 
 	public Integer getId() {
 		return id;
@@ -22,12 +50,20 @@ public class Story {
 		this.id = id;
 	}
 
-	public String getImage() {
-		return image;
+	public StoryType getType() {
+		return type;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setType(StoryType type) {
+		this.type = type;
+	}
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
 	}
 
 	public String getTitle() {
@@ -54,32 +90,11 @@ public class Story {
 		this.createdTime = createdTime;
 	}
 
-	public UserOrganization getUserOrganization() {
-		return userOrganization;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserOrganization(UserOrganization userOrganization) {
-		this.userOrganization = userOrganization;
+	public void setUser(User user) {
+		this.user = user;
 	}
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id", nullable = false, updatable = false)
-	private Integer id;
-
-	@Column(name = "image", nullable = false)
-	private String image;
-
-	@Column(name = "title")
-	private String title;
-    
-	@Column(name = "body")
-	private String body;
-
-	@Column(name = "created_time", nullable = false)
-	private Timestamp createdTime;
-
-	@OneToOne
-	@JoinColumn(name = "id", updatable = false)
-	private UserOrganization userOrganization;
 }
