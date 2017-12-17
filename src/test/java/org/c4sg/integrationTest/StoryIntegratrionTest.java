@@ -4,7 +4,9 @@ import org.c4sg.C4SGTest;
 import org.c4sg.C4SgApplication;
 import org.c4sg.controller.StoryController;
 import org.c4sg.dto.CreateStoryDTO;
+import org.c4sg.dto.StoryDTO;
 import org.c4sg.entity.StoryType;
+import org.c4sg.service.StoryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +17,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,6 +40,9 @@ public class StoryIntegratrionTest extends C4SGTest {
     @Autowired
     private StoryController storyController;
 
+    @Autowired
+    private StoryService storyService;
+
     private MockMvc mockMvc;
 
     @Before
@@ -43,14 +51,12 @@ public class StoryIntegratrionTest extends C4SGTest {
     }
 
     @Test
-    public void getStories() throws Exception {
+    public void createAndGetStory() throws Exception {
 
-        CreateStoryDTO request = new CreateStoryDTO();
-        String title = "an open source story";
-        request.setTitle(title);
-        request.setType(StoryType.ORGANIZATION);
-        request.setUserId(1);
+        // Pre-condition
+        int existingStories = storyService.findStories().size();
 
+        CreateStoryDTO request = buildValidCreateStoryDTO();
         this.mockMvc.perform(
                 post(URI_GET_STORIES, request)
                 .content(asJsonString(request))
@@ -61,6 +67,22 @@ public class StoryIntegratrionTest extends C4SGTest {
         this.mockMvc.perform(
                 get(URI_GET_STORIES).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(greaterThan(0))));
+                .andExpect(jsonPath("$", hasSize(comparesEqualTo(existingStories + 1))));
+    }
+
+    private CreateStoryDTO buildValidCreateStoryDTO() {
+
+        CreateStoryDTO request = new CreateStoryDTO();
+        String title = "an open source story";
+        String imageUrl = "image url";
+        String body = "body";
+
+        request.setTitle(title);
+        request.setType(StoryType.ORGANIZATION);
+        request.setUserId(1);
+        request.setBody(body);
+        request.setImageUrl(imageUrl);
+
+        return request;
     }
 }

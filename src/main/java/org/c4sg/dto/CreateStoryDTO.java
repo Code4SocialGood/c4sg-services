@@ -2,6 +2,7 @@ package org.c4sg.dto;
 
 import org.c4sg.entity.StoryType;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class CreateStoryDTO {
@@ -12,13 +13,14 @@ public class CreateStoryDTO {
     @Size(max = 100, message = "Image URL cannot exceed 100 characters")
     private String imageUrl;
 
+    @NotNull(message = "Title is required")
     @Size(max = 100, message = "Title cannot exceed 100 characters")
     private String title;
 
-    @Size(max = 20, message = "StoryType cannot exceed 20 characters")
+    @NotNull(message = "StoryType is required")
     private StoryType type;
 
-    @Size(max = 20, message = "UserId cannot exceed 20 characters")
+    @NotNull(message = "UserId is required")
     private Integer userId;
 
     public String getBody() {
