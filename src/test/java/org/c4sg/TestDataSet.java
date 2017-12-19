@@ -17,4 +17,10 @@ public class TestDataSet {
     static final String PROJECT_3_NAME = "SEARCH ENGINE MARKETING PLAN";
     static final String PROJECT_4_NAME = "LO; DESIGN & VISUAL BRAND IDENTITY";
     static final String PROJECT_5_NAME = "Website Visual Design";
+
+    // Stories
+    public static final int STORY_1_ID = 1;
+    public static final String STORY_1_TITLE = "My First Story";
+    public static final String STORY_2_TITLE = "My Second Story";
+
 }
