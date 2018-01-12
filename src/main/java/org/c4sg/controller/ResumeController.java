@@ -38,8 +38,8 @@ public class ResumeController {
 		this.resumeService = storageService;
 	}
 
-	@GetMapping("/assets/{id}/") //todo ???
-	public String listUploadedFiles(Model model) throws IOException {
+	@GetMapping("/assets/{id}/") 
+	public String listUploadedFiles(@PathVariable int id, Model model) throws IOException {
 
 		model.addAttribute("files",
 				resumeService.loadAll()
@@ -54,7 +54,7 @@ public class ResumeController {
 	@GetMapping("/assets/{id}/{filename:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> serveFile(@PathVariable int id, @PathVariable String filename) {
-		userService.findById(id);//hmmm
+		
 		Resource file = resumeService.loadAsResource(filename);
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
