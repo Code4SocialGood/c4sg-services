@@ -211,4 +211,7 @@ public class UserServiceImpl implements UserService {
 	public void saveAvatar(Integer id, String imgUrl) {
 		userDAO.updateAvatar(imgUrl, id);
 	}
+	public void saveResume(Integer id, String resumeUrl) {
+		userDAO.updateResume(resumeUrl, id);
+	}
 }

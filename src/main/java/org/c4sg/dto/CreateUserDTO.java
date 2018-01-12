@@ -51,8 +51,9 @@ public class CreateUserDTO {
     private String publishFlag = "Y";
     private String notifyFlag = "Y";
     
-    // Following fields are not used
     private String resumeUrl;
+    
+    // Following fields are not used
     private String facebookUrl;
     private String twitterUrl;
     

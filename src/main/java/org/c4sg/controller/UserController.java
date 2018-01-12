@@ -176,6 +176,21 @@ public class UserController {
 	}
     
     @CrossOrigin
+    @RequestMapping(value = "/{id}/resume", params = "resumeUrl", method = RequestMethod.PUT)
+	@ApiOperation(value = "Upload a user resume file")
+	public void saveResume(
+			@ApiParam(value = "user Id", required = true) @PathVariable("id") Integer id,
+			@ApiParam(value = "Resume Url", required = true) @RequestParam("resumeUrl") String url) {
+
+    	System.out.println("************** UserController.saveResume()" 
+                + ": id=" + id  
+                + "; url=" + url                  
+                + " **************");
+    	
+    	userService.saveResume(id, url);
+	}
+    
+    @CrossOrigin
     @RequestMapping(value="/jobTitles", method = RequestMethod.GET)
     @ApiOperation(value = "Get a list of job titles")
     public List<JobTitleDTO> getJobTitles() {

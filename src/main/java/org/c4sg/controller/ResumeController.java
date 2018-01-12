@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.c4sg.exception.ResumeStorageException;
 import org.c4sg.service.ResumeStorageService;
+import org.c4sg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,17 +22,23 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
+
 @Controller
 public class ResumeController {
 
+	@Autowired
 	private final ResumeStorageService resumeService;
+	
+	@Autowired
+    private UserService userService;
 
 	@Autowired
 	public ResumeController(ResumeStorageService storageService) {
 		this.resumeService = storageService;
 	}
 
-	@GetMapping("/")
+	@GetMapping("/assets/{id}/") //todo ???
 	public String listUploadedFiles(Model model) throws IOException {
 
 		model.addAttribute("files",
@@ -44,17 +51,17 @@ public class ResumeController {
 		return "uploadForm";
 	}
 
-	@GetMapping("/files/{filename:.+}")
+	@GetMapping("/assets/{id}/{filename:.+}")
 	@ResponseBody
-	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-
+	public ResponseEntity<Resource> serveFile(@PathVariable int id, @PathVariable String filename) {
+		userService.findById(id);//hmmm
 		Resource file = resumeService.loadAsResource(filename);
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
 				.body(file);
 	}
 
-	@PostMapping("/")
+	@PostMapping("/assets/{id}/")
 	public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 
 		resumeService.store(file);
