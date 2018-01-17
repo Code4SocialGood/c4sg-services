@@ -78,11 +78,16 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
      
      String SEARCH_SKILL = " AND (us.skill.id in (:skills))";
      String SEARCH_JOB =  " AND ( u.jobTitleId in (:jobTitles))";
+     String SEARCH_COUNTRY =  " AND ( u.country in (:countries))";
      
      String FIND_BY_KEYWORD = SEARCH_FIRST + SEARCH_LAST;		 
      String FIND_BY_KEYWORD_SKILL = SEARCH_FIRST + SEARCH_SKILL + SEARCH_LAST;
      String FIND_BY_KEYWORD_JOB = SEARCH_FIRST + SEARCH_JOB + SEARCH_LAST;
      String FIND_BY_KEYWORD_JOB_SKILL = SEARCH_FIRST + SEARCH_JOB + SEARCH_SKILL + SEARCH_LAST;
+     String FIND_BY_KEYWORD_COUNTRY = SEARCH_FIRST + SEARCH_COUNTRY + SEARCH_LAST;		 
+     String FIND_BY_KEYWORD_SKILL_COUNTRY = SEARCH_FIRST + SEARCH_SKILL + SEARCH_COUNTRY + SEARCH_LAST;
+     String FIND_BY_KEYWORD_JOB_COUNTRY = SEARCH_FIRST + SEARCH_JOB + SEARCH_COUNTRY + SEARCH_LAST;
+     String FIND_BY_KEYWORD_JOB_SKILL_COUNTRY = SEARCH_FIRST + SEARCH_JOB + SEARCH_SKILL + SEARCH_COUNTRY + SEARCH_LAST;
     
     @Query(FIND_ACTIVE_VOLUNTEERS)
     Page<User> findActiveVolunteers(Pageable pageable);
@@ -128,6 +133,18 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
 
     @Query(FIND_BY_KEYWORD_JOB_SKILL)
     List<User> findByKeywordAndJobAndSkill(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);
+    
+    @Query(FIND_BY_KEYWORD_JOB_SKILL_COUNTRY)
+	List<User> findByKeywordAndJobAndSkillAndCountries(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("skills") List<Integer> skills, @Param("countries") List<String> countries, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);
+
+    @Query(FIND_BY_KEYWORD_SKILL_COUNTRY)
+	List<User> findByKeywordAndSkillAndCountries(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("countries") List<String> countries, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);
+
+    @Query(FIND_BY_KEYWORD_JOB_COUNTRY)
+	List<User> findByKeywordAndJobAndCountries(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("countries") List<String> countries, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);
+
+    @Query(FIND_BY_KEYWORD_COUNTRY)
+	List<User> findByKeywordAndCountries(@Param("keyWord") String keyWord, @Param("countries") List<String> countries, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);
 
     @Query(FIND_BY_KEYWORD)
     Page<User>  findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag, Pageable pageable);
@@ -140,5 +157,17 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
 
     @Query(FIND_BY_KEYWORD_JOB_SKILL)
     Page<User>  findByKeywordAndJobAndSkill(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag, Pageable pageable);
+    
+    @Query(FIND_BY_KEYWORD_JOB_SKILL_COUNTRY)
+	Page<User> findByKeywordAndJobAndSkillAndCountries(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("skills") List<Integer> skills, @Param("countries") List<String> countries, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag, Pageable pageable);
+
+    @Query(FIND_BY_KEYWORD_SKILL_COUNTRY)
+	Page<User> findByKeywordAndSkillAndCountries(@Param("keyWord") String keyWord, @Param("skills") List<Integer> skills, @Param("countries") List<String> countries, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag, Pageable pageable);
+
+    @Query(FIND_BY_KEYWORD_JOB_COUNTRY)
+	Page<User> findByKeywordAndJobAndCountries(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("countries") List<String> countries, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag, Pageable pageable);
+
+    @Query(FIND_BY_KEYWORD_COUNTRY)
+	Page<User> findByKeywordAndCountries(@Param("keyWord") String keyWord, @Param("countries") List<String> countries, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag, Pageable pageable);
 
 }

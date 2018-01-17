@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
     }	
 
 	@Override
-	public Page<UserDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, String status, String role, String publishFlag, Integer page, Integer size) {
+	public Page<UserDTO> search(String keyWord, List<Integer> jobTitles, List<Integer> skills, List<String> countries, String status, String role, String publishFlag, Integer page, Integer size) {
 
 		Page<User> userPages = null;
 		List<User> users = null;
@@ -147,27 +147,51 @@ public class UserServiceImpl implements UserService {
 			page=0;
 		
 		if (size == null) {
-			if(skills != null && jobTitles != null) {
-				users = userDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, role, publishFlag);
-			} else if(skills != null) {
-				users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag);
-			} else if(jobTitles != null) {
-				users = userDAO.findByKeywordAndJob(keyWord, jobTitles, status, role, publishFlag);
-	    	} else {
-	    		users = userDAO.findByKeyword(keyWord, status, role, publishFlag);
-	    	}
+			if(countries == null) {
+				if(skills != null && jobTitles != null) {
+					users = userDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, role, publishFlag);
+				} else if(skills != null) {
+					users = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag);
+				} else if(jobTitles != null) {
+					users = userDAO.findByKeywordAndJob(keyWord, jobTitles, status, role, publishFlag);
+				} else {
+					users = userDAO.findByKeyword(keyWord, status, role, publishFlag);
+				}
+			} else {
+				if(skills != null && jobTitles != null) {
+					users = userDAO.findByKeywordAndJobAndSkillAndCountries(keyWord, jobTitles, skills, countries, status, role, publishFlag);
+				} else if(skills != null) {
+					users = userDAO.findByKeywordAndSkillAndCountries(keyWord, skills, countries, status, role, publishFlag);
+				} else if(jobTitles != null) {
+					users = userDAO.findByKeywordAndJobAndCountries(keyWord, jobTitles, countries, status, role, publishFlag);
+				} else {
+					users = userDAO.findByKeywordAndCountries(keyWord, countries, status, role, publishFlag);
+				}
+			}
 			userPages=new PageImpl<User>(users);
 		} else {
 			Pageable pageable = new PageRequest(page,size);
-			if(skills != null && jobTitles != null) {
-				userPages = userDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, role, publishFlag, pageable);
-			} else if(skills != null) {
-				userPages = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag, pageable);
-			} else if(jobTitles != null) {
-				userPages = userDAO.findByKeywordAndJob(keyWord, jobTitles, status, role, publishFlag, pageable);
-	    	} else {
-	    		userPages = userDAO.findByKeyword(keyWord, status, role, publishFlag, pageable);
-	    	}			
+			if(countries == null) {
+				if(skills != null && jobTitles != null) {
+					userPages = userDAO.findByKeywordAndJobAndSkill(keyWord, jobTitles, skills, status, role, publishFlag, pageable);
+				} else if(skills != null) {
+					userPages = userDAO.findByKeywordAndSkill(keyWord, skills, status, role, publishFlag, pageable);
+				} else if(jobTitles != null) {
+					userPages = userDAO.findByKeywordAndJob(keyWord, jobTitles, status, role, publishFlag, pageable);
+		    	} else {
+		    		userPages = userDAO.findByKeyword(keyWord, status, role, publishFlag, pageable);
+		    	}
+			} else {
+				if(skills != null && jobTitles != null) {
+					userPages = userDAO.findByKeywordAndJobAndSkillAndCountries(keyWord, jobTitles, skills, countries, status, role, publishFlag, pageable);
+				} else if(skills != null) {
+					userPages = userDAO.findByKeywordAndSkillAndCountries(keyWord, skills, countries, status, role, publishFlag, pageable);
+				} else if(jobTitles != null) {
+					userPages = userDAO.findByKeywordAndJobAndCountries(keyWord, jobTitles, countries, status, role, publishFlag, pageable);
+				} else {
+					userPages = userDAO.findByKeywordAndCountries(keyWord, countries, status, role, publishFlag, pageable);
+					}
+			}
 		}
 		
 		Page<UserDTO> userDTOS = userPages.map(p -> userMapper.getUserDtoFromEntity(p));
