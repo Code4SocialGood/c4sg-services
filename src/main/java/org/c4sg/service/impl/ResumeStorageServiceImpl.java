@@ -26,7 +26,7 @@ public class ResumeStorageServiceImpl implements ResumeStorageService {
 
 	@Autowired
 	public ResumeStorageServiceImpl() {
-		this.rootLocation = Paths.get("/api/assets/"); 
+		this.rootLocation = Paths.get("/api"); 
 	}
 
 	@Override
