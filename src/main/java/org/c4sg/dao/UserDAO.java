@@ -1,6 +1,7 @@
 package org.c4sg.dao;
 
 import org.c4sg.entity.User;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -88,7 +89,11 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
      String FIND_BY_KEYWORD_SKILL_COUNTRY = SEARCH_FIRST + SEARCH_SKILL + SEARCH_COUNTRY + SEARCH_LAST;
      String FIND_BY_KEYWORD_JOB_COUNTRY = SEARCH_FIRST + SEARCH_JOB + SEARCH_COUNTRY + SEARCH_LAST;
      String FIND_BY_KEYWORD_JOB_SKILL_COUNTRY = SEARCH_FIRST + SEARCH_JOB + SEARCH_SKILL + SEARCH_COUNTRY + SEARCH_LAST;
-    
+
+     String GET_TOTAL_VOLUNTEERS = "SELECT COUNT(*)" +
+             " FROM user "+
+             " WHERE role = 'V' ";
+
     @Query(FIND_ACTIVE_VOLUNTEERS)
     Page<User> findActiveVolunteers(Pageable pageable);
 
@@ -98,12 +103,15 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     User findById(int id);
     
     User findByEmail(String email);
-    
-    List<User> findAllByOrderByIdDesc();    
-    
+
+    List<User> findAllByOrderByIdDesc();
+
     @Query(FIND_BY_ID_QUERY)
     List<User> findByUserProjectId(@Param("projId") Integer projId, @Param("userProjStatus") String userProjStatus);
-    
+
+    @Query(value = GET_TOTAL_VOLUNTEERS,nativeQuery = true)
+    int getTotalVolunteers();
+
     @Query(FIND_BY_ORG_ID)
     List<User> findByOrgId(@Param("orgId") Integer orgId);
 

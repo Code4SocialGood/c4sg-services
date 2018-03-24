@@ -70,7 +70,10 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
     String FIND_BY_KEYWORD_SKILL = SEARCH_FIRST + SEARCH_SKILL + SEARCH_LAST;
     String FIND_BY_KEYWORD_JOB = SEARCH_FIRST + SEARCH_JOB + SEARCH_LAST;
     String FIND_BY_KEYWORD_JOB_SKILL = SEARCH_FIRST + SEARCH_JOB + SEARCH_SKILL + SEARCH_LAST;
-    
+
+    String TOTAL_ACTIVE_PROJECTS = "SELECT COUNT(*) " +
+            "FROM project " +
+            "WHERE status = 'A' ";
     
 	Project findById(int id);
 	Project findByName(String name);
@@ -123,5 +126,7 @@ public interface ProjectDAO extends CrudRepository<Project, Long> {
 
   @Query(FIND_BY_KEYWORD_JOB_SKILL)
   Page<Project> findByKeywordAndJobAndSkill(@Param("keyWord") String keyWord, @Param("jobTitles") List<Integer> jobTitles, @Param("skills") List<Integer> skills, @Param("status") String status, @Param("remote") String remote, Pageable pageable);
-      
+
+  @Query(value = TOTAL_ACTIVE_PROJECTS , nativeQuery = true)
+  int getTotalActiveProjects();
 }

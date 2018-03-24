@@ -248,4 +248,15 @@ public class OrganizationController {
 
 		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
+
+	@CrossOrigin
+	@RequestMapping(value="/active/total", method = RequestMethod.GET)
+	@ApiOperation(value = "Total number of active organization")
+	public ResponseEntity<Map<String, String>> getTotalActiveOrg() {
+		HashMap<String, String> map = new HashMap<>();
+		int totalActive = organizationService.countActiveOrganizations();
+		map.put("total", String.valueOf(totalActive));
+
+		return new ResponseEntity<>(map, HttpStatus.OK);
+	}
 }

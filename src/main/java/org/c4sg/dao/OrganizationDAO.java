@@ -60,6 +60,11 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
                                     "    SELECT country from user " +
                                 ") c WHERE country IS NOT NULL AND country <> ''";
 
+    String COUNT_ACTIVE_ORGANIZATIONS = "SELECT COUNT(*) " +
+                                        "FROM organization "+
+                                        "WHERE status = 'A' ";
+
+
     String DELETE_USER_ORGANIZATIONS = "DELETE FROM UserOrganization uo WHERE uo.organization.id=:id";
     
     String SAVE_LOGO = "UPDATE Organization o set o.logoUrl = :imgUrl where o.id = :organizationId";
@@ -75,6 +80,8 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     @Query(value = COUNT_BY_COUNTRY, nativeQuery = true)
     int countByCountry();
 
+    @Query(value=COUNT_ACTIVE_ORGANIZATIONS,nativeQuery = true)
+    int countActiveOrganizations();
     /*@Query("SELECT o FROM Organization o WHERE LOWER(o.name) LIKE LOWER(CONCAT('%',:keyword,'%')) OR LOWER(o.description) LIKE LOWER(CONCAT('%',:keyword,'%'))")
     List<Organization> findByKeyword(String keyword);*/
 

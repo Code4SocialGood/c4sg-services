@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -385,6 +386,17 @@ public class ProjectController {
     	System.out.println("************** ProjectController.getJobTitles() **************");
     	
         return projectService.findJobTitles();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value="/active/total", method = RequestMethod.GET)
+    @ApiOperation(value = "Total number of active projects")
+    public ResponseEntity<Map<String, String>> getTotalActiveProjects() {
+        HashMap<String, String> map = new HashMap<>();
+        int totalActive = projectService.getTotalActiveProjects();
+        map.put("total", String.valueOf(totalActive));
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 }
 

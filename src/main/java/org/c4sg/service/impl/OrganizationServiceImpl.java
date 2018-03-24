@@ -251,4 +251,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public int countByCountry() {
 		return organizationDAO.countByCountry();
 	}
+
+	@Override
+	public int countActiveOrganizations(){return organizationDAO.countActiveOrganizations();}
 }

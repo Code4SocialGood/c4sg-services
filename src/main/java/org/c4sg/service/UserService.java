@@ -31,4 +31,6 @@ public interface UserService {
     void saveAvatar(Integer id, String imgUrl);
 
 	List<UserDTO> findByOrgId(int orgId);
+
+	int getTotalVolunteers();
 }

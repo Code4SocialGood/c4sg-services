@@ -22,4 +22,5 @@ public interface OrganizationService {
     void saveLogo(Integer id, String imgUrl);
     void approveOrDecline(Integer id, String status);
     int countByCountry();
+    int countActiveOrganizations();
 }
