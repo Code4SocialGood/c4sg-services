@@ -92,8 +92,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 	    		if(open != null){
 	    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories);
 	    		}
-	    		else{    			
-	    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories);
+	    		else{   
+	    			if(categories != null) {
+	    				organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories);
+	    			}
 	    		}	
 	    		
 	        }
@@ -101,8 +103,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 	    		if(open != null){
 	    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories);
 	    		}
-	    		else{    			
-	    			organizations = organizationDAO.findByCriteria(keyWord, open, status, categories);
+	    		else{
+	    			// Issue #1824 - Introduced separate query for scenarios where category is not being used to filter results
+	    			if(categories != null) {
+	    				organizations = organizationDAO.findByCriteria(keyWord, open, status, categories);
+	    			}else {
+	    				organizations = organizationDAO.findByCriteriaNoCategoryFilter(keyWord, open, status);
+	    			}
 	    		}    		
 	    	}
 	    	organizationPages=new PageImpl<Organization>(organizations);
@@ -121,8 +128,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 	    		if(open != null){
 	    			organizationPages = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories,pageable);
 	    		}
-	    		else{    			
-	    			organizationPages = organizationDAO.findByCriteria(keyWord, open, status, categories,pageable);
+	    		else{
+	    			// Issue #1824 - Introduced separate query for scenarios where category is not being used to filter results
+	    			if(categories != null) {
+	    				organizationPages = organizationDAO.findByCriteria(keyWord, open, status, categories,pageable);
+	    			}else {
+	    				organizationPages = organizationDAO.findByCriteriaNoCategoryFilter(keyWord, open, status, pageable); 
+	    			}
 	    		}    		
 	    	}    		
     	}
