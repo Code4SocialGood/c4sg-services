@@ -42,6 +42,7 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     String DELETE_USER_SKILLS = "DELETE FROM UserSkill us WHERE us.user.id=:userId";    
     
     String SAVE_AVATAR = "UPDATE User u set u.avatarUrl = :imgUrl where u.id = :userId";
+    String SAVE_RESUME = "UPDATE User u set u.resumeUrl = :resumeUrl where u.id = :userId";
     
     /*String FIND_APPLICANT_QUERY =     
      		"SELECT upa.user_id, upa.project_id, u.first_name, u.last_name, u.title, upa.created_time as applied_time, upc.created_time as approved_time, upd.created_time as declined_time " +  
@@ -121,6 +122,11 @@ public interface UserDAO extends JpaRepository<User, Long>, JpaSpecificationExec
     @Modifying
     @Query(SAVE_AVATAR)
     void updateAvatar(@Param("imgUrl") String imgUrl, @Param("userId") Integer userId);
+    
+    @Transactional
+    @Modifying
+    @Query(SAVE_RESUME)
+    void updateResume(@Param("resumeUrl") String resumeUrl, @Param("userId") Integer userId);
     
     @Query(FIND_BY_KEYWORD)
     List<User> findByKeyword(@Param("keyWord") String keyWord, @Param("status") String status, @Param("role") String role, @Param("publishFlag") String publishFlag);

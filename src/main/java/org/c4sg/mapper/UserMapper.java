@@ -66,7 +66,6 @@ public class UserMapper extends ModelMapper {
 			if (o[8] != null) {
 				applicant.setDeclinedTime((Date) o[8]);				
 			} 	
-			
 			applicantList.add(applicant);
 		}
 		return applicantList;
