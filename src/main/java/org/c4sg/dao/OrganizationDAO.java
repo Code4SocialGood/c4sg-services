@@ -41,7 +41,15 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
             " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
                 " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
                 + " AND (:status is null OR o.status = :status)"
-                + " AND (:categories is null OR o.category in (:categories))"                
+                + " AND (o.category in (:categories))"                
+                + " AND (:open is null )"
+                + ")  ORDER BY o.name ASC";
+    
+    // Issue #1824 - Introduced query instead of performing (:categories) null check on FIND_BY_CRITERIA
+    String FIND_BY_CRITERIA_NO_CATEGORY_FILTER = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o" +
+            " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+                " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
+                + " AND (:status is null OR o.status = :status)"             
                 + " AND (:open is null )"
                 + ")  ORDER BY o.name ASC";
     
@@ -93,6 +101,10 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     Page<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("open") Boolean open
     		, @Param("status") String status, @Param("categories") List<String> categories,Pageable pageable);
     
+    @Query(FIND_BY_CRITERIA_NO_CATEGORY_FILTER)
+    Page<Organization> findByCriteriaNoCategoryFilter(@Param("keyword") String keyWord, @Param("open") Boolean open
+    		, @Param("status") String status, Pageable pageable);
+    
     @Query(FIND_BY_CRITERIA_AND_OPEN)
     Page<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord, @Param("open") Boolean open
     		, @Param("status") String status, @Param("categories") List<String> categories, Pageable pageable);
@@ -108,6 +120,11 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     @Query(FIND_BY_CRITERIA)
     List<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("open") Boolean open
     		, @Param("status") String status, @Param("categories") List<String> categories);
+    
+    @Query(FIND_BY_CRITERIA_NO_CATEGORY_FILTER)
+    List<Organization> findByCriteriaNoCategoryFilter(@Param("keyword") String keyWord, @Param("open") Boolean open
+    		, @Param("status") String status);
+    
     
     @Query(FIND_BY_CRITERIA_AND_OPEN)
     List<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord, @Param("open") Boolean open
