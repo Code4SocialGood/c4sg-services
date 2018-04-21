@@ -66,8 +66,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     public List<OrganizationDTO> findOrganizations() {
         List<Organization> organizations = organizationDAO.findAllByOrderByIdDesc();
-        List<OrganizationDTO> organizationDTOS = organizations.stream().map(o -> organizationMapper
-                .getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
+        List<OrganizationDTO> organizationDTOS = organizations.stream().map(o -> organizationMapper.getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
         return organizationDTOS;
     }
 
@@ -78,54 +77,66 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<OrganizationDTO> findByKeyword(String keyWord) {
         List<Organization> organizations = organizationDAO.findByNameOrDescription(keyWord, keyWord);
 
-        return organizations.stream()
-                            .map(o -> organizationMapper.getOrganizationDtoFromEntity(o))
-                            .collect(Collectors.toList());
+        return organizations.stream().map(o -> organizationMapper.getOrganizationDtoFromEntity(o)).collect(Collectors.toList());
     }
     
     public Page<OrganizationDTO> findByCriteria(String keyWord, List<String> countries, Boolean open, String status, List<String> categories, Integer page, Integer size) {
-    	Page<Organization> organizationPages=null;
-    	List<Organization> organizations=null;
-    	if (page==null) page=0;
-    	if (size==null){
-	    	if(countries != null && !countries.isEmpty()){
-	    		if(open != null){
-	    			organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories);
-	    		}
-	    		else{    			
-	    			organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories);
-	    		}	
-	    		
-	        }
-	    	else{
-	    		if(open != null){
+        Page<Organization> organizationPages;
+        List<Organization> organizations = null;
+
+        if (page == null) page = 0;
+
+        if (size == null) {
+            if (countries == null || countries.isEmpty()) {
+                if (open == null) {
+                    if (categories != null) {
+                        organizations = organizationDAO.findByCriteria(keyWord, open, status, categories);
+                    } else {
+                        organizations = organizationDAO.findByCriteriaNoCategoriesFilter(keyWord, open, status);
+	    			}
+                } else {
+                    if (categories == null) {
+                        organizations = organizationDAO.findByCriteriaAndOpenNoCategoriesFilter(keyWord, open, status);
+                    } else {
 	    			organizations = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories);
 	    		}
-	    		else{    			
-	    			organizations = organizationDAO.findByCriteria(keyWord, open, status, categories);
+                }
+            } else {
+                if (open == null) {
+                    if (categories != null) {
+                        organizations = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories);
+                    }
+                } else {
+                    organizations = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories);
+	    			}
 	    		}    		
+            organizationPages = new PageImpl<>(organizations);
+
+            return organizationPages.map(o -> organizationMapper.getOrganizationDtoFromEntity(o));
 	    	}
-	    	organizationPages=new PageImpl<Organization>(organizations);
+
+        Pageable pageable = new PageRequest(page, size);
+
+        if (countries == null || countries.isEmpty()) {
+            if (open == null) {
+                if (categories == null) {
+                    organizationPages = organizationDAO.findByCriteriaNoCategoriesFilter(keyWord, open, status, pageable);
     	} else {
-			Pageable pageable=new PageRequest(page,size);    	    	
-	    	if(countries != null && !countries.isEmpty()){
-	    		if(open != null){
-	    			organizationPages = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories,pageable);
-	    		}
-	    		else{    			
-	    			organizationPages = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories,pageable);
-	    		}	
-	    		
-	        }
-	    	else{
-	    		if(open != null){
-	    			organizationPages = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories,pageable);
-	    		}
-	    		else{    			
-	    			organizationPages = organizationDAO.findByCriteria(keyWord, open, status, categories,pageable);
+                    organizationPages = organizationDAO.findByCriteria(keyWord, open, status, categories, pageable);
+                }
+            } else {
+                if (categories == null) {
+                    organizationPages = organizationDAO.findByCriteriaAndOpenNoCategoriesFilter(keyWord, open, status, pageable);
+                } else {
+                    organizationPages = organizationDAO.findByCriteriaAndOpen(keyWord, open, status, categories, pageable);
+	    			}
 	    		}    		
-	    	}    		
-    	}
+        } else if (open == null) {
+            organizationPages = organizationDAO.findByCriteriaAndCountries(keyWord, countries, open, status, categories, pageable);
+        } else {
+            organizationPages = organizationDAO.findByCriteriaAndCountriesAndOpen(keyWord, countries, open, status, categories, pageable);
+	    	}
+
     	return organizationPages.map(o -> organizationMapper.getOrganizationDtoFromEntity(o));    	
     }
       
@@ -146,7 +157,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     			Map<String, BigDecimal> geoCode = geocodeService.getGeoCode(organization.getState(), organization.getCountry());
     			organization.setLatitude(geoCode.get("lat"));
     			organization.setLongitude(geoCode.get("lng"));
-            }  catch (Exception e) {
+            } catch (Exception e) {
             	//throw new NotFoundException("Error getting geocode");
             	System.out.println("Error getting geocode: " + e.toString());
     		}
@@ -173,14 +184,14 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationMapper.getOrganizationDtoFromEntity(organization);
     }
 
-    public void deleteOrganization(int id){
+    public void deleteOrganization(int id) {
     	Organization organization = organizationDAO.findOne(id);
-    	if(organization != null){
+        if (organization != null) {
     		organization.setStatus(Constants.ORGANIZATION_STATUS_DELETED);
     		// TODO Delete logo from S3 by frontend
     		organizationDAO.save(organization);
-    		List<ProjectDTO> projects=projectService.findByOrganization(id, null);
-    		for (ProjectDTO project:projects){
+            List<ProjectDTO> projects = projectService.findByOrganization(id, null);
+            for (ProjectDTO project : projects) {
     			projectService.deleteProject(project.getId());
     		}
     		organizationDAO.deleteUserOrganizations(id);
@@ -240,10 +251,10 @@ public class OrganizationServiceImpl implements OrganizationService {
     	}	
         			
        	Map<String, Object> context = new HashMap<String, Object>();     	
-       	if (status.equals(Constants.ORGANIZATION_STATUS_ACTIVE))
-       		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, "", Constants.SUBJECT_NEW_ORGANIZATION_APPROVE, Constants.TEMPLATE_NEW_ORGANIZATION_APPROVE, context);
-       	else if (status.equals(Constants.ORGANIZATION_STATUS_DECLINED))
-       		asyncEmailService.sendWithContext(Constants.C4SG_ADDRESS, toAddress, "", Constants.SUBJECT_NEW_ORGANIZATION_DECLINE, Constants.TEMPLATE_NEW_ORGANIZATION_DECLINE, context);
+        if (status.equals(Constants.ORGANIZATION_STATUS_ACTIVE)) asyncEmailService
+                .sendWithContext(Constants.C4SG_ADDRESS, toAddress, "", Constants.SUBJECT_NEW_ORGANIZATION_APPROVE, Constants.TEMPLATE_NEW_ORGANIZATION_APPROVE, context);
+        else if (status.equals(Constants.ORGANIZATION_STATUS_DECLINED)) asyncEmailService
+                .sendWithContext(Constants.C4SG_ADDRESS, toAddress, "", Constants.SUBJECT_NEW_ORGANIZATION_DECLINE, Constants.TEMPLATE_NEW_ORGANIZATION_DECLINE, context);
        	System.out.println("Organization approval/decline email sent: Organization=" + id + " ; Email=" + toAddress);
 	}
 
