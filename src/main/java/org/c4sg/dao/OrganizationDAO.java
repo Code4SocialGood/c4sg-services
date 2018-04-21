@@ -5,7 +5,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.c4sg.entity.Organization;
-import org.c4sg.entity.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 
 public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
+
     String FIND_BY_NAME_OR_DESCRIPTION = "SELECT o FROM Organization o " +
                                             "WHERE LOWER(o.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
                                                 "OR LOWER(o.description) LIKE LOWER(CONCAT('%', :description, '%')) order by project_updated_time desc";
@@ -45,8 +45,7 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
                 + " AND (:open is null )"
                 + ")  ORDER BY o.name ASC";
     
-    // Issue #1824 - Introduced query instead of performing (:categories) null check on FIND_BY_CRITERIA
-    String FIND_BY_CRITERIA_NO_CATEGORY_FILTER = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o" +
+    String FIND_BY_CRITERIA_NO_CATEGORIES_FILTER = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o" +
             " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
                 " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
                 + " AND (:status is null OR o.status = :status)"             
@@ -57,7 +56,14 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
             " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
                 " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
                 + " AND (:status is null OR o.status = :status)"
-                + " AND (:categories is null OR o.category in (:categories))"                
+            + " AND (o.category in (:categories))"
+            + " AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false))"
+            + ")  ORDER BY o.name ASC";
+
+    String FIND_BY_CRITERIA_AND_OPEN_NO_CATEGORIES_FILTER = "SELECT DISTINCT o FROM Project p JOIN p.organization o" +
+            " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+            " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
+            + " AND (:status is null OR o.status = :status)"
                 + " AND ((LOWER(p.status) ='a' AND :open=true) OR (LOWER(p.status) ='c' AND :open=false))"
                 + ")  ORDER BY o.name ASC";
 
@@ -73,11 +79,8 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     String SAVE_LOGO = "UPDATE Organization o set o.logoUrl = :imgUrl where o.id = :organizationId";
     
     String APPROVE_DECLINE = "UPDATE Organization o set o.status = :status where o.id = :organizationId";
-    
-    Organization findByName(String name);
 
     List<Organization> findAllByOrderByIdDesc();
-    
     Organization findOne(Integer id);
 
     @Query(value = COUNT_BY_COUNTRY, nativeQuery = true)
@@ -90,53 +93,82 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
     List<Organization> findByNameOrDescription(@Param("name") String name, @Param("description") String description);
 
     @Query(FIND_BY_CRITERIA_AND_COUNTRIES)
-    Page<Organization> findByCriteriaAndCountries(@Param("keyword") String keyWord, @Param("countries") List<String> countries,@Param("open") Boolean open
-    		, @Param("status") String status, @Param("categories") List<String> categories,Pageable pageable);
+    Page<Organization> findByCriteriaAndCountries(@Param("keyword") String keyWord,
+                                                  @Param("countries") List<String> countries,
+                                                  @Param("open") Boolean open,
+                                                  @Param("status") String status,
+                                                  @Param("categories") List<String> categories,
+                                                  Pageable pageable);
     
     @Query(FIND_BY_CRITERIA_AND_COUNTRIES_AND_OPEN)
-    Page<Organization> findByCriteriaAndCountriesAndOpen(@Param("keyword") String keyWord, @Param("countries") List<String> countries,@Param("open") Boolean open
-    		, @Param("status") String status, @Param("categories") List<String> categories,Pageable pageable);
+    Page<Organization> findByCriteriaAndCountriesAndOpen(@Param("keyword") String keyWord,
+                                                         @Param("countries") List<String> countries,
+                                                         @Param("open") Boolean open,
+                                                         @Param("status") String status,
+                                                         @Param("categories") List<String> categories,
+                                                         Pageable pageable);
     
     @Query(FIND_BY_CRITERIA)
-    Page<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("open") Boolean open
-    		, @Param("status") String status, @Param("categories") List<String> categories,Pageable pageable);
+    List<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("open") Boolean open,
+                                      @Param("status") String status, @Param("categories") List<String> categories);
     
-    @Query(FIND_BY_CRITERIA_NO_CATEGORY_FILTER)
-    Page<Organization> findByCriteriaNoCategoryFilter(@Param("keyword") String keyWord, @Param("open") Boolean open
-    		, @Param("status") String status, Pageable pageable);
+    @Query(FIND_BY_CRITERIA)
+    Page<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("open") Boolean open,
+                                      @Param("status") String status, @Param("categories") List<String> categories,
+                                      Pageable pageable);
+
+    @Query(FIND_BY_CRITERIA_NO_CATEGORIES_FILTER)
+    List<Organization> findByCriteriaNoCategoriesFilter(@Param("keyword") String keyWord, @Param("open") Boolean open,
+                                                        @Param("status") String status);
+
+    @Query(FIND_BY_CRITERIA_NO_CATEGORIES_FILTER)
+    Page<Organization> findByCriteriaNoCategoriesFilter(@Param("keyword") String keyWord, @Param("open") Boolean open,
+                                                        @Param("status") String status, Pageable pageable);
     
     @Query(FIND_BY_CRITERIA_AND_OPEN)
-    Page<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord, @Param("open") Boolean open
-    		, @Param("status") String status, @Param("categories") List<String> categories, Pageable pageable);
+    List<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord,
+                                             @Param("open") Boolean open,
+                                             @Param("status") String status,
+                                             @Param("categories") List<String> categories);
+
+    @Query(FIND_BY_CRITERIA_AND_OPEN)
+    Page<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord,
+                                             @Param("open") Boolean open,
+                                             @Param("status") String status,
+                                             @Param("categories") List<String> categories,
+                                             Pageable pageable);
+
+    @Query(FIND_BY_CRITERIA_AND_OPEN_NO_CATEGORIES_FILTER)
+    List<Organization> findByCriteriaAndOpenNoCategoriesFilter(@Param("keyword") String keyWord,
+                                             @Param("open") Boolean open,
+                                             @Param("status") String status);
+
+    @Query(FIND_BY_CRITERIA_AND_OPEN_NO_CATEGORIES_FILTER)
+    Page<Organization> findByCriteriaAndOpenNoCategoriesFilter(@Param("keyword") String keyWord,
+                                             @Param("open") Boolean open,
+                                             @Param("status") String status,
+                                             Pageable pageable);
 
     @Query(FIND_BY_CRITERIA_AND_COUNTRIES)
-    List<Organization> findByCriteriaAndCountries(@Param("keyword") String keyWord, @Param("countries") List<String> countries,@Param("open") Boolean open
-    		, @Param("status") String status, @Param("categories") List<String> categories);
+    List<Organization> findByCriteriaAndCountries(@Param("keyword") String keyWord,
+                                                  @Param("countries") List<String> countries,
+                                                  @Param("open") Boolean open,
+                                                  @Param("status") String status,
+                                                  @Param("categories") List<String> categories);
     
     @Query(FIND_BY_CRITERIA_AND_COUNTRIES_AND_OPEN)
-    List<Organization> findByCriteriaAndCountriesAndOpen(@Param("keyword") String keyWord, @Param("countries") List<String> countries,@Param("open") Boolean open
-    		, @Param("status") String status, @Param("categories") List<String> categories);
-    
-    @Query(FIND_BY_CRITERIA)
-    List<Organization> findByCriteria(@Param("keyword") String keyWord, @Param("open") Boolean open
-    		, @Param("status") String status, @Param("categories") List<String> categories);
-    
-    @Query(FIND_BY_CRITERIA_NO_CATEGORY_FILTER)
-    List<Organization> findByCriteriaNoCategoryFilter(@Param("keyword") String keyWord, @Param("open") Boolean open
-    		, @Param("status") String status);
-    
-    
-    @Query(FIND_BY_CRITERIA_AND_OPEN)
-    List<Organization> findByCriteriaAndOpen(@Param("keyword") String keyWord, @Param("open") Boolean open
-    		, @Param("status") String status, @Param("categories") List<String> categories);
+    List<Organization> findByCriteriaAndCountriesAndOpen(@Param("keyword") String keyWord,
+                                                         @Param("countries") List<String> countries,
+                                                         @Param("open") Boolean open,
+                                                         @Param("status") String status,
+                                                         @Param("categories") List<String> categories);
+
     
     @Modifying
     @Query(DELETE_USER_ORGANIZATIONS)
     @Transactional
     void deleteUserOrganizations(@Param("id") Integer id);
 
-//	List<Organization> findByNameLikeOrDescriptionLikeAllIgnoreCase(String name, String description);
-    
     @Transactional
     @Modifying
     @Query(SAVE_LOGO)

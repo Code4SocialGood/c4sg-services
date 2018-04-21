@@ -47,40 +47,37 @@ public class OrganizationController {
 	private OrganizationService organizationService;
 
 	@CrossOrigin
-	@RequestMapping(produces = { "application/json" }, method = RequestMethod.GET)
+    @RequestMapping(produces = {"application/json"}, method = RequestMethod.GET)
 	@ApiOperation(value = "Find all organizations", notes = "Returns a collection of organizations")
 	public List<OrganizationDTO> getOrganizations() {
-		
     	System.out.println("************** OrganizationController.getOrganizations() **************");
     	
 		return organizationService.findOrganizations();
 	}
 
 	@CrossOrigin
-	@RequestMapping(value = "/{id}", produces = { "application/json" }, method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", produces = {"application/json"}, method = RequestMethod.GET)
 	@ApiOperation(value = "Find organization by ID", notes = "Returns a collection of organizations")
-	public OrganizationDTO getOrganization(
-			@ApiParam(value = "ID of organization to return", required = true) 
-			@PathVariable("id") int id) {
-		
-    	System.out.println("************** OrganizationController.getOrganization()" 
-                + ": id=" + id 
-                + " **************");
+    public OrganizationDTO getOrganization(@ApiParam(value = "ID of organization to return", required = true) @PathVariable("id") int id) {
+        System.out
+                .println("************** OrganizationController.getOrganization()" + ": id=" + id + " **************");
     	
 		return organizationService.findById(id);
 	}
 
 	@CrossOrigin
-	@RequestMapping(value = "/search", produces = { "application/json" }, method = RequestMethod.GET)
-	@ApiOperation(value = "Find organization by keyWord", notes = " Returns a list of organizations which has the keyword in name / description / country, AND, which has the opportunities open, AND, which is located in the selected country. The search result is sorted by organization name in ascending order.")
-	public Page<OrganizationDTO> getOrganizations (
+    @RequestMapping(value = "/search", produces = {"application/json"}, method = RequestMethod.GET)
+    @ApiOperation(value = "Find organization by keyWord", notes = " Returns a list of organizations which has the keyword in name / description / country, AND, " +
+            "which has the opportunities open, AND, which is located in the selected country. " +
+            "The search result is sorted by organization name in ascending order.")
+    public Page<OrganizationDTO> getOrganizations(
 			@ApiParam(value = "Keyword in Name or description or country of organization to return", required = false) @RequestParam(required = false) String keyWord,
-			@ApiParam(value = "Countries of organization to return", required = false) @RequestParam(required = false) List<String> countries,
-			@ApiParam(value = "Opportunities open in the organization", required = false) @RequestParam(required = false) Boolean open,
-			@ApiParam(value = "Status of the organization to return", required = false) @Pattern(regexp="[ADPNC]") @RequestParam(required = false) String status,
-			@ApiParam(value = "Category of the organization to return", required = false) @ListEntry @RequestParam(required = false) List<String> category,
-		    @ApiParam(value = "Results page you want to retrieve (0..N)",required=false) @RequestParam(required=false) Integer page,
-		    @ApiParam(value = "Number of records per page", required=false) @RequestParam(required=false) Integer size)	{
+            @ApiParam(value = "Countries of organization to return") @RequestParam(required = false) List<String> countries,
+            @ApiParam(value = "Opportunities open in the organization") @RequestParam(required = false) Boolean open,
+            @ApiParam(value = "Status of the organization to return") @Pattern(regexp = "[ADPNC]") @RequestParam(required = false) String status,
+            @ApiParam(value = "Category of the organization to return") @ListEntry @RequestParam(required = false) List<String> category,
+            @ApiParam(value = "Results page you want to retrieve (0..N)") @RequestParam(required = false) Integer page,
+            @ApiParam(value = "Number of records per page") @RequestParam(required = false) Integer size) {
 		
     	System.out.println("************** OrganizationController.getOrganizations()" 
                 + ": keyWord=" + keyWord 
@@ -93,7 +90,7 @@ public class OrganizationController {
                 + " **************");
     	
 		try {
-			return organizationService.findByCriteria(keyWord, countries, open, status, category,page,size);
+            return organizationService.findByCriteria(keyWord, countries, open, status, category, page, size);
 		} catch (Exception e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -102,13 +99,12 @@ public class OrganizationController {
 	@CrossOrigin
 	@RequestMapping(method = RequestMethod.POST)
 	@ApiOperation(value = "Create organization", notes = "Creates an organization, and returns the organization created.", response = OrganizationDTO.class)
-	@ApiResponses(value = { @ApiResponse(code = 500, message = "Internal server error") })
+    @ApiResponses(value = {@ApiResponse(code = 500, message = "Internal server error")})
 	public Map<String, Object> createOrganization(
 			@ApiParam(value = "Organization to create", required = true) @RequestBody @Valid CreateOrganizationDTO createOrganizationDTO) {
 
     	System.out.println("************** OrganizationController.createOrganization()" 
-                + ": createOrganizationDTO=" + createOrganizationDTO                
-                + " **************");
+                + ": createOrganizationDTO=" + createOrganizationDTO + " **************");
     	
 		Map<String, Object> responseData = null;
 		// organizationDTO.setLogo(organizationService.getLogoUploadPath(organizationDTO.getId()));
@@ -126,7 +122,7 @@ public class OrganizationController {
 	@CrossOrigin
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	@ApiOperation(value = "Update an existing organization")
-	public Map<String, Object> updateOrganization (
+    public Map<String, Object> updateOrganization(
 			@ApiParam(value = "Updated organization object", required = true) @PathVariable("id") int id,
 			@RequestBody @Valid OrganizationDTO organizationDTO) {
 
@@ -166,7 +162,7 @@ public class OrganizationController {
 	@CrossOrigin
 	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
 	@ApiOperation(value = "Find organizations by user id", notes = "Returns a collection of organizations")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "ID of user invalid") })
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "ID of user invalid")})
 	public List<OrganizationDTO> getOrganizationsByUser(
 			@ApiParam(value = "userId of organizations to return", required = true) @PathVariable("id") Integer id) {
 
@@ -187,7 +183,7 @@ public class OrganizationController {
 	@CrossOrigin
 	@RequestMapping(value = "/{id}/users/{userId}", method = RequestMethod.POST)
 	@ApiOperation(value = "Create a relation between user and organization")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "ID of organization or user invalid") })
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "ID of organization or user invalid")})
 	// TODO: Replace explicit user{id} with AuthN user id.
 	public ResponseEntity<?> createUserOrganization(
 			@ApiParam(value = "ID of user", required = true) @PathVariable("userId") Integer userId,
@@ -239,7 +235,7 @@ public class OrganizationController {
 	}
 
 	@CrossOrigin
-	@RequestMapping(value="/countries/total", method = RequestMethod.GET)
+    @RequestMapping(value = "/countries/total", method = RequestMethod.GET)
 	@ApiOperation(value = "Total number of countries (Organizations & Users) involved in the project")
 	public ResponseEntity<Map<String, String>> getJobTitles() {
 		HashMap<String, String> map = new HashMap<>();
