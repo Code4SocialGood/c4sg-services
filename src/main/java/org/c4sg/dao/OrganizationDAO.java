@@ -53,13 +53,6 @@ public interface OrganizationDAO extends CrudRepository<Organization, Integer> {
                 + " AND (:open is null )"
                 + ")  ORDER BY o.name ASC";
     
-    String FIND_BY_CRITERIA_NO_CATEGORIES = "SELECT DISTINCT o FROM Project p RIGHT OUTER JOIN p.organization o" +
-            " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
-                " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
-                + " AND (:status is null OR o.status = :status)"              
-                + " AND (:open is null )"
-                + ")  ORDER BY o.name ASC";
-    
     String FIND_BY_CRITERIA_AND_OPEN = "SELECT DISTINCT o FROM Project p JOIN p.organization o" +
             " WHERE ((:keyword is null OR LOWER(o.name) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
                 " OR LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.country) LIKE LOWER(CONCAT('%', :keyword, '%')))"
