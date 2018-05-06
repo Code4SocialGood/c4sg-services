@@ -212,8 +212,13 @@ public class ProjectServiceImpl implements ProjectService {
 		List<JobTitle> jobTitles = projectDAO.findJobTitles();
 		return projectMapper.getJobTitleDtosFromEntities(jobTitles);
 	}
-	
-	@Override
+
+    @Override
+    public int getTotalActiveProjects() {
+        return projectDAO.getTotalActiveProjects();
+    }
+
+    @Override
 	public void saveImage(Integer id, String imgUrl) {
 				
 		projectDAO.updateImage(imgUrl, id);

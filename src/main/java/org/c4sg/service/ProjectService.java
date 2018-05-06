@@ -49,4 +49,6 @@ public interface ProjectService {
     void saveImage(Integer id, String imgUrl);
 
 	List<JobTitleDTO> findJobTitles();
+
+	int getTotalActiveProjects();
 }
